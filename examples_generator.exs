@@ -139,14 +139,14 @@ defmodule ExamplesGenerator do
 
   def run do
     File.mkdir_p("tmp/docs")
-    File.mkdir("tmp/images")
+    File.mkdir_p("examples/images")
     File.mkdir("tmp/repos")
     File.mkdir("tmp/dot")
     File.mkdir("tmp/config_files")
 
     @data
     |> Enum.each(fn {project_name, %{repo: repo, examples: examples}} = data_item ->
-      File.mkdir(Path.join("tmp/images", project_name))
+      File.mkdir(Path.join("examples/images", project_name))
       File.mkdir(Path.join("tmp/dot", project_name))
       File.mkdir(Path.join("tmp/config_files", project_name))
       init_project(project_name, repo)
@@ -228,7 +228,7 @@ defmodule ExamplesGenerator do
         "-Tpng",
         output_path,
         "-o",
-        Path.join(["tmp/images", project_name, slug <> ".png"])
+        Path.join(["examples/images", project_name, slug <> ".png"])
       ],
       stderr_to_stdout: true
     )

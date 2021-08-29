@@ -15,7 +15,7 @@ defmodule Ecto.ERD.MixProject do
       source_url: @source_url,
       description: description(),
       docs: docs(),
-      aliases: [docs: [&generate_examples/1, "docs", &copy_images/1]]
+      aliases: [docs: [&generate_examples/1, "docs"]]
     ]
   end
 
@@ -53,10 +53,6 @@ defmodule Ecto.ERD.MixProject do
 
   defp generate_examples(_) do
     ExamplesGenerator.run()
-  end
-
-  defp copy_images(_) do
-    File.cp_r("tmp/images", "doc/images", fn _source, _destination -> true end)
   end
 
   defp deps do
