@@ -137,7 +137,7 @@ defmodule ExamplesGenerator do
     }
   }
 
-  def run do
+  def run(source_url_root) do
     File.mkdir_p("tmp/docs")
     File.mkdir_p("examples/images")
     File.mkdir("tmp/repos")
@@ -155,11 +155,11 @@ defmodule ExamplesGenerator do
       |> Enum.map(fn example -> Task.async(fn -> generate_example(example, project_name) end) end)
       |> Task.yield_many(:infinity)
 
-      generate_doc(data_item)
+      generate_doc(data_item, source_url_root)
     end)
   end
 
-  defp generate_doc({project_name, %{repo: repo, examples: examples}}) do
+  defp generate_doc({project_name, %{repo: repo, examples: examples}}, source_url_root) do
     examples_md =
       examples
       |> Enum.map_join("\n\n", fn example ->
@@ -174,12 +174,12 @@ defmodule ExamplesGenerator do
             """
           end
 
-        path_to_image = Path.join(["images", project_name, slugify(example[:name]) <> ".png"])
+        url_to_image = Path.join([source_url_root, "examples/images", project_name, slugify(example[:name]) <>".png"])
 
         """
         ## #{example[:name]}
 
-        [![#{example[:name]}](#{path_to_image})](#{path_to_image})
+        [View image on GitHub](#{url_to_image})
 
         #{config_content}
         """

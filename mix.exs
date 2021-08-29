@@ -3,11 +3,12 @@ Code.compile_file("examples_generator.exs")
 defmodule Ecto.ERD.MixProject do
   use Mix.Project
   @source_url "https://github.com/fuelen/ecto_erd/"
+  @version "0.1.0"
 
   def project do
     [
       app: :ecto_erd,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -52,7 +53,7 @@ defmodule Ecto.ERD.MixProject do
   end
 
   defp generate_examples(_) do
-    ExamplesGenerator.run()
+    ExamplesGenerator.run(Path.join([@source_url, "blob", "v#{@version}"]))
   end
 
   defp deps do
