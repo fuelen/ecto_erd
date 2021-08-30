@@ -40,7 +40,7 @@ defmodule Ecto.ERD.Dot do
          },
          skip_port?
        ) do
-    result = "#{render_position(from, skip_port?)} -> #{render_position(to, skip_port?)}"
+    result = "#{render_position(from, skip_port?)}:e -> #{render_position(to, skip_port?)}:w"
 
     # don't draw arrow if relation is 1 <-> 1
     if {:has, :one} in assoc_types do
