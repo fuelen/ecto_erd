@@ -8,7 +8,7 @@ The package can be installed by adding `ecto_erd` to your list of dependencies i
 ```elixir
 def deps do
   [
-    {:ecto_erd, "~> 0.1.0"}
+    {:ecto_erd, "~> 0.1"}
   ]
 end
 ```

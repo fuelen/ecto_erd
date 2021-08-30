@@ -1,9 +1,17 @@
-Code.compile_file("examples_generator.exs")
+if File.exists?("examples_generator.exs") do
+  # This module is needed only for docs and is not shipped in package
+  Code.compile_file("examples_generator.exs")
+else
+  defmodule ExamplesGenerator do
+    def projects, do: []
+    def run(_), do: :noop
+  end
+end
 
 defmodule Ecto.ERD.MixProject do
   use Mix.Project
   @source_url "https://github.com/fuelen/ecto_erd/"
-  @version "0.1.0"
+  @version "0.1.1"
 
   def project do
     [
