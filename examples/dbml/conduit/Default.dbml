@@ -1,0 +1,83 @@
+
+
+Table accounts_users {
+  uuid uuid [pk]
+  username varchar
+  email varchar
+  hashed_password varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table blog_articles {
+  uuid uuid [pk]
+  slug varchar
+  title varchar
+  description varchar
+  body varchar
+  tag_list array
+  favorite_count integer
+  published_at timestamp
+  author_uuid uuid
+  author_bio varchar
+  author_image varchar
+  author_username varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table blog_authors {
+  uuid uuid [pk]
+  user_uuid uuid
+  username varchar
+  bio varchar
+  image varchar
+  followers array
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table blog_comments {
+  uuid uuid [pk]
+  body varchar
+  article_uuid uuid
+  author_uuid uuid
+  author_bio varchar
+  author_image varchar
+  author_username varchar
+  commented_at timestamp
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table blog_favorited_articles {
+  article_uuid uuid [pk]
+  favorited_by_author_uuid uuid [pk]
+  favorited_by_username varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table blog_feed_articles {
+  article_uuid uuid [pk]
+  follower_uuid uuid [pk]
+  author_uuid uuid
+  published_at timestamp
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table blog_tags {
+  uuid uuid [pk]
+  name varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table projection_versions {
+  projection_name varchar [pk]
+  last_seen_event_number integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+

@@ -2,7 +2,7 @@ if File.exists?("examples_generator.exs") do
   # This module is needed only for docs and is not shipped in package
   Code.compile_file("examples_generator.exs")
 else
-  defmodule ExamplesGenerator do
+  defmodule Ecto.ERD.ExamplesGenerator do
     def projects, do: []
     def run(_), do: :noop
   end
@@ -11,7 +11,7 @@ end
 defmodule Ecto.ERD.MixProject do
   use Mix.Project
   @source_url "https://github.com/fuelen/ecto_erd/"
-  @version "0.1.2"
+  @version "0.2.0"
 
   def project do
     [
@@ -23,6 +23,7 @@ defmodule Ecto.ERD.MixProject do
       package: package(),
       source_url: @source_url,
       description: description(),
+      name: "Ecto ERD",
       docs: docs(),
       aliases: [docs: [&generate_examples/1, "docs"]]
     ]
@@ -35,7 +36,7 @@ defmodule Ecto.ERD.MixProject do
   defp docs do
     [
       extras:
-        Enum.map(ExamplesGenerator.projects(), fn project ->
+        Enum.map(Ecto.ERD.ExamplesGenerator.projects(), fn project ->
           {:"tmp/docs/#{project}.md", [title: project]}
         end),
       source_url: @source_url,
@@ -61,7 +62,7 @@ defmodule Ecto.ERD.MixProject do
   end
 
   defp generate_examples(_) do
-    ExamplesGenerator.run(Path.join([@source_url, "blob", "v#{@version}"]))
+    Ecto.ERD.ExamplesGenerator.run(Path.join([@source_url, "blob", "v#{@version}"]))
   end
 
   defp deps do

@@ -1,10 +1,11 @@
-defmodule ExamplesGenerator do
+defmodule Ecto.ERD.ExamplesGenerator do
   require Logger
 
   @shared_examples [
-    [name: "Default"],
+    [name: "Default", formats: [:dbml, :dot]],
     [
       name: "No fields",
+      formats: [:dot],
       config: """
       [
         columns: []
@@ -13,6 +14,7 @@ defmodule ExamplesGenerator do
     ],
     [
       name: "Contexts as clusters",
+      formats: [:dbml, :dot],
       config: """
       alias Ecto.ERD.Node
 
@@ -26,6 +28,7 @@ defmodule ExamplesGenerator do
     ],
     [
       name: "Contexts as clusters (no fields)",
+      formats: [:dot],
       config: """
       alias Ecto.ERD.Node
 
@@ -56,6 +59,7 @@ defmodule ExamplesGenerator do
           [
             [
               name: "Clusters",
+              formats: [:dbml, :dot],
               config: """
               alias Ecto.ERD.Node
 
@@ -118,6 +122,7 @@ defmodule ExamplesGenerator do
           [
             [
               name: "Only selected cluster (Accounts context)",
+              formats: [:dbml, :dot],
               config: """
               alias Ecto.ERD.Node
 
@@ -132,6 +137,20 @@ defmodule ExamplesGenerator do
                 end
               ]
               """
+            ],
+            [
+              name: "Only embedded schemas",
+              formats: [:dot],
+              config: """
+              alias Ecto.ERD.Node
+
+              [
+                map_node: fn
+                  %Node{source: nil} = node -> node
+                  _ -> nil
+                end
+              ]
+              """
             ]
           ]
     }
@@ -139,14 +158,16 @@ defmodule ExamplesGenerator do
 
   def run(source_url_root) do
     File.mkdir_p("tmp/docs")
-    File.mkdir_p("examples/images")
+    File.mkdir_p("examples/dot_images")
+    File.mkdir_p("examples/dbml")
     File.mkdir("tmp/repos")
     File.mkdir("tmp/dot")
     File.mkdir("tmp/config_files")
 
     @data
     |> Enum.each(fn {project_name, %{repo: repo, examples: examples}} = data_item ->
-      File.mkdir(Path.join("examples/images", project_name))
+      File.mkdir(Path.join("examples/dot_images", project_name))
+      File.mkdir(Path.join("examples/dbml", project_name))
       File.mkdir(Path.join("tmp/dot", project_name))
       File.mkdir(Path.join("tmp/config_files", project_name))
       init_project(project_name, repo)
@@ -166,6 +187,7 @@ defmodule ExamplesGenerator do
         config_content =
           if example[:config] do
             """
+            #### Config file
 
             ```elixir
             # .ecto_erd.exs
@@ -174,12 +196,42 @@ defmodule ExamplesGenerator do
             """
           end
 
-        url_to_image = Path.join([source_url_root, "examples/images", project_name, slugify(example[:name]) <>".png"])
+        links_to_output =
+          example[:formats]
+          |> Enum.map(fn
+            :dbml ->
+              url =
+                Path.join([
+                  source_url_root,
+                  "examples/dbml",
+                  project_name,
+                  slugify(example[:name]) <> ".dbml"
+                ])
+
+              "DBML: [View document on GitHub](#{url})"
+
+            :dot ->
+              url =
+                Path.join([
+                  source_url_root,
+                  "examples/dot_images",
+                  project_name,
+                  slugify(example[:name]) <> ".png"
+                ])
+
+              "DOT: [View image on GitHub](#{url})"
+          end)
+
+        output_content = """
+        #### Output
+
+        #{Enum.join(links_to_output, "\n\n")}
+        """
 
         """
         ## #{example[:name]}
 
-        [View image on GitHub](#{url_to_image})
+        #{output_content}
 
         #{config_content}
         """
@@ -199,39 +251,47 @@ defmodule ExamplesGenerator do
   defp generate_example(example, project_name) do
     Logger.debug("#{project_name}: generating #{example[:name]}")
     slug = slugify(example[:name])
-    output_path = Path.expand(Path.join(["tmp/dot", project_name, slug <> ".dot"]))
 
-    if example[:config] do
-      config_path = Path.expand(Path.join(["tmp/config_files", project_name, slug <> ".exs"]))
-      File.write!(config_path, example[:config])
+    example[:formats]
+    |> Enum.map(fn
+      :dot -> {:dot, Path.expand(Path.join(["tmp/dot", project_name, slug <> ".dot"]))}
+      :dbml -> {:dbml, Path.expand(Path.join(["examples/dbml", project_name, slug <> ".dbml"]))}
+    end)
+    |> Enum.each(fn {format, output_path} ->
+      if example[:config] do
+        config_path = Path.expand(Path.join(["tmp/config_files", project_name, slug <> ".exs"]))
+        File.write!(config_path, example[:config])
 
-      System.cmd(
-        "mix",
-        [
-          "ecto.gen.erd",
-          "--output-path=#{output_path}",
-          "--config-path=#{config_path}"
-        ],
-        cd: Path.join("tmp/repos", project_name),
-        stderr_to_stdout: true
-      )
-    else
-      System.cmd("mix", ["ecto.gen.erd", "--output-path=#{output_path}"],
-        cd: Path.join("tmp/repos", project_name),
-        stderr_to_stdout: true
-      )
-    end
+        System.cmd(
+          "mix",
+          [
+            "ecto.gen.erd",
+            "--output-path=#{output_path}",
+            "--config-path=#{config_path}"
+          ],
+          cd: Path.join("tmp/repos", project_name),
+          stderr_to_stdout: true
+        )
+      else
+        System.cmd("mix", ["ecto.gen.erd", "--output-path=#{output_path}"],
+          cd: Path.join("tmp/repos", project_name),
+          stderr_to_stdout: true
+        )
+      end
 
-    System.cmd(
-      "dot",
-      [
-        "-Tpng",
-        output_path,
-        "-o",
-        Path.join(["examples/images", project_name, slug <> ".png"])
-      ],
-      stderr_to_stdout: true
-    )
+      if format == :dot do
+        System.cmd(
+          "dot",
+          [
+            "-Tpng",
+            output_path,
+            "-o",
+            Path.join(["examples/dot_images", project_name, slug <> ".png"])
+          ],
+          stderr_to_stdout: true
+        )
+      end
+    end)
 
     Logger.debug("#{project_name}: generated #{example[:name]}")
   end

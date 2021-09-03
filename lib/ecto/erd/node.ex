@@ -38,25 +38,26 @@ defmodule Ecto.ERD.Node do
   end
 
   @doc false
-  def from_schema_module(schema_module) do
+  def new(schema_module \\ nil, source, fields) do
     %__MODULE__{
       schema_module: schema_module,
-      source: schema_module.__schema__(:source),
-      fields:
-        Enum.map(
-          schema_module.__schema__(:fields),
-          fn field ->
-            Ecto.ERD.Field.new(field, schema_module.__schema__(:type, field))
-          end
-        )
+      source: source,
+      fields: fields
     }
   end
 
   @doc false
-  def from_schemaless_join_source(source, fields) do
+  def merge_to_schemaless(%__MODULE__{source: source, fields: fields1}, %__MODULE__{
+        source: source,
+        fields: fields2
+      })
+      when not is_nil(source) do
+    # if fields have different types with the same name, then only 1 type will be choosen
+    fields = Enum.uniq_by(fields1 ++ fields2, & &1.name)
+
     %__MODULE__{
       source: source,
-      fields: Enum.sort(fields)
+      fields: fields
     }
   end
 end

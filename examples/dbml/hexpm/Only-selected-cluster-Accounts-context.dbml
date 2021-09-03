@@ -1,0 +1,109 @@
+TableGroup "Hexpm.Accounts" {
+  audit_logs
+  emails
+  keys
+  organizations
+  organization_users
+  password_resets
+  sessions
+  users
+}
+
+
+Table audit_logs {
+  id integer [pk]
+  user_agent varchar
+  action varchar
+  params jsonb
+  user_id integer
+  organization_id integer
+  inserted_at timestamp
+}
+
+Table emails {
+  id integer [pk]
+  email varchar
+  verified boolean
+  primary boolean
+  public boolean
+  gravatar boolean
+  verification_key varchar
+  verification_expiry timestamp
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table keys {
+  id integer [pk]
+  name varchar
+  secret_first varchar
+  secret_second varchar
+  public boolean
+  revoke_at timestamp
+  revoked_at timestamp
+  inserted_at timestamp
+  updated_at timestamp
+  last_use jsonb
+  user_id integer
+  organization_id integer
+  permissions jsonb
+}
+
+Table organization_users {
+  id integer [pk]
+  role varchar
+  organization_id integer
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table organizations {
+  id integer [pk]
+  name varchar
+  billing_active boolean
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table password_resets {
+  id integer [pk]
+  key varchar
+  primary_email varchar
+  user_id integer
+  inserted_at timestamp
+}
+
+Table sessions {
+  id integer [pk]
+  token bytea
+  data jsonb
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table users {
+  id integer [pk]
+  username varchar
+  full_name varchar
+  password varchar
+  service boolean
+  deactivated_at timestamp
+  role varchar
+  inserted_at timestamp
+  updated_at timestamp
+  handles jsonb
+  tfa jsonb
+  organization_id integer
+}
+
+Ref: organizations.id < audit_logs.organization_id
+Ref: organizations.id < keys.organization_id
+Ref: organizations.id < organization_users.organization_id
+Ref: organizations.id - users.organization_id
+Ref: users.id < audit_logs.user_id
+Ref: users.id < emails.user_id
+Ref: users.id < keys.user_id
+Ref: users.id < organization_users.user_id
+Ref: users.id < password_resets.user_id

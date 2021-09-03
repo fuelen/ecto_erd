@@ -1,15 +1,19 @@
 defmodule Ecto.ERD.Dot do
   @moduledoc false
-  alias Ecto.ERD.{Document, HTML, Edge, Node, Field}
+  alias Ecto.ERD.{HTML, Edge, Node, Field, Graph}
 
-  def render(%Document{nodes: global_nodes, edges: edges, clusters: clusters}, opts) do
+  def render(%Graph{nodes: nodes, edges: edges}, opts) do
     fontname = Keyword.fetch!(opts, :fontname)
     columns = Keyword.fetch!(opts, :columns)
+
+    clusters = Enum.group_by(nodes, & &1.cluster)
+    {global_nodes, clusters} = Map.pop(clusters, nil)
+    global_nodes = List.wrap(global_nodes)
 
     subgraphs =
       Enum.map(clusters, fn {cluster_name, nodes} ->
         """
-          subgraph "cluster_#{cluster_name}" {
+          subgraph #{in_quotes("cluster_#{cluster_name}")} {
             style=filled
             fontname=#{in_quotes(fontname)}
             color = #{Ecto.ERD.Color.get(cluster_name)}
@@ -75,7 +79,7 @@ defmodule Ecto.ERD.Dot do
               fn column ->
                 max_length =
                   fields
-                  |> Enum.map(fn field -> field |> Field.format(column) |> String.length() end)
+                  |> Enum.map(fn field -> field |> format_field(column) |> String.length() end)
                   |> Enum.max()
 
                 {column, max_length + 5}
@@ -87,7 +91,7 @@ defmodule Ecto.ERD.Dot do
              {:td, [align: :left, port: Edge.port_name({:field, name})],
               Enum.map(columns, fn
                 column ->
-                  text = String.pad_trailing(Field.format(field, column), column_width[column])
+                  text = String.pad_trailing(format_field(field, column), column_width[column])
 
                   case column do
                     :type -> {:i, [], {:font, [color: :gray54], text}}
@@ -135,4 +139,34 @@ defmodule Ecto.ERD.Dot do
   defp in_quotes(value) do
     "\"" <> String.replace(value, "\"", "\\\"") <> "\""
   end
+
+  defp format_field(%Field{name: name}, :name), do: inspect(name)
+
+  defp format_field(%Field{type: {:parameterized, Ecto.Enum, %{values: values}}}, :type) do
+    "#Enum<#{inspect(values)}>"
+  end
+
+  defp format_field(
+         %Field{
+           type:
+             {:parameterized, Ecto.Embedded,
+              %Ecto.Embedded{cardinality: cardinality, related: related}}
+         },
+         :type
+       ) do
+    "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
+  end
+
+  # Oldp format_field, was removed in this commit:
+  # https://github.com/elixir-ecto/ecto/commit/59962034a25835a40d15d6c7d8eae23e64fd4eba
+  defp format_field(
+         %Field{
+           type: {:embed, %Ecto.Embedded{cardinality: cardinality, related: related}}
+         },
+         :type
+       ) do
+    "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
+  end
+
+  defp format_field(%Field{type: type}, :type), do: inspect(type)
 end

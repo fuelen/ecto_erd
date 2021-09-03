@@ -1,0 +1,247 @@
+
+Enum role {
+  admin
+  owner
+  viewer
+}
+
+Table api_keys {
+  id integer [pk]
+  name varchar
+  scopes array
+  hourly_request_limit integer
+  key_hash varchar
+  key_prefix varchar
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table custom_domains {
+  id integer [pk]
+  domain varchar
+  has_ssl_certificate boolean
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table events {
+  name varchar
+  domain varchar
+  hostname varchar
+  pathname varchar
+  user_id integer
+  session_id integer
+  timestamp timestamp
+  referrer varchar
+  referrer_source varchar
+  utm_medium varchar
+  utm_source varchar
+  utm_campaign varchar
+  country_code varchar
+  screen_size varchar
+  operating_system varchar
+  operating_system_version varchar
+  browser varchar
+  browser_version varchar
+  "meta.key" array
+  "meta.value" array
+}
+
+Table goals {
+  id integer [pk]
+  domain varchar
+  event_name varchar
+  page_path varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table google_auth {
+  id integer [pk]
+  email varchar
+  property varchar
+  refresh_token varchar
+  access_token varchar
+  expires timestamp
+  user_id integer
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table invitations {
+  id integer [pk]
+  invitation_id varchar
+  email varchar
+  role role
+  inviter_id integer
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table monthly_reports {
+  id integer [pk]
+  recipients array
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table oban_jobs {
+  id integer [pk]
+  state varchar
+  queue varchar
+  worker varchar
+  args jsonb
+  meta jsonb
+  tags array
+  errors array
+  attempt integer
+  attempted_by array
+  max_attempts integer
+  priority integer
+  attempted_at timestamp
+  cancelled_at timestamp
+  completed_at timestamp
+  discarded_at timestamp
+  inserted_at timestamp
+  scheduled_at timestamp
+}
+
+Table schema_migrations {
+  version integer
+  inserted_at timestamp
+}
+
+Table sessions {
+  hostname varchar
+  domain varchar
+  user_id integer
+  session_id integer
+  start timestamp
+  duration integer
+  is_bounce boolean
+  entry_page varchar
+  exit_page varchar
+  pageviews integer
+  events integer
+  sign integer
+  utm_medium varchar
+  utm_source varchar
+  utm_campaign varchar
+  referrer varchar
+  referrer_source varchar
+  country_code varchar
+  screen_size varchar
+  operating_system varchar
+  operating_system_version varchar
+  browser varchar
+  browser_version varchar
+  timestamp timestamp
+}
+
+Table shared_links {
+  id integer [pk]
+  site_id integer
+  name varchar
+  slug varchar
+  password_hash varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table site_memberships {
+  id integer [pk]
+  role role
+  site_id integer
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table sites {
+  id integer [pk]
+  domain varchar
+  timezone varchar
+  public boolean
+  locked boolean
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table spike_notifications {
+  id integer [pk]
+  recipients array
+  threshold integer
+  last_sent timestamp
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table subscriptions {
+  id integer [pk]
+  paddle_subscription_id varchar
+  paddle_plan_id varchar
+  update_url varchar
+  cancel_url varchar
+  status varchar
+  next_bill_amount varchar
+  next_bill_date date
+  last_bill_date date
+  currency_code varchar
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table tweets {
+  id integer [pk]
+  link varchar
+  tweet_id varchar
+  author_handle varchar
+  author_name varchar
+  author_image varchar
+  text varchar
+  created timestamp
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table users {
+  id integer [pk]
+  email varchar
+  password_hash varchar
+  name varchar
+  last_seen timestamp
+  trial_expiry_date date
+  theme varchar
+  email_verified boolean
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table weekly_reports {
+  id integer [pk]
+  recipients array
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Ref: sites.id - custom_domains.site_id
+Ref: sites.id - google_auth.site_id
+Ref: sites.id < invitations.site_id
+Ref: sites.id - monthly_reports.site_id
+Ref: sites.id < shared_links.site_id
+Ref: sites.id < site_memberships.site_id
+Ref: sites.id - spike_notifications.site_id
+Ref: sites.id - weekly_reports.site_id
+Ref: users.id < api_keys.user_id
+Ref: users.id - google_auth.user_id
+Ref: users.id < invitations.inviter_id
+Ref: users.id < site_memberships.user_id
+Ref: users.id - subscriptions.user_id

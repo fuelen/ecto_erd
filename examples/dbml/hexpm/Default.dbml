@@ -1,0 +1,244 @@
+
+
+Table audit_logs {
+  id integer [pk]
+  user_agent varchar
+  action varchar
+  params jsonb
+  user_id integer
+  organization_id integer
+  inserted_at timestamp
+}
+
+Table blocked_addresses {
+  id integer [pk]
+  ip varchar
+  comment varchar
+}
+
+Table downloads {
+  id integer [pk]
+  release_id integer
+  downloads integer
+  day date
+}
+
+Table emails {
+  id integer [pk]
+  email varchar
+  verified boolean
+  primary boolean
+  public boolean
+  gravatar boolean
+  verification_key varchar
+  verification_expiry timestamp
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table installs {
+  id integer [pk]
+  hex varchar
+  elixirs array
+}
+
+Table keys {
+  id integer [pk]
+  name varchar
+  secret_first varchar
+  secret_second varchar
+  public boolean
+  revoke_at timestamp
+  revoked_at timestamp
+  inserted_at timestamp
+  updated_at timestamp
+  last_use jsonb
+  user_id integer
+  organization_id integer
+  permissions jsonb
+}
+
+Table organization_users {
+  id integer [pk]
+  role varchar
+  organization_id integer
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table organizations {
+  id integer [pk]
+  name varchar
+  billing_active boolean
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table package_dependants {
+  id integer [pk]
+  package_id integer
+  name varchar
+  repo varchar
+}
+
+Table package_downloads {
+  package_id integer
+  view varchar
+  downloads integer
+}
+
+Table package_owners {
+  id integer [pk]
+  level varchar
+  package_id integer
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table package_report_comments {
+  id integer [pk]
+  text varchar
+  inserted_at timestamp
+  updated_at timestamp
+  package_report_id integer
+  author_id integer
+}
+
+Table package_report_releases {
+  id integer [pk]
+  release_id integer
+  package_report_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table package_reports {
+  id integer [pk]
+  state varchar
+  description varchar
+  author_id integer
+  package_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table packages {
+  id integer [pk]
+  name varchar
+  docs_updated_at timestamp
+  inserted_at timestamp
+  updated_at timestamp
+  repository_id integer
+  meta jsonb
+}
+
+Table password_resets {
+  id integer [pk]
+  key varchar
+  primary_email varchar
+  user_id integer
+  inserted_at timestamp
+}
+
+Table release_downloads {
+  release_id integer
+  downloads integer
+}
+
+Table releases {
+  id integer [pk]
+  version varchar
+  inner_checksum bytea
+  outer_checksum bytea
+  has_docs boolean
+  inserted_at timestamp
+  updated_at timestamp
+  package_id integer
+  publisher_id integer
+  meta jsonb
+  retirement jsonb
+}
+
+Table repositories {
+  id integer [pk]
+  name varchar
+  public boolean
+  inserted_at timestamp
+  updated_at timestamp
+  organization_id integer
+}
+
+Table requirements {
+  id integer [pk]
+  app varchar
+  requirement varchar
+  optional boolean
+  release_id integer
+  dependency_id integer
+}
+
+Table schema_migrations {
+  version integer
+  inserted_at timestamp
+}
+
+Table sessions {
+  id integer [pk]
+  token bytea
+  data jsonb
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table short_urls {
+  id integer [pk]
+  url varchar
+  short_code varchar
+  inserted_at timestamp
+}
+
+Table users {
+  id integer [pk]
+  username varchar
+  full_name varchar
+  password varchar
+  service boolean
+  deactivated_at timestamp
+  role varchar
+  inserted_at timestamp
+  updated_at timestamp
+  handles jsonb
+  tfa jsonb
+  organization_id integer
+}
+
+Ref: organizations.id < audit_logs.organization_id
+Ref: organizations.id < keys.organization_id
+Ref: organizations.id < organization_users.organization_id
+Ref: organizations.id - repositories.organization_id
+Ref: organizations.id - users.organization_id
+Ref: package_reports.id < package_report_comments.package_report_id
+Ref: package_reports.id < package_report_releases.package_report_id
+Ref: packages.id < package_dependants.package_id
+Ref: packages.id < package_downloads.package_id
+Ref: packages.id < package_owners.package_id
+Ref: packages.id < package_reports.package_id
+Ref: packages.id < releases.package_id
+Ref: packages.id < requirements.dependency_id
+Ref: releases.id < downloads.release_id
+Ref: releases.id < package_report_releases.release_id
+Ref: releases.id - release_downloads.release_id
+Ref: releases.id < requirements.release_id
+Ref: repositories.id < packages.repository_id
+Ref: users.id < audit_logs.user_id
+Ref: users.id < emails.user_id
+Ref: users.id < keys.user_id
+Ref: users.id < organization_users.user_id
+Ref: users.id < package_owners.user_id
+Ref: users.id < package_report_comments.author_id
+Ref: users.id < package_reports.author_id
+Ref: users.id < password_resets.user_id
+Ref: users.id < releases.publisher_id
