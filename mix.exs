@@ -21,7 +21,6 @@ defmodule Ecto.ERD.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
-      source_url: @source_url,
       description: description(),
       name: "Ecto ERD",
       docs: docs(),
@@ -41,6 +40,7 @@ defmodule Ecto.ERD.MixProject do
           {:"tmp/docs/#{project}.md", [title: project]}
         end),
       source_url: @source_url,
+      source_ref: "v#{@version}",
       groups_for_extras: [
         Examples: ~r"tmp/docs/"
       ]
