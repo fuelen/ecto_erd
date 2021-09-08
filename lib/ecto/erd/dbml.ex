@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.DBML do
   @moduledoc false
-  alias Ecto.ERD.{Node, Field, Edge, Graph}
+  alias Ecto.ERD.{Node, Field, Edge, Graph, Render}
 
   def render(%Graph{nodes: nodes, edges: edges}) do
     groups =
@@ -9,13 +9,11 @@ defmodule Ecto.ERD.DBML do
       |> Map.delete(nil)
       |> Enum.map_join(fn {cluster_name, sources} ->
         """
-        TableGroup #{in_quotes(cluster_name)} {
-          #{Enum.map_join(sources, "\n  ", &in_quotes/1)}
+        TableGroup #{Render.in_quotes(cluster_name)} {
+          #{Enum.map_join(sources, "\n  ", &Render.in_quotes/1)}
         }
         """
       end)
-
-    nodes = merge_nodes_with_same_source(nodes)
 
     enums_mapping = enums_mapping(nodes)
 
@@ -25,8 +23,8 @@ defmodule Ecto.ERD.DBML do
       |> Enum.uniq()
       |> Enum.map_join("\n", fn {name, values} ->
         """
-        Enum #{in_quotes(name)} {
-          #{values |> Enum.map_join("\n  ", &in_quotes/1)}
+        Enum #{Render.in_quotes(name)} {
+          #{values |> Enum.map_join("\n  ", &Render.in_quotes/1)}
         }
         """
       end)
@@ -39,7 +37,7 @@ defmodule Ecto.ERD.DBML do
         end
 
         """
-        Table #{in_quotes(source)} {
+        Table #{Render.in_quotes(source)} {
           #{Enum.map_join(fields, "\n  ", &render_field(&1, enum_name_by_field_name))}
         }
         """
@@ -60,9 +58,9 @@ defmodule Ecto.ERD.DBML do
 
         [
           "Ref:",
-          in_quotes(from_source) <> "." <> in_quotes(from_field),
+          Render.in_quotes(from_source) <> "." <> Render.in_quotes(from_field),
           operator,
-          in_quotes(to_source) <> "." <> in_quotes(to_field)
+          Render.in_quotes(to_source) <> "." <> Render.in_quotes(to_field)
         ]
         |> Enum.join(" ")
       end)
@@ -107,13 +105,6 @@ defmodule Ecto.ERD.DBML do
     |> Map.new()
   end
 
-  def merge_nodes_with_same_source(nodes) do
-    nodes
-    |> Enum.group_by(fn %Node{source: source} -> source end)
-    |> Map.delete(nil)
-    |> Enum.map(fn {_source, nodes} -> Enum.reduce(nodes, &Node.merge_to_schemaless/2) end)
-  end
-
   defp render_field(%Field{name: name, type: type, primary?: primary?}, enum_name_by_field_name) do
     settings =
       if primary? do
@@ -124,25 +115,14 @@ defmodule Ecto.ERD.DBML do
 
     case type do
       {:parameterized, Ecto.Enum, _} ->
-        "#{in_quotes(name)} #{in_quotes(enum_name_by_field_name.(name))}#{settings}"
+        "#{Render.in_quotes(name)} #{Render.in_quotes(enum_name_by_field_name.(name))}#{settings}"
 
       _ ->
-        "#{in_quotes(name)} #{format_type(type)}#{settings}"
+        "#{Render.in_quotes(name)} #{format_type(type)}#{settings}"
     end
   end
 
-  defp in_quotes(value) do
-    value = to_string(value)
-
-    # DBML is supposed to be human editable, so it is better to avoid redundant quotes
-    if value =~ ~r/^[a-z\d_]+$/i do
-      value
-    else
-      "\"" <> String.replace(value, "\"", "\\\"") <> "\""
-    end
-  end
-
-  def format_type(type) do
+  defp format_type(type) do
     case Ecto.Type.type(type) do
       {:array, _t} -> "array"
       :id -> "integer"

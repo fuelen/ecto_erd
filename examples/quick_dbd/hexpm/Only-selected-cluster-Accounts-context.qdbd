@@ -1,0 +1,87 @@
+audit_logs
+---
+id integer PK
+user_agent varchar
+action varchar
+params jsonb
+user_id integer FK >- users.id
+organization_id integer FK >- organizations.id
+inserted_at timestamp
+
+emails
+---
+id integer PK
+email varchar
+verified boolean
+primary boolean
+public boolean
+gravatar boolean
+verification_key varchar
+verification_expiry timestamp
+user_id integer FK >- users.id
+inserted_at timestamp
+updated_at timestamp
+
+keys
+---
+id integer PK
+name varchar
+secret_first varchar
+secret_second varchar
+public boolean
+revoke_at timestamp
+revoked_at timestamp
+inserted_at timestamp
+updated_at timestamp
+last_use jsonb
+user_id integer FK >- users.id
+organization_id integer FK >- organizations.id
+permissions jsonb
+
+organization_users
+---
+id integer PK
+role varchar
+organization_id integer FK >- organizations.id
+user_id integer FK >- users.id
+inserted_at timestamp
+updated_at timestamp
+
+organizations
+---
+id integer PK
+name varchar
+billing_active boolean
+inserted_at timestamp
+updated_at timestamp
+
+password_resets
+---
+id integer PK
+key varchar
+primary_email varchar
+user_id integer FK >- users.id
+inserted_at timestamp
+
+sessions
+---
+id integer PK
+token bytea
+data jsonb
+inserted_at timestamp
+updated_at timestamp
+
+users
+---
+id integer PK
+username varchar
+full_name varchar
+password varchar
+service boolean
+deactivated_at timestamp
+role varchar
+inserted_at timestamp
+updated_at timestamp
+handles jsonb
+tfa jsonb
+organization_id integer FK - organizations.id

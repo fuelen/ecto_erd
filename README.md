@@ -8,7 +8,7 @@ The package can be installed by adding `ecto_erd` to your list of dependencies i
 ```elixir
 def deps do
   [
-    {:ecto_erd, "~> 0.1"}
+    {:ecto_erd, "~> 0.3"}
   ]
 end
 ```
@@ -20,4 +20,3 @@ $ mix ecto.gen.erd
 ```
 
 The docs can be found at [https://hexdocs.pm/ecto_erd](https://hexdocs.pm/ecto_erd).
-

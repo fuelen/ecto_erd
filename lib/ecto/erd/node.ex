@@ -47,17 +47,42 @@ defmodule Ecto.ERD.Node do
   end
 
   @doc false
-  def merge_to_schemaless(%__MODULE__{source: source, fields: fields1}, %__MODULE__{
-        source: source,
-        fields: fields2
-      })
+  def merge_to_schemaless(
+        %__MODULE__{source: source, fields: fields1, cluster: cluster1},
+        %__MODULE__{
+          source: source,
+          fields: fields2,
+          cluster: cluster2
+        }
+      )
       when not is_nil(source) do
     # if fields have different types with the same name, then only 1 type will be choosen
     fields = Enum.uniq_by(fields1 ++ fields2, & &1.name)
 
+    cluster =
+      case {cluster1, cluster2} do
+        {nil, cluster} ->
+          cluster
+
+        {cluster, nil} ->
+          cluster
+
+        {cluster, cluster} ->
+          cluster
+
+        {cluster1, cluster2} ->
+          IO.warn(
+            "Trying to merge two nodes with source #{inspect(source)} but with different clusters " <>
+              "(#{inspect(cluster1)} and #{inspect(cluster2)}), removing cluster in favour of global space"
+          )
+
+          nil
+      end
+
     %__MODULE__{
       source: source,
-      fields: fields
+      fields: fields,
+      cluster: cluster
     }
   end
 end

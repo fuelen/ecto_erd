@@ -40,6 +40,27 @@ defmodule Ecto.ERD.Graph do
     }
   end
 
+  # it, actually, doesn't remove ALL information about schemas, but only in duplicated entities -
+  # when nodes have the same source or when edges are equal by source and port.
+  def make_schemaless(%__MODULE__{nodes: nodes, edges: edges}) do
+    nodes =
+      nodes
+      |> Enum.group_by(fn %Node{source: source} -> source end)
+      |> Map.delete(nil)
+      |> Enum.map(fn {_source, nodes} -> Enum.reduce(nodes, &Node.merge_to_schemaless/2) end)
+
+    edges =
+      edges
+      |> Enum.uniq_by(fn %Edge{from: {source1, _module1, port1}, to: {source2, _module2, port2}} ->
+        {{source1, port1}, {source2, port2}}
+      end)
+
+    %__MODULE__{
+      nodes: nodes,
+      edges: edges
+    }
+  end
+
   defp merge_edges_with_same_direction(edges) do
     edges
     |> Enum.group_by(fn %Edge{from: from, to: to} -> {from, to} end)

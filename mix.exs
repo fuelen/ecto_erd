@@ -11,7 +11,7 @@ end
 defmodule Ecto.ERD.MixProject do
   use Mix.Project
   @source_url "https://github.com/fuelen/ecto_erd/"
-  @version "0.2.0"
+  @version "0.3.0"
 
   def project do
     [
@@ -35,6 +35,7 @@ defmodule Ecto.ERD.MixProject do
 
   defp docs do
     [
+      main: "Mix.Tasks.Ecto.Gen.Erd",
       extras:
         Enum.map(Ecto.ERD.ExamplesGenerator.projects(), fn project ->
           {:"tmp/docs/#{project}.md", [title: project]}
@@ -62,7 +63,11 @@ defmodule Ecto.ERD.MixProject do
   end
 
   defp generate_examples(_) do
-    Ecto.ERD.ExamplesGenerator.run(Path.join([@source_url, "blob", "v#{@version}"]))
+    if System.get_env("DISABLE_EXAMPLES_GENERATOR") == "true" do
+      :noop
+    else
+      Ecto.ERD.ExamplesGenerator.run(Path.join([@source_url, "blob", "v#{@version}"]))
+    end
   end
 
   defp deps do

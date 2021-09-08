@@ -1,0 +1,214 @@
+audit_logs
+---
+id integer PK
+user_agent varchar
+action varchar
+params jsonb
+user_id integer FK >- users.id
+organization_id integer FK >- organizations.id
+inserted_at timestamp
+
+blocked_addresses
+---
+id integer PK
+ip varchar
+comment varchar
+
+downloads
+---
+id integer PK
+release_id integer FK >- releases.id
+downloads integer
+day date
+
+emails
+---
+id integer PK
+email varchar
+verified boolean
+primary boolean
+public boolean
+gravatar boolean
+verification_key varchar
+verification_expiry timestamp
+user_id integer FK >- users.id
+inserted_at timestamp
+updated_at timestamp
+
+installs
+---
+id integer PK
+hex varchar
+elixirs array
+
+keys
+---
+id integer PK
+name varchar
+secret_first varchar
+secret_second varchar
+public boolean
+revoke_at timestamp
+revoked_at timestamp
+inserted_at timestamp
+updated_at timestamp
+last_use jsonb
+user_id integer FK >- users.id
+organization_id integer FK >- organizations.id
+permissions jsonb
+
+organization_users
+---
+id integer PK
+role varchar
+organization_id integer FK >- organizations.id
+user_id integer FK >- users.id
+inserted_at timestamp
+updated_at timestamp
+
+organizations
+---
+id integer PK
+name varchar
+billing_active boolean
+inserted_at timestamp
+updated_at timestamp
+
+package_dependants
+---
+id integer PK
+package_id integer FK >- packages.id
+name varchar
+repo varchar
+
+package_downloads
+---
+package_id integer FK >- packages.id
+view varchar
+downloads integer
+
+package_owners
+---
+id integer PK
+level varchar
+package_id integer FK >- packages.id
+user_id integer FK >- users.id
+inserted_at timestamp
+updated_at timestamp
+
+package_report_comments
+---
+id integer PK
+text varchar
+inserted_at timestamp
+updated_at timestamp
+package_report_id integer FK >- package_reports.id
+author_id integer FK >- users.id
+
+package_report_releases
+---
+id integer PK
+release_id integer FK >- releases.id
+package_report_id integer FK >- package_reports.id
+inserted_at timestamp
+updated_at timestamp
+
+package_reports
+---
+id integer PK
+state varchar
+description varchar
+author_id integer FK >- users.id
+package_id integer FK >- packages.id
+inserted_at timestamp
+updated_at timestamp
+
+packages
+---
+id integer PK
+name varchar
+docs_updated_at timestamp
+inserted_at timestamp
+updated_at timestamp
+repository_id integer FK >- repositories.id
+meta jsonb
+
+password_resets
+---
+id integer PK
+key varchar
+primary_email varchar
+user_id integer FK >- users.id
+inserted_at timestamp
+
+release_downloads
+---
+release_id integer FK - releases.id
+downloads integer
+
+releases
+---
+id integer PK
+version varchar
+inner_checksum bytea
+outer_checksum bytea
+has_docs boolean
+inserted_at timestamp
+updated_at timestamp
+package_id integer FK >- packages.id
+publisher_id integer FK >- users.id
+meta jsonb
+retirement jsonb
+
+repositories
+---
+id integer PK
+name varchar
+public boolean
+inserted_at timestamp
+updated_at timestamp
+organization_id integer FK - organizations.id
+
+requirements
+---
+id integer PK
+app varchar
+requirement varchar
+optional boolean
+release_id integer FK >- releases.id
+dependency_id integer FK >- packages.id
+
+schema_migrations
+---
+version integer
+inserted_at timestamp
+
+sessions
+---
+id integer PK
+token bytea
+data jsonb
+inserted_at timestamp
+updated_at timestamp
+
+short_urls
+---
+id integer PK
+url varchar
+short_code varchar
+inserted_at timestamp
+
+users
+---
+id integer PK
+username varchar
+full_name varchar
+password varchar
+service boolean
+deactivated_at timestamp
+role varchar
+inserted_at timestamp
+updated_at timestamp
+handles jsonb
+tfa jsonb
+organization_id integer FK - organizations.id

@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.Dot do
   @moduledoc false
-  alias Ecto.ERD.{HTML, Edge, Node, Field, Graph}
+  alias Ecto.ERD.{HTML, Edge, Node, Field, Graph, Render}
 
   def render(%Graph{nodes: nodes, edges: edges}, opts) do
     fontname = Keyword.fetch!(opts, :fontname)
@@ -13,9 +13,9 @@ defmodule Ecto.ERD.Dot do
     subgraphs =
       Enum.map(clusters, fn {cluster_name, nodes} ->
         """
-          subgraph #{in_quotes("cluster_#{cluster_name}")} {
+          subgraph #{Render.in_quotes("cluster_#{cluster_name}")} {
             style=filled
-            fontname=#{in_quotes(fontname)}
+            fontname=#{Render.in_quotes(fontname)}
             color = #{Ecto.ERD.Color.get(cluster_name)}
             label = <#{{:font, ["point-size": 24], {:b, [], cluster_name}} |> HTML.to_iodata()}>
             #{Enum.map_join(nodes, "\n  ", &render_node(&1, columns))}
@@ -28,7 +28,7 @@ defmodule Ecto.ERD.Dot do
     """
     #{if strict?, do: "strict "}digraph {
       ranksep=1.0; rankdir=LR;
-      node [shape = none, fontname=#{in_quotes(fontname)}];
+      node [shape = none, fontname=#{Render.in_quotes(fontname)}];
       #{Enum.map_join(global_nodes, "\n  ", &render_node(&1, columns))}
     #{subgraphs}
       #{Enum.map_join(edges, "\n  ", &render_edge(&1, columns == []))}
@@ -55,8 +55,8 @@ defmodule Ecto.ERD.Dot do
   end
 
   defp render_position({source, schema_module, port}, skip_port?) do
-    string = in_quotes(Node.id(source, schema_module))
-    if skip_port?, do: string, else: string <> ":" <> in_quotes(Edge.port_name(port))
+    string = Render.in_quotes(Node.id(source, schema_module))
+    if skip_port?, do: string, else: string <> ":" <> Render.in_quotes(Edge.port_name(port))
   end
 
   defp render_node(
@@ -133,11 +133,7 @@ defmodule Ecto.ERD.Dot do
        ]}
       |> HTML.to_iodata()
 
-    in_quotes(Node.id(source, schema_module)) <> " [label= <#{table}>]"
-  end
-
-  defp in_quotes(value) do
-    "\"" <> String.replace(value, "\"", "\\\"") <> "\""
+    Render.in_quotes(Node.id(source, schema_module)) <> " [label= <#{table}>]"
   end
 
   defp format_field(%Field{name: name}, :name), do: inspect(name)
@@ -157,7 +153,7 @@ defmodule Ecto.ERD.Dot do
     "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
   end
 
-  # Oldp format_field, was removed in this commit:
+  # format_field for older Ecto versions, this format was removed in this commit:
   # https://github.com/elixir-ecto/ecto/commit/59962034a25835a40d15d6c7d8eae23e64fd4eba
   defp format_field(
          %Field{

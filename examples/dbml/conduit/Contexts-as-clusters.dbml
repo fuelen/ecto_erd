@@ -1,6 +1,5 @@
 TableGroup "Conduit.Accounts" {
   accounts_users
-  projection_versions
 }
 TableGroup "Conduit.Blog" {
   blog_articles
@@ -9,7 +8,6 @@ TableGroup "Conduit.Blog" {
   blog_favorited_articles
   blog_feed_articles
   blog_tags
-  projection_versions
   projection_versions
 }
 

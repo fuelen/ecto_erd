@@ -2,8 +2,8 @@ TableGroup "Hexpm.Accounts" {
   audit_logs
   emails
   keys
-  organizations
   organization_users
+  organizations
   password_resets
   sessions
   users

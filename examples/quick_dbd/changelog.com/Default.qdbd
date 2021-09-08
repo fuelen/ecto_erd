@@ -1,0 +1,413 @@
+benefits
+---
+id integer PK
+offer varchar
+code varchar
+link_url varchar
+notes varchar
+sponsor_id integer FK >- sponsors.id
+inserted_at timestamp
+updated_at timestamp
+
+episode_guests
+---
+id integer PK
+position integer
+thanks boolean
+discount_code varchar
+episode_id integer FK >- episodes.id
+person_id integer FK >- people.id
+inserted_at timestamp
+updated_at timestamp
+
+episode_hosts
+---
+id integer PK
+position integer
+person_id integer FK >- people.id
+episode_id integer FK >- episodes.id
+inserted_at timestamp
+updated_at timestamp
+
+episode_requests
+---
+id integer PK
+status integer
+hosts varchar
+guests varchar
+topics varchar
+pitch varchar
+pronunciation varchar
+decline_message varchar
+podcast_id integer FK >- podcasts.id
+submitter_id integer FK >- people.id
+inserted_at timestamp
+updated_at timestamp
+
+episode_sponsors
+---
+id integer PK
+position integer
+title varchar
+link_url varchar
+description varchar
+episode_id integer FK >- episodes.id
+sponsor_id integer FK >- sponsors.id
+inserted_at timestamp
+updated_at timestamp
+
+episode_stats
+---
+id integer PK
+date date
+episode_bytes integer
+total_bytes integer
+downloads float
+uniques integer
+demographics jsonb
+episode_id integer FK >- episodes.id
+podcast_id integer FK >- podcasts.id
+inserted_at timestamp
+updated_at timestamp
+
+episode_topics
+---
+id integer PK
+position integer
+topic_id integer FK >- topics.id
+episode_id integer FK >- episodes.id
+inserted_at timestamp
+updated_at timestamp
+
+episodes
+---
+id integer PK
+slug varchar
+guid varchar
+title varchar
+subtitle varchar
+type integer
+featured boolean
+highlight varchar
+subhighlight varchar
+summary varchar
+notes varchar
+doc_url varchar
+published boolean
+published_at timestamp
+recorded_at timestamp
+recorded_live boolean
+youtube_id varchar
+audio_file varchar
+audio_bytes integer
+audio_duration integer
+plusplus_file varchar
+plusplus_bytes integer
+plusplus_duration integer
+download_count float
+import_count float
+reach_count integer
+transcript array
+podcast_id integer FK >- podcasts.id
+request_id integer FK - episode_requests.id
+inserted_at timestamp
+updated_at timestamp
+
+metacasts
+---
+id integer PK
+name varchar
+description varchar
+keywords varchar
+slug varchar
+is_official boolean
+cover varchar
+filter_query varchar
+inserted_at timestamp
+updated_at timestamp
+
+news_ads
+---
+id integer PK
+url varchar
+headline varchar
+story varchar
+image varchar
+active boolean
+newsletter boolean
+impression_count integer
+click_count integer
+sponsorship_id integer FK >- news_sponsorships.id
+inserted_at timestamp
+updated_at timestamp
+
+news_issue_ads
+---
+id integer PK
+position integer
+image boolean
+ad_id integer FK >- news_ads.id
+issue_id integer FK >- news_issues.id
+inserted_at timestamp
+updated_at timestamp
+
+news_issue_items
+---
+id integer PK
+position integer
+image boolean
+issue_id integer FK >- news_issues.id
+item_id integer FK >- news_items.id
+inserted_at timestamp
+updated_at timestamp
+
+news_issues
+---
+id integer PK
+slug varchar
+note varchar
+teaser varchar
+published boolean
+published_at timestamp
+inserted_at timestamp
+updated_at timestamp
+
+news_item_comments
+---
+id integer PK
+content varchar
+approved boolean
+edited_at timestamp
+deleted_at timestamp
+item_id integer FK >- news_items.id
+author_id integer FK >- people.id
+parent_id integer FK >- news_item_comments.id
+inserted_at timestamp
+updated_at timestamp
+
+news_item_topics
+---
+id integer PK
+position integer
+item_id integer FK >- news_items.id
+topic_id integer FK >- topics.id
+inserted_at timestamp
+updated_at timestamp
+
+news_items
+---
+id integer PK
+status integer
+type integer
+url varchar
+headline varchar
+story varchar
+image varchar
+object_id varchar
+feed_only boolean
+pinned boolean
+published_at timestamp
+refreshed_at timestamp
+impression_count integer
+click_count integer
+decline_message varchar
+author_id integer FK >- people.id
+logger_id integer FK >- people.id
+submitter_id integer FK >- people.id
+source_id integer FK >- news_sources.id
+inserted_at timestamp
+updated_at timestamp
+
+news_queue
+---
+id integer PK
+position float
+item_id integer FK - news_items.id
+
+news_sources
+---
+id integer PK
+name varchar
+slug varchar
+website varchar
+twitter_handle varchar
+description varchar
+feed varchar
+regex varchar
+icon varchar
+inserted_at timestamp
+updated_at timestamp
+
+news_sponsorships
+---
+id integer PK
+name varchar
+weeks array
+impression_count integer
+click_count integer
+sponsor_id integer FK >- sponsors.id
+inserted_at timestamp
+updated_at timestamp
+
+oban_jobs
+---
+id integer PK
+state varchar
+queue varchar
+worker varchar
+args jsonb
+meta jsonb
+tags array
+errors array
+attempt integer
+attempted_by array
+max_attempts integer
+priority integer
+attempted_at timestamp
+cancelled_at timestamp
+completed_at timestamp
+discarded_at timestamp
+inserted_at timestamp
+scheduled_at timestamp
+
+people
+---
+id integer PK
+name varchar
+email varchar
+handle varchar
+github_handle varchar
+linkedin_handle varchar
+twitter_handle varchar
+slack_id varchar
+website varchar
+bio varchar
+location varchar
+auth_token varchar
+auth_token_expires_at timestamp
+joined_at timestamp
+signed_in_at timestamp
+approved boolean
+avatar varchar
+admin boolean
+host boolean
+editor boolean
+public_profile boolean
+settings jsonb
+inserted_at timestamp
+updated_at timestamp
+
+podcast_hosts
+---
+id integer PK
+position integer
+retired boolean
+person_id integer FK >- people.id
+podcast_id integer FK >- podcasts.id
+inserted_at timestamp
+updated_at timestamp
+
+podcast_topics
+---
+id integer PK
+position integer
+podcast_id integer FK >- podcasts.id
+topic_id integer FK >- topics.id
+inserted_at timestamp
+updated_at timestamp
+
+podcasts
+---
+id integer PK
+name varchar
+slug varchar
+status integer
+welcome varchar
+description varchar
+extended_description varchar
+vanity_domain varchar
+keywords varchar
+twitter_handle varchar
+apple_url varchar
+spotify_url varchar
+riverside_url varchar
+schedule_note varchar
+download_count float
+reach_count integer
+recorded_live boolean
+partner boolean
+position integer
+subscribers jsonb
+cover varchar
+inserted_at timestamp
+updated_at timestamp
+
+post_topics
+---
+id integer PK
+position integer
+topic_id integer FK >- topics.id
+post_id integer FK >- posts.id
+inserted_at timestamp
+updated_at timestamp
+
+posts
+---
+id integer PK
+title varchar
+subtitle varchar
+slug varchar
+guid varchar
+canonical_url varchar
+image varchar
+tldr varchar
+body varchar
+published boolean
+published_at timestamp
+author_id integer FK >- people.id
+editor_id integer FK >- people.id
+inserted_at timestamp
+updated_at timestamp
+
+schema_migrations
+---
+version integer
+inserted_at timestamp
+
+sponsors
+---
+id integer PK
+name varchar
+description varchar
+website varchar
+github_handle varchar
+twitter_handle varchar
+avatar varchar
+color_logo varchar
+dark_logo varchar
+light_logo varchar
+inserted_at timestamp
+updated_at timestamp
+
+subscriptions
+---
+id integer PK
+unsubscribed_at timestamp
+context varchar
+person_id integer FK >- people.id
+podcast_id integer FK >- podcasts.id
+item_id integer FK >- news_items.id
+inserted_at timestamp
+updated_at timestamp
+
+topics
+---
+id integer PK
+name varchar
+slug varchar
+description varchar
+website varchar
+twitter_handle varchar
+icon varchar
+inserted_at timestamp
+updated_at timestamp

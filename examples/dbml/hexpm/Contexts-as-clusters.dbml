@@ -5,8 +5,8 @@ TableGroup "Hexpm.Accounts" {
   audit_logs
   emails
   keys
-  organizations
   organization_users
+  organizations
   password_resets
   sessions
   users
@@ -17,15 +17,15 @@ TableGroup "Hexpm.BlockAddress" {
 TableGroup "Hexpm.Repository" {
   downloads
   installs
-  packages
   package_dependants
   package_downloads
   package_owners
-  package_reports
   package_report_comments
   package_report_releases
-  releases
+  package_reports
+  packages
   release_downloads
+  releases
   repositories
   requirements
 }

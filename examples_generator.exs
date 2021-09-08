@@ -2,7 +2,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
   require Logger
 
   @shared_examples [
-    [name: "Default", formats: [:dbml, :dot]],
+    [name: "Default", formats: [:dbml, :dot, :qdbd]],
     [
       name: "No fields",
       formats: [:dot],
@@ -122,7 +122,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
           [
             [
               name: "Only selected cluster (Accounts context)",
-              formats: [:dbml, :dot],
+              formats: [:dbml, :dot, :qdbd],
               config: """
               alias Ecto.ERD.Node
 
@@ -160,6 +160,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
     File.mkdir_p("tmp/docs")
     File.mkdir_p("examples/dot_images")
     File.mkdir_p("examples/dbml")
+    File.mkdir_p("examples/quick_dbd")
     File.mkdir("tmp/repos")
     File.mkdir("tmp/dot")
     File.mkdir("tmp/config_files")
@@ -168,6 +169,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
     |> Enum.each(fn {project_name, %{repo: repo, examples: examples}} = data_item ->
       File.mkdir(Path.join("examples/dot_images", project_name))
       File.mkdir(Path.join("examples/dbml", project_name))
+      File.mkdir(Path.join("examples/quick_dbd", project_name))
       File.mkdir(Path.join("tmp/dot", project_name))
       File.mkdir(Path.join("tmp/config_files", project_name))
       init_project(project_name, repo)
@@ -209,6 +211,17 @@ defmodule Ecto.ERD.ExamplesGenerator do
                 ])
 
               "DBML: [View document on GitHub](#{url})"
+
+            :qdbd ->
+              url =
+                Path.join([
+                  source_url_root,
+                  "examples/quick_dbd",
+                  project_name,
+                  slugify(example[:name]) <> ".qdbd"
+                ])
+
+              "QuickDBD: [View document on GitHub](#{url})"
 
             :dot ->
               url =
@@ -256,6 +269,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
     |> Enum.map(fn
       :dot -> {:dot, Path.expand(Path.join(["tmp/dot", project_name, slug <> ".dot"]))}
       :dbml -> {:dbml, Path.expand(Path.join(["examples/dbml", project_name, slug <> ".dbml"]))}
+      :qdbd -> {:qdbd, Path.expand(Path.join(["examples/quick_dbd", project_name, slug <> ".qdbd"]))}
     end)
     |> Enum.each(fn {format, output_path} ->
       if example[:config] do

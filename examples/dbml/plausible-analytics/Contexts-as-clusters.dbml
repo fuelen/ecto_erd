@@ -22,12 +22,12 @@ TableGroup "Plausible.Goal" {
   goals
 }
 TableGroup "Plausible.Site" {
-  sites
   custom_domains
   google_auth
-  site_memberships
   monthly_reports
   shared_links
+  site_memberships
+  sites
   spike_notifications
   weekly_reports
 }
