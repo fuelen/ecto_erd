@@ -63,9 +63,9 @@ defmodule Ecto.ERD.MixProject do
   end
 
   defp generate_examples(_) do
-    if System.get_env("DISABLE_EXAMPLES_GENERATOR") == "true" do
-      :noop
-    else
+    run? = "Generate examples? y/n: " |> IO.gets() |> String.trim() |> String.downcase() == "y"
+
+    if run? do
       Ecto.ERD.ExamplesGenerator.run(Path.join([@source_url, "blob", "v#{@version}"]))
     end
   end
