@@ -1,0 +1,660 @@
+@startuml
+
+hide circle
+hide methods
+
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+
+entity ChatApi.Accounts.Account {
+  id : binary_id
+  --
+  company_name : string
+  company_logo_url : string
+  time_zone : string
+  subscription_plan : string
+  stripe_customer_id : string
+  stripe_subscription_id : string
+  stripe_product_id : string
+  stripe_default_payment_method_id : string
+  settings : embed
+  working_hours : embed
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Accounts.Settings {
+  id : binary_id
+  --
+  disable_automated_reply_emails : boolean
+  conversation_reminders_enabled : boolean
+  conversation_reminder_hours_interval : integer
+  max_num_conversation_reminders : integer
+}
+
+entity ChatApi.Accounts.WorkingHours {
+  id : binary_id
+  --
+  day : string
+  start_minute : integer
+  end_minute : integer
+}
+
+entity ChatApi.ApiKeys.PersonalApiKey {
+  id : binary_id
+  --
+  label : string
+  value : string
+  last_used_at : utc_datetime
+  account_id : binary_id
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Auth.PowSession {
+  namespace : string
+  key : array
+  original_key : binary
+  value : binary
+  expires_at : utc_datetime
+  inserted_at : utc_datetime
+  updated_at : utc_datetime
+}
+
+entity ChatApi.BrowserReplayEvents.BrowserReplayEvent {
+  id : binary_id
+  --
+  event : map
+  timestamp : utc_datetime_usec
+  account_id : binary_id
+  browser_session_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.BrowserSessions.BrowserSession {
+  id : binary_id
+  --
+  finished_at : utc_datetime
+  started_at : utc_datetime
+  metadata : map
+  account_id : binary_id
+  customer_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.CannedResponses.CannedResponse {
+  id : binary_id
+  --
+  content : string
+  name : string
+  account_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Companies.Company {
+  id : binary_id
+  --
+  name : string
+  description : string
+  external_id : string
+  website_url : string
+  industry : string
+  logo_image_url : string
+  slack_channel_id : string
+  slack_channel_name : string
+  slack_team_id : string
+  slack_team_name : string
+  metadata : map
+  account_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Conversations.Conversation {
+  id : binary_id
+  --
+  status : string
+  priority : string
+  source : string
+  subject : string
+  read : boolean
+  archived_at : utc_datetime
+  first_replied_at : utc_datetime
+  closed_at : utc_datetime
+  last_activity_at : utc_datetime
+  metadata : map
+  assignee_id : integer
+  account_id : binary_id
+  customer_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Customers.Customer {
+  id : binary_id
+  --
+  first_seen : date
+  email : string
+  name : string
+  phone : string
+  external_id : string
+  profile_photo_url : string
+  browser : string
+  browser_version : string
+  browser_language : string
+  os : string
+  ip : string
+  last_seen_at : utc_datetime
+  current_url : string
+  host : string
+  pathname : string
+  screen_height : integer
+  screen_width : integer
+  lib : string
+  time_zone : string
+  metadata : map
+  account_id : binary_id
+  company_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.EventSubscriptions.EventSubscription {
+  id : binary_id
+  --
+  scope : string
+  webhook_url : string
+  verified : boolean
+  account_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Files.FileUpload {
+  id : binary_id
+  --
+  filename : string
+  file_url : string
+  unique_filename : string
+  content_type : string
+  account_id : binary_id
+  customer_id : binary_id
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Github.GithubAuthorization {
+  id : binary_id
+  --
+  access_token : string
+  access_token_expires_at : utc_datetime
+  refresh_token : string
+  refresh_token_expires_at : utc_datetime
+  token_type : string
+  scope : string
+  github_installation_id : string
+  metadata : map
+  settings : map
+  account_id : binary_id
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Google.GmailConversationThread {
+  id : binary_id
+  --
+  gmail_thread_id : string
+  gmail_initial_subject : string
+  last_gmail_message_id : string
+  last_gmail_history_id : string
+  last_synced_at : utc_datetime
+  metadata : map
+  account_id : binary_id
+  conversation_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Google.GoogleAuthorization {
+  id : binary_id
+  --
+  client : string
+  access_token : string
+  refresh_token : string
+  token_type : string
+  expires_at : integer
+  scope : string
+  type : string
+  metadata : map
+  settings : map
+  account_id : binary_id
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Issues.ConversationIssue {
+  id : binary_id
+  --
+  account_id : binary_id
+  conversation_id : binary_id
+  issue_id : binary_id
+  creator_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Issues.CustomerIssue {
+  id : binary_id
+  --
+  account_id : binary_id
+  customer_id : binary_id
+  issue_id : binary_id
+  creator_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Issues.Issue {
+  id : binary_id
+  --
+  title : string
+  body : string
+  state : string
+  finished_at : utc_datetime
+  closed_at : utc_datetime
+  github_issue_url : string
+  metadata : map
+  account_id : binary_id
+  creator_id : integer
+  assignee_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Lambdas.Lambda {
+  id : binary_id
+  --
+  code : string
+  description : string
+  language : string
+  last_deployed_at : utc_datetime
+  last_executed_at : utc_datetime
+  metadata : map
+  name : string
+  runtime : string
+  status : string
+  lambda_function_name : string
+  lambda_function_handler : string
+  lambda_revision_id : string
+  lambda_last_update_status : string
+  account_id : binary_id
+  creator_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Mattermost.MattermostAuthorization {
+  id : binary_id
+  --
+  access_token : string
+  refresh_token : string
+  bot_token : string
+  verification_token : string
+  mattermost_url : string
+  channel_id : string
+  channel_name : string
+  team_id : string
+  team_domain : string
+  webhook_url : string
+  scope : string
+  metadata : map
+  settings : map
+  account_id : binary_id
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Mattermost.MattermostConversationThread {
+  id : binary_id
+  --
+  mattermost_channel_id : string
+  mattermost_post_root_id : string
+  account_id : binary_id
+  conversation_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Mentions.Mention {
+  id : binary_id
+  --
+  seen_at : utc_datetime
+  account_id : binary_id
+  conversation_id : binary_id
+  message_id : binary_id
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Messages.Message {
+  id : binary_id
+  --
+  body : string
+  sent_at : utc_datetime
+  seen_at : utc_datetime
+  source : string
+  type : string
+  subject : string
+  private : boolean
+  metadata : map
+  conversation_id : binary_id
+  account_id : binary_id
+  customer_id : binary_id
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Messages.MessageFile {
+  id : binary_id
+  --
+  message_id : binary_id
+  file_id : binary_id
+  account_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Notes.Note {
+  id : binary_id
+  --
+  body : string
+  account_id : binary_id
+  customer_id : binary_id
+  author_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.SlackAuthorizations.Settings {
+  id : binary_id
+  --
+  sync_all_incoming_threads : boolean
+  sync_by_emoji_tagging : boolean
+  sync_trigger_emoji : string
+  forward_synced_messages_to_reply_channel : boolean
+}
+
+entity ChatApi.SlackAuthorizations.SlackAuthorization {
+  id : binary_id
+  --
+  access_token : string
+  type : string
+  app_id : string
+  authed_user_id : string
+  bot_user_id : string
+  channel : string
+  channel_id : string
+  configuration_url : string
+  scope : string
+  team_id : string
+  team_name : string
+  token_type : string
+  webhook_url : string
+  metadata : map
+  settings : embed
+  account_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.SlackConversationThreads.SlackConversationThread {
+  id : binary_id
+  --
+  slack_channel : string
+  slack_team : string
+  slack_thread_ts : string
+  account_id : binary_id
+  conversation_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Tags.ConversationTag {
+  id : binary_id
+  --
+  account_id : binary_id
+  conversation_id : binary_id
+  tag_id : binary_id
+  creator_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Tags.CustomerTag {
+  id : binary_id
+  --
+  account_id : binary_id
+  customer_id : binary_id
+  tag_id : binary_id
+  creator_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Tags.Tag {
+  id : binary_id
+  --
+  name : string
+  description : string
+  color : string
+  account_id : binary_id
+  creator_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Twilio.TwilioAuthorization {
+  id : binary_id
+  --
+  twilio_auth_token : string
+  twilio_account_sid : string
+  from_phone_number : string
+  metadata : map
+  settings : map
+  account_id : binary_id
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.UserInvitations.UserInvitation {
+  id : binary_id
+  --
+  expires_at : utc_datetime
+  account_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Users.User {
+  id : id
+  --
+  email_confirmation_token : string
+  password_reset_token : string
+  email_confirmed_at : utc_datetime
+  disabled_at : utc_datetime
+  archived_at : utc_datetime
+  role : string
+  has_valid_email : boolean
+  account_id : binary_id
+  password_hash : string
+  email : string
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Users.UserProfile {
+  id : binary_id
+  --
+  display_name : string
+  full_name : string
+  profile_photo_url : string
+  slack_user_id : string
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.Users.UserSettings {
+  id : binary_id
+  --
+  email_alert_on_new_message : boolean
+  expo_push_token : string
+  user_id : integer
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity ChatApi.WidgetSettings.WidgetSetting {
+  id : binary_id
+  --
+  title : string
+  subtitle : string
+  color : string
+  greeting : string
+  new_message_placeholder : string
+  show_agent_availability : boolean
+  agent_available_text : string
+  agent_unavailable_text : string
+  require_email_upfront : boolean
+  is_open_by_default : boolean
+  is_branding_hidden : boolean
+  custom_icon_url : string
+  iframe_url_override : string
+  icon_variant : string
+  email_input_placeholder : string
+  new_messages_notification_text : string
+  base_url : string
+  away_message : string
+  host : string
+  pathname : string
+  last_seen_at : utc_datetime
+  account_id : binary_id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Ecto.Migration.SchemaMigration {
+  version : integer
+  inserted_at : naive_datetime
+}
+
+entity Oban.Job {
+  id : id
+  --
+  state : string
+  queue : string
+  worker : string
+  args : map
+  errors : array
+  tags : array
+  attempt : integer
+  attempted_by : array
+  max_attempts : integer
+  priority : integer
+  attempted_at : utc_datetime_usec
+  completed_at : utc_datetime_usec
+  discarded_at : utc_datetime_usec
+  inserted_at : utc_datetime_usec
+  scheduled_at : utc_datetime_usec
+}
+
+ChatApi.Accounts.Account ||--|{ ChatApi.BrowserReplayEvents.BrowserReplayEvent
+ChatApi.Accounts.Account ||--|{ ChatApi.BrowserSessions.BrowserSession
+ChatApi.Accounts.Account ||--|{ ChatApi.CannedResponses.CannedResponse
+ChatApi.Accounts.Account ||--|{ ChatApi.Companies.Company
+ChatApi.Accounts.Account ||--|{ ChatApi.Issues.ConversationIssue
+ChatApi.Accounts.Account ||--|{ ChatApi.Tags.ConversationTag
+ChatApi.Accounts.Account ||--|{ ChatApi.Conversations.Conversation
+ChatApi.Accounts.Account ||--|{ ChatApi.Issues.CustomerIssue
+ChatApi.Accounts.Account ||--|{ ChatApi.Tags.CustomerTag
+ChatApi.Accounts.Account ||--|{ ChatApi.Customers.Customer
+ChatApi.Accounts.Account ||--|{ ChatApi.EventSubscriptions.EventSubscription
+ChatApi.Accounts.Account ||--|{ ChatApi.Files.FileUpload
+ChatApi.Accounts.Account ||--|{ ChatApi.Github.GithubAuthorization
+ChatApi.Accounts.Account ||--|{ ChatApi.Google.GmailConversationThread
+ChatApi.Accounts.Account ||--|{ ChatApi.Google.GoogleAuthorization
+ChatApi.Accounts.Account ||--|{ ChatApi.Issues.Issue
+ChatApi.Accounts.Account ||--|{ ChatApi.Lambdas.Lambda
+ChatApi.Accounts.Account ||--|{ ChatApi.Mattermost.MattermostAuthorization
+ChatApi.Accounts.Account ||--|{ ChatApi.Mattermost.MattermostConversationThread
+ChatApi.Accounts.Account ||--|{ ChatApi.Mentions.Mention
+ChatApi.Accounts.Account ||--|{ ChatApi.Messages.MessageFile
+ChatApi.Accounts.Account ||--|{ ChatApi.Messages.Message
+ChatApi.Accounts.Account ||--|{ ChatApi.Notes.Note
+ChatApi.Accounts.Account ||--|{ ChatApi.ApiKeys.PersonalApiKey
+ChatApi.Accounts.Account ||--|{ ChatApi.SlackAuthorizations.SlackAuthorization
+ChatApi.Accounts.Account ||--|{ ChatApi.SlackConversationThreads.SlackConversationThread
+ChatApi.Accounts.Account ||--|{ ChatApi.Tags.Tag
+ChatApi.Accounts.Account ||--|{ ChatApi.Twilio.TwilioAuthorization
+ChatApi.Accounts.Account ||--|{ ChatApi.UserInvitations.UserInvitation
+ChatApi.Accounts.Account ||--|{ ChatApi.Users.User
+ChatApi.Accounts.Account ||--o| ChatApi.WidgetSettings.WidgetSetting
+ChatApi.Accounts.Account ||--o| ChatApi.Accounts.Settings
+ChatApi.Accounts.Account ||--|{ ChatApi.Accounts.WorkingHours
+ChatApi.BrowserSessions.BrowserSession ||--|{ ChatApi.BrowserReplayEvents.BrowserReplayEvent
+ChatApi.Companies.Company ||--|{ ChatApi.Customers.Customer
+ChatApi.Conversations.Conversation ||--|{ ChatApi.Issues.ConversationIssue
+ChatApi.Conversations.Conversation ||--|{ ChatApi.Tags.ConversationTag
+ChatApi.Conversations.Conversation ||--|{ ChatApi.Google.GmailConversationThread
+ChatApi.Conversations.Conversation ||--|{ ChatApi.Mattermost.MattermostConversationThread
+ChatApi.Conversations.Conversation ||--|{ ChatApi.Mentions.Mention
+ChatApi.Conversations.Conversation ||--|{ ChatApi.Messages.Message
+ChatApi.Conversations.Conversation ||--|{ ChatApi.SlackConversationThreads.SlackConversationThread
+ChatApi.Customers.Customer ||--|{ ChatApi.BrowserSessions.BrowserSession
+ChatApi.Customers.Customer ||--|{ ChatApi.Conversations.Conversation
+ChatApi.Customers.Customer ||--|{ ChatApi.Issues.CustomerIssue
+ChatApi.Customers.Customer ||--|{ ChatApi.Tags.CustomerTag
+ChatApi.Customers.Customer ||--|{ ChatApi.Files.FileUpload
+ChatApi.Customers.Customer ||--|{ ChatApi.Messages.Message
+ChatApi.Customers.Customer ||--|{ ChatApi.Notes.Note
+ChatApi.Files.FileUpload ||--|{ ChatApi.Messages.MessageFile
+ChatApi.Issues.Issue ||--|{ ChatApi.Issues.ConversationIssue
+ChatApi.Issues.Issue ||--|{ ChatApi.Issues.CustomerIssue
+ChatApi.Messages.Message ||--|{ ChatApi.Mentions.Mention
+ChatApi.Messages.Message ||--|{ ChatApi.Messages.MessageFile
+ChatApi.SlackAuthorizations.SlackAuthorization ||--o| ChatApi.SlackAuthorizations.Settings
+ChatApi.Tags.Tag ||--|{ ChatApi.Tags.ConversationTag
+ChatApi.Tags.Tag ||--|{ ChatApi.Tags.CustomerTag
+ChatApi.Users.User ||--|{ ChatApi.Issues.ConversationIssue
+ChatApi.Users.User ||--|{ ChatApi.Tags.ConversationTag
+ChatApi.Users.User ||--|{ ChatApi.Conversations.Conversation
+ChatApi.Users.User ||--|{ ChatApi.Issues.CustomerIssue
+ChatApi.Users.User ||--|{ ChatApi.Tags.CustomerTag
+ChatApi.Users.User ||--|{ ChatApi.Files.FileUpload
+ChatApi.Users.User ||--|{ ChatApi.Github.GithubAuthorization
+ChatApi.Users.User ||--|{ ChatApi.Google.GoogleAuthorization
+ChatApi.Users.User ||--|{ ChatApi.Issues.Issue
+ChatApi.Users.User ||--|{ ChatApi.Lambdas.Lambda
+ChatApi.Users.User ||--|{ ChatApi.Mattermost.MattermostAuthorization
+ChatApi.Users.User ||--|{ ChatApi.Mentions.Mention
+ChatApi.Users.User ||--|{ ChatApi.Messages.Message
+ChatApi.Users.User ||--|{ ChatApi.Notes.Note
+ChatApi.Users.User ||--|{ ChatApi.ApiKeys.PersonalApiKey
+ChatApi.Users.User ||--|{ ChatApi.Tags.Tag
+ChatApi.Users.User ||--|{ ChatApi.Twilio.TwilioAuthorization
+ChatApi.Users.User ||--o| ChatApi.Users.UserProfile
+ChatApi.Users.User ||--o| ChatApi.Users.UserSettings
+@enduml

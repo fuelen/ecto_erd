@@ -1,0 +1,29 @@
+strict digraph {
+  ranksep=1.0; rankdir=LR;
+  node [shape = none, fontname="Roboto Mono"];
+  
+  subgraph "cluster_Conduit.Accounts" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee685"
+    label = <<font point-size='24'><b>Conduit.Accounts</b></font>>
+    "Conduit.Accounts.Projections.User" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Accounts.Projections.User   </font></td></tr><tr><td><font point-size='14'><i>accounts_users</i></font></td></tr></table>>]
+  "Conduit.Accounts.Projectors.User.ProjectionVersion" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Accounts.Projectors.User.ProjectionVersion   </font></td></tr><tr><td><font point-size='14'><i>projection_versions</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_Conduit.Blog" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0ffff"
+    label = <<font point-size='24'><b>Conduit.Blog</b></font>>
+    "Conduit.Blog.Projections.Article" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Blog.Projections.Article   </font></td></tr><tr><td><font point-size='14'><i>blog_articles</i></font></td></tr></table>>]
+  "Conduit.Blog.Projections.Author" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Blog.Projections.Author   </font></td></tr><tr><td><font point-size='14'><i>blog_authors</i></font></td></tr></table>>]
+  "Conduit.Blog.Projections.Comment" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Blog.Projections.Comment   </font></td></tr><tr><td><font point-size='14'><i>blog_comments</i></font></td></tr></table>>]
+  "Conduit.Blog.Projections.FavoritedArticle" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Blog.Projections.FavoritedArticle   </font></td></tr><tr><td><font point-size='14'><i>blog_favorited_articles</i></font></td></tr></table>>]
+  "Conduit.Blog.Projections.Feed" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Blog.Projections.Feed   </font></td></tr><tr><td><font point-size='14'><i>blog_feed_articles</i></font></td></tr></table>>]
+  "Conduit.Blog.Projections.Tag" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Blog.Projections.Tag   </font></td></tr><tr><td><font point-size='14'><i>blog_tags</i></font></td></tr></table>>]
+  "Conduit.Blog.Projectors.Article.ProjectionVersion" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Blog.Projectors.Article.ProjectionVersion   </font></td></tr><tr><td><font point-size='14'><i>projection_versions</i></font></td></tr></table>>]
+  "Conduit.Blog.Projectors.Tag.ProjectionVersion" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Conduit.Blog.Projectors.Tag.ProjectionVersion   </font></td></tr><tr><td><font point-size='14'><i>projection_versions</i></font></td></tr></table>>]
+  }
+
+  
+}

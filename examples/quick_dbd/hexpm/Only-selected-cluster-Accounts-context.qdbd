@@ -38,20 +38,20 @@ user_id integer FK >- users.id
 organization_id integer FK >- organizations.id
 permissions jsonb
 
+organizations
+---
+id integer PK
+name varchar
+billing_active boolean
+inserted_at timestamp
+updated_at timestamp
+
 organization_users
 ---
 id integer PK
 role varchar
 organization_id integer FK >- organizations.id
 user_id integer FK >- users.id
-inserted_at timestamp
-updated_at timestamp
-
-organizations
----
-id integer PK
-name varchar
-billing_active boolean
 inserted_at timestamp
 updated_at timestamp
 

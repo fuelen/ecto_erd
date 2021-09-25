@@ -1,0 +1,163 @@
+@startuml
+
+hide circle
+hide methods
+
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+namespace Hexpm.Accounts #8deeee {
+  entity Hexpm.Accounts.AuditLog {
+    id : id
+    --
+    user_agent : string
+    action : string
+    params : map
+    user_id : id
+    organization_id : id
+    inserted_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.Email {
+    id : id
+    --
+    email : string
+    verified : boolean
+    primary : boolean
+    public : boolean
+    gravatar : boolean
+    verification_key : string
+    verification_expiry : utc_datetime_usec
+    user_id : id
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.Key {
+    id : id
+    --
+    name : string
+    secret_first : string
+    secret_second : string
+    public : boolean
+    revoke_at : utc_datetime_usec
+    revoked_at : utc_datetime_usec
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+    last_use : map
+    user_id : id
+    organization_id : id
+    permissions : map
+  }
+
+  entity Hexpm.Accounts.Key.Use {
+    id : binary_id
+    --
+    used_at : utc_datetime_usec
+    user_agent : string
+    ip : string
+  }
+
+  entity Hexpm.Accounts.KeyPermission {
+    id : binary_id
+    --
+    domain : string
+    resource : string
+  }
+
+  entity Hexpm.Accounts.Organization {
+    id : id
+    --
+    name : string
+    billing_active : boolean
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.OrganizationUser {
+    id : id
+    --
+    role : string
+    organization_id : id
+    user_id : id
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.PasswordReset {
+    id : id
+    --
+    key : string
+    primary_email : string
+    user_id : id
+    inserted_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.RecoveryCode {
+    id : binary_id
+    --
+    code : string
+    used_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.Session {
+    id : id
+    --
+    token : binary
+    data : map
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.TFA {
+    secret : string
+    tfa_enabled : boolean
+    app_enabled : boolean
+    recovery_codes : map
+  }
+
+  entity Hexpm.Accounts.User {
+    id : id
+    --
+    username : string
+    full_name : string
+    password : string
+    service : boolean
+    deactivated_at : utc_datetime_usec
+    role : string
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+    handles : map
+    tfa : map
+    organization_id : id
+  }
+
+  entity Hexpm.Accounts.UserHandles {
+    id : binary_id
+    --
+    twitter : string
+    github : string
+    elixirforum : string
+    freenode : string
+    slack : string
+  }
+
+}
+
+
+Hexpm.Accounts.TFA ||--|{ Hexpm.Accounts.RecoveryCode
+Hexpm.Accounts.Key ||--o| Hexpm.Accounts.Key.Use
+Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.KeyPermission
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.AuditLog
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.Key
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.OrganizationUser
+Hexpm.Accounts.Organization ||--o| Hexpm.Accounts.User
+Hexpm.Accounts.User ||--o| Hexpm.Accounts.UserHandles
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.AuditLog
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.Email
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.Key
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.OrganizationUser
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.PasswordReset
+Hexpm.Accounts.User ||--o| Hexpm.Accounts.TFA
+@enduml

@@ -1,0 +1,89 @@
+@startuml
+
+hide circle
+hide methods
+hide fields
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+namespace Ecto.Migration #f0f8ff {
+  entity Ecto.Migration.SchemaMigration
+}
+namespace Hexpm.Accounts #8deeee {
+  entity Hexpm.Accounts.AuditLog
+  entity Hexpm.Accounts.Email
+  entity Hexpm.Accounts.Key
+  entity Hexpm.Accounts.Key.Use
+  entity Hexpm.Accounts.KeyPermission
+  entity Hexpm.Accounts.Organization
+  entity Hexpm.Accounts.OrganizationUser
+  entity Hexpm.Accounts.PasswordReset
+  entity Hexpm.Accounts.RecoveryCode
+  entity Hexpm.Accounts.Session
+  entity Hexpm.Accounts.TFA
+  entity Hexpm.Accounts.User
+  entity Hexpm.Accounts.UserHandles
+}
+namespace Hexpm.BlockAddress #fffafa {
+  entity Hexpm.BlockAddress.Entry
+}
+namespace Hexpm.Repository #eedfcc {
+  entity Hexpm.Repository.Download
+  entity Hexpm.Repository.Install
+  entity Hexpm.Repository.Package
+  entity Hexpm.Repository.PackageDependant
+  entity Hexpm.Repository.PackageDownload
+  entity Hexpm.Repository.PackageMetadata
+  entity Hexpm.Repository.PackageOwner
+  entity Hexpm.Repository.PackageReport
+  entity Hexpm.Repository.PackageReportComment
+  entity Hexpm.Repository.PackageReportRelease
+  entity Hexpm.Repository.Release
+  entity Hexpm.Repository.ReleaseDownload
+  entity Hexpm.Repository.ReleaseMetadata
+  entity Hexpm.Repository.ReleaseRetirement
+  entity Hexpm.Repository.Repository
+  entity Hexpm.Repository.Requirement
+}
+namespace Hexpm.ShortURLs #b4eeb4 {
+  entity Hexpm.ShortURLs.ShortURL
+}
+
+
+Hexpm.Accounts.TFA ||--|{ Hexpm.Accounts.RecoveryCode
+Hexpm.Accounts.Key ||--o| Hexpm.Accounts.Key.Use
+Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.KeyPermission
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.AuditLog
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.Key
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.OrganizationUser
+Hexpm.Accounts.Organization ||--o| Hexpm.Repository.Repository
+Hexpm.Accounts.Organization ||--o| Hexpm.Accounts.User
+Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportComment
+Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportRelease
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDependant
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDownload
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageOwner
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageReport
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.Release
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.Requirement
+Hexpm.Repository.Package ||--o| Hexpm.Repository.PackageMetadata
+Hexpm.Repository.Release ||--|{ Hexpm.Repository.Download
+Hexpm.Repository.Release ||--|{ Hexpm.Repository.PackageReportRelease
+Hexpm.Repository.Release ||--o| Hexpm.Repository.ReleaseDownload
+Hexpm.Repository.Release ||--|{ Hexpm.Repository.Requirement
+Hexpm.Repository.Release ||--o| Hexpm.Repository.ReleaseMetadata
+Hexpm.Repository.Release ||--o| Hexpm.Repository.ReleaseRetirement
+Hexpm.Repository.Repository ||--|{ Hexpm.Repository.Package
+Hexpm.Accounts.User ||--o| Hexpm.Accounts.UserHandles
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.AuditLog
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.Email
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.Key
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.OrganizationUser
+Hexpm.Accounts.User ||--|{ Hexpm.Repository.PackageOwner
+Hexpm.Accounts.User ||--|{ Hexpm.Repository.PackageReportComment
+Hexpm.Accounts.User ||--|{ Hexpm.Repository.PackageReport
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.PasswordReset
+Hexpm.Accounts.User ||--|{ Hexpm.Repository.Release
+Hexpm.Accounts.User ||--o| Hexpm.Accounts.TFA
+@enduml

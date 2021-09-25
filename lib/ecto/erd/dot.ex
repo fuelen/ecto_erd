@@ -16,7 +16,7 @@ defmodule Ecto.ERD.Dot do
           subgraph #{Render.in_quotes("cluster_#{cluster_name}")} {
             style=filled
             fontname=#{Render.in_quotes(fontname)}
-            color = #{Ecto.ERD.Color.get(cluster_name)}
+            color = #{Render.in_quotes(Ecto.ERD.Color.get(cluster_name))}
             label = <#{{:font, ["point-size": 24], {:b, [], cluster_name}} |> HTML.to_iodata()}>
             #{Enum.map_join(nodes, "\n  ", &render_node(&1, columns))}
           }

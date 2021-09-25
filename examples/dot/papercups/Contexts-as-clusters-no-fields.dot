@@ -1,0 +1,291 @@
+strict digraph {
+  ranksep=1.0; rankdir=LR;
+  node [shape = none, fontname="Roboto Mono"];
+  
+  subgraph "cluster_ChatApi.Accounts" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee685"
+    label = <<font point-size='24'><b>ChatApi.Accounts</b></font>>
+    "ChatApi.Accounts.Account" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Accounts.Account   </font></td></tr><tr><td><font point-size='14'><i>accounts</i></font></td></tr></table>>]
+  "ChatApi.Accounts.Settings" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Accounts.Settings   </font></td></tr></table>>]
+  "ChatApi.Accounts.WorkingHours" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Accounts.WorkingHours   </font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.ApiKeys" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#8deeee"
+    label = <<font point-size='24'><b>ChatApi.ApiKeys</b></font>>
+    "ChatApi.ApiKeys.PersonalApiKey" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.ApiKeys.PersonalApiKey   </font></td></tr><tr><td><font point-size='14'><i>personal_api_keys</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Auth" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>ChatApi.Auth</b></font>>
+    "ChatApi.Auth.PowSession" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Auth.PowSession   </font></td></tr><tr><td><font point-size='14'><i>pow_sessions</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.BrowserReplayEvents" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#b4eeb4"
+    label = <<font point-size='24'><b>ChatApi.BrowserReplayEvents</b></font>>
+    "ChatApi.BrowserReplayEvents.BrowserReplayEvent" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.BrowserReplayEvents.BrowserReplayEvent   </font></td></tr><tr><td><font point-size='14'><i>browser_replay_events</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.BrowserSessions" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0f8ff"
+    label = <<font point-size='24'><b>ChatApi.BrowserSessions</b></font>>
+    "ChatApi.BrowserSessions.BrowserSession" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.BrowserSessions.BrowserSession   </font></td></tr><tr><td><font point-size='14'><i>browser_sessions</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.CannedResponses" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee685"
+    label = <<font point-size='24'><b>ChatApi.CannedResponses</b></font>>
+    "ChatApi.CannedResponses.CannedResponse" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.CannedResponses.CannedResponse   </font></td></tr><tr><td><font point-size='14'><i>canned_responses</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Companies" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#b4eeb4"
+    label = <<font point-size='24'><b>ChatApi.Companies</b></font>>
+    "ChatApi.Companies.Company" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Companies.Company   </font></td></tr><tr><td><font point-size='14'><i>companies</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Conversations" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0f8ff"
+    label = <<font point-size='24'><b>ChatApi.Conversations</b></font>>
+    "ChatApi.Conversations.Conversation" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Conversations.Conversation   </font></td></tr><tr><td><font point-size='14'><i>conversations</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Customers" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0f8ff"
+    label = <<font point-size='24'><b>ChatApi.Customers</b></font>>
+    "ChatApi.Customers.Customer" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Customers.Customer   </font></td></tr><tr><td><font point-size='14'><i>customers</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.EventSubscriptions" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#b4eeb4"
+    label = <<font point-size='24'><b>ChatApi.EventSubscriptions</b></font>>
+    "ChatApi.EventSubscriptions.EventSubscription" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.EventSubscriptions.EventSubscription   </font></td></tr><tr><td><font point-size='14'><i>event_subscriptions</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Files" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>ChatApi.Files</b></font>>
+    "ChatApi.Files.FileUpload" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Files.FileUpload   </font></td></tr><tr><td><font point-size='14'><i>files</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Github" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>ChatApi.Github</b></font>>
+    "ChatApi.Github.GithubAuthorization" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Github.GithubAuthorization   </font></td></tr><tr><td><font point-size='14'><i>github_authorizations</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Google" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>ChatApi.Google</b></font>>
+    "ChatApi.Google.GmailConversationThread" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Google.GmailConversationThread   </font></td></tr><tr><td><font point-size='14'><i>gmail_conversation_threads</i></font></td></tr></table>>]
+  "ChatApi.Google.GoogleAuthorization" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Google.GoogleAuthorization   </font></td></tr><tr><td><font point-size='14'><i>google_authorizations</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Issues" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>ChatApi.Issues</b></font>>
+    "ChatApi.Issues.ConversationIssue" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Issues.ConversationIssue   </font></td></tr><tr><td><font point-size='14'><i>conversation_issues</i></font></td></tr></table>>]
+  "ChatApi.Issues.CustomerIssue" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Issues.CustomerIssue   </font></td></tr><tr><td><font point-size='14'><i>customer_issues</i></font></td></tr></table>>]
+  "ChatApi.Issues.Issue" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Issues.Issue   </font></td></tr><tr><td><font point-size='14'><i>issues</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Lambdas" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#b4eeb4"
+    label = <<font point-size='24'><b>ChatApi.Lambdas</b></font>>
+    "ChatApi.Lambdas.Lambda" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Lambdas.Lambda   </font></td></tr><tr><td><font point-size='14'><i>lambdas</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Mattermost" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee685"
+    label = <<font point-size='24'><b>ChatApi.Mattermost</b></font>>
+    "ChatApi.Mattermost.MattermostAuthorization" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Mattermost.MattermostAuthorization   </font></td></tr><tr><td><font point-size='14'><i>mattermost_authorizations</i></font></td></tr></table>>]
+  "ChatApi.Mattermost.MattermostConversationThread" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Mattermost.MattermostConversationThread   </font></td></tr><tr><td><font point-size='14'><i>mattermost_conversation_threads</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Mentions" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>ChatApi.Mentions</b></font>>
+    "ChatApi.Mentions.Mention" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Mentions.Mention   </font></td></tr><tr><td><font point-size='14'><i>mentions</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Messages" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0f8ff"
+    label = <<font point-size='24'><b>ChatApi.Messages</b></font>>
+    "ChatApi.Messages.Message" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Messages.Message   </font></td></tr><tr><td><font point-size='14'><i>messages</i></font></td></tr></table>>]
+  "ChatApi.Messages.MessageFile" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Messages.MessageFile   </font></td></tr><tr><td><font point-size='14'><i>message_files</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Notes" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>ChatApi.Notes</b></font>>
+    "ChatApi.Notes.Note" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Notes.Note   </font></td></tr><tr><td><font point-size='14'><i>notes</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.SlackAuthorizations" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0ffff"
+    label = <<font point-size='24'><b>ChatApi.SlackAuthorizations</b></font>>
+    "ChatApi.SlackAuthorizations.Settings" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.SlackAuthorizations.Settings   </font></td></tr></table>>]
+  "ChatApi.SlackAuthorizations.SlackAuthorization" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.SlackAuthorizations.SlackAuthorization   </font></td></tr><tr><td><font point-size='14'><i>slack_authorizations</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.SlackConversationThreads" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee685"
+    label = <<font point-size='24'><b>ChatApi.SlackConversationThreads</b></font>>
+    "ChatApi.SlackConversationThreads.SlackConversationThread" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.SlackConversationThreads.SlackConversationThread   </font></td></tr><tr><td><font point-size='14'><i>slack_conversation_threads</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Tags" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#8deeee"
+    label = <<font point-size='24'><b>ChatApi.Tags</b></font>>
+    "ChatApi.Tags.ConversationTag" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Tags.ConversationTag   </font></td></tr><tr><td><font point-size='14'><i>conversation_tags</i></font></td></tr></table>>]
+  "ChatApi.Tags.CustomerTag" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Tags.CustomerTag   </font></td></tr><tr><td><font point-size='14'><i>customer_tags</i></font></td></tr></table>>]
+  "ChatApi.Tags.Tag" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Tags.Tag   </font></td></tr><tr><td><font point-size='14'><i>tags</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Twilio" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#b4eeb4"
+    label = <<font point-size='24'><b>ChatApi.Twilio</b></font>>
+    "ChatApi.Twilio.TwilioAuthorization" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Twilio.TwilioAuthorization   </font></td></tr><tr><td><font point-size='14'><i>twilio_authorizations</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.UserInvitations" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#b4eeb4"
+    label = <<font point-size='24'><b>ChatApi.UserInvitations</b></font>>
+    "ChatApi.UserInvitations.UserInvitation" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.UserInvitations.UserInvitation   </font></td></tr><tr><td><font point-size='14'><i>user_invitations</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.Users" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0f8ff"
+    label = <<font point-size='24'><b>ChatApi.Users</b></font>>
+    "ChatApi.Users.User" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Users.User   </font></td></tr><tr><td><font point-size='14'><i>users</i></font></td></tr></table>>]
+  "ChatApi.Users.UserProfile" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Users.UserProfile   </font></td></tr><tr><td><font point-size='14'><i>user_profiles</i></font></td></tr></table>>]
+  "ChatApi.Users.UserSettings" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.Users.UserSettings   </font></td></tr><tr><td><font point-size='14'><i>user_settings</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_ChatApi.WidgetSettings" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#ffefd5"
+    label = <<font point-size='24'><b>ChatApi.WidgetSettings</b></font>>
+    "ChatApi.WidgetSettings.WidgetSetting" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   ChatApi.WidgetSettings.WidgetSetting   </font></td></tr><tr><td><font point-size='14'><i>widget_settings</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_Ecto.Migration" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0f8ff"
+    label = <<font point-size='24'><b>Ecto.Migration</b></font>>
+    "Ecto.Migration.SchemaMigration" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.Migration.SchemaMigration   </font></td></tr><tr><td><font point-size='14'><i>schema_migrations</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_Oban.Job" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#b4eeb4"
+    label = <<font point-size='24'><b>Oban.Job</b></font>>
+    "Oban.Job" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Oban.Job   </font></td></tr><tr><td><font point-size='14'><i>oban_jobs</i></font></td></tr></table>>]
+  }
+
+  "ChatApi.Accounts.Account":e -> "ChatApi.BrowserReplayEvents.BrowserReplayEvent":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.BrowserSessions.BrowserSession":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.CannedResponses.CannedResponse":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Companies.Company":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Issues.ConversationIssue":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Tags.ConversationTag":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Conversations.Conversation":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Issues.CustomerIssue":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Tags.CustomerTag":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Customers.Customer":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.EventSubscriptions.EventSubscription":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Files.FileUpload":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Github.GithubAuthorization":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Google.GmailConversationThread":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Google.GoogleAuthorization":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Issues.Issue":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Lambdas.Lambda":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Mattermost.MattermostAuthorization":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Mattermost.MattermostConversationThread":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Mentions.Mention":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Messages.MessageFile":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Messages.Message":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Notes.Note":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.ApiKeys.PersonalApiKey":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.SlackAuthorizations.SlackAuthorization":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.SlackConversationThreads.SlackConversationThread":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Tags.Tag":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Twilio.TwilioAuthorization":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.UserInvitations.UserInvitation":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.Users.User":w
+  "ChatApi.Accounts.Account":e -> "ChatApi.WidgetSettings.WidgetSetting":w [dir=none]
+  "ChatApi.Accounts.Account":e -> "ChatApi.Accounts.Settings":w [dir=none]
+  "ChatApi.Accounts.Account":e -> "ChatApi.Accounts.WorkingHours":w
+  "ChatApi.BrowserSessions.BrowserSession":e -> "ChatApi.BrowserReplayEvents.BrowserReplayEvent":w
+  "ChatApi.Companies.Company":e -> "ChatApi.Customers.Customer":w
+  "ChatApi.Conversations.Conversation":e -> "ChatApi.Issues.ConversationIssue":w
+  "ChatApi.Conversations.Conversation":e -> "ChatApi.Tags.ConversationTag":w
+  "ChatApi.Conversations.Conversation":e -> "ChatApi.Google.GmailConversationThread":w
+  "ChatApi.Conversations.Conversation":e -> "ChatApi.Mattermost.MattermostConversationThread":w
+  "ChatApi.Conversations.Conversation":e -> "ChatApi.Mentions.Mention":w
+  "ChatApi.Conversations.Conversation":e -> "ChatApi.Messages.Message":w
+  "ChatApi.Conversations.Conversation":e -> "ChatApi.SlackConversationThreads.SlackConversationThread":w
+  "ChatApi.Customers.Customer":e -> "ChatApi.BrowserSessions.BrowserSession":w
+  "ChatApi.Customers.Customer":e -> "ChatApi.Conversations.Conversation":w
+  "ChatApi.Customers.Customer":e -> "ChatApi.Issues.CustomerIssue":w
+  "ChatApi.Customers.Customer":e -> "ChatApi.Tags.CustomerTag":w
+  "ChatApi.Customers.Customer":e -> "ChatApi.Files.FileUpload":w
+  "ChatApi.Customers.Customer":e -> "ChatApi.Messages.Message":w
+  "ChatApi.Customers.Customer":e -> "ChatApi.Notes.Note":w
+  "ChatApi.Files.FileUpload":e -> "ChatApi.Messages.MessageFile":w
+  "ChatApi.Issues.Issue":e -> "ChatApi.Issues.ConversationIssue":w
+  "ChatApi.Issues.Issue":e -> "ChatApi.Issues.CustomerIssue":w
+  "ChatApi.Messages.Message":e -> "ChatApi.Mentions.Mention":w
+  "ChatApi.Messages.Message":e -> "ChatApi.Messages.MessageFile":w
+  "ChatApi.SlackAuthorizations.SlackAuthorization":e -> "ChatApi.SlackAuthorizations.Settings":w [dir=none]
+  "ChatApi.Tags.Tag":e -> "ChatApi.Tags.ConversationTag":w
+  "ChatApi.Tags.Tag":e -> "ChatApi.Tags.CustomerTag":w
+  "ChatApi.Users.User":e -> "ChatApi.Issues.ConversationIssue":w
+  "ChatApi.Users.User":e -> "ChatApi.Tags.ConversationTag":w
+  "ChatApi.Users.User":e -> "ChatApi.Conversations.Conversation":w
+  "ChatApi.Users.User":e -> "ChatApi.Issues.CustomerIssue":w
+  "ChatApi.Users.User":e -> "ChatApi.Tags.CustomerTag":w
+  "ChatApi.Users.User":e -> "ChatApi.Files.FileUpload":w
+  "ChatApi.Users.User":e -> "ChatApi.Github.GithubAuthorization":w
+  "ChatApi.Users.User":e -> "ChatApi.Google.GoogleAuthorization":w
+  "ChatApi.Users.User":e -> "ChatApi.Issues.Issue":w
+  "ChatApi.Users.User":e -> "ChatApi.Issues.Issue":w
+  "ChatApi.Users.User":e -> "ChatApi.Lambdas.Lambda":w
+  "ChatApi.Users.User":e -> "ChatApi.Mattermost.MattermostAuthorization":w
+  "ChatApi.Users.User":e -> "ChatApi.Mentions.Mention":w
+  "ChatApi.Users.User":e -> "ChatApi.Messages.Message":w
+  "ChatApi.Users.User":e -> "ChatApi.Notes.Note":w
+  "ChatApi.Users.User":e -> "ChatApi.ApiKeys.PersonalApiKey":w
+  "ChatApi.Users.User":e -> "ChatApi.Tags.Tag":w
+  "ChatApi.Users.User":e -> "ChatApi.Twilio.TwilioAuthorization":w
+  "ChatApi.Users.User":e -> "ChatApi.Users.UserProfile":w [dir=none]
+  "ChatApi.Users.User":e -> "ChatApi.Users.UserSettings":w [dir=none]
+}

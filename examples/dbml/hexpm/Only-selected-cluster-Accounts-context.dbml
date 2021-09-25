@@ -2,8 +2,8 @@ TableGroup "Hexpm.Accounts" {
   audit_logs
   emails
   keys
-  organization_users
   organizations
+  organization_users
   password_resets
   sessions
   users
@@ -50,19 +50,19 @@ Table keys {
   permissions jsonb
 }
 
+Table organizations {
+  id integer [pk]
+  name varchar
+  billing_active boolean
+  inserted_at timestamp
+  updated_at timestamp
+}
+
 Table organization_users {
   id integer [pk]
   role varchar
   organization_id integer
   user_id integer
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Table organizations {
-  id integer [pk]
-  name varchar
-  billing_active boolean
   inserted_at timestamp
   updated_at timestamp
 }

@@ -1,0 +1,76 @@
+@startuml
+
+hide circle
+hide methods
+
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+
+entity Hexpm.Accounts.Key.Use {
+  id : binary_id
+  --
+  used_at : utc_datetime_usec
+  user_agent : string
+  ip : string
+}
+
+entity Hexpm.Accounts.KeyPermission {
+  id : binary_id
+  --
+  domain : string
+  resource : string
+}
+
+entity Hexpm.Accounts.RecoveryCode {
+  id : binary_id
+  --
+  code : string
+  used_at : utc_datetime_usec
+}
+
+entity Hexpm.Accounts.TFA {
+  secret : string
+  tfa_enabled : boolean
+  app_enabled : boolean
+  recovery_codes : map
+}
+
+entity Hexpm.Accounts.UserHandles {
+  id : binary_id
+  --
+  twitter : string
+  github : string
+  elixirforum : string
+  freenode : string
+  slack : string
+}
+
+entity Hexpm.Repository.PackageMetadata {
+  id : binary_id
+  --
+  description : string
+  licenses : array
+  links : map
+  maintainers : array
+  extra : map
+}
+
+entity Hexpm.Repository.ReleaseMetadata {
+  id : binary_id
+  --
+  app : string
+  build_tools : array
+  elixir : string
+}
+
+entity Hexpm.Repository.ReleaseRetirement {
+  id : binary_id
+  --
+  reason : string
+  message : string
+}
+
+Hexpm.Accounts.TFA ||--|{ Hexpm.Accounts.RecoveryCode
+@enduml

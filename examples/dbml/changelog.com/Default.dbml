@@ -11,6 +11,40 @@ Table benefits {
   updated_at timestamp
 }
 
+Table episodes {
+  id integer [pk]
+  slug varchar
+  guid varchar
+  title varchar
+  subtitle varchar
+  type integer
+  featured boolean
+  highlight varchar
+  subhighlight varchar
+  summary varchar
+  notes varchar
+  doc_url varchar
+  published boolean
+  published_at timestamp
+  recorded_at timestamp
+  recorded_live boolean
+  youtube_id varchar
+  audio_file varchar
+  audio_bytes integer
+  audio_duration integer
+  plusplus_file varchar
+  plusplus_bytes integer
+  plusplus_duration integer
+  download_count float
+  import_count float
+  reach_count integer
+  transcript array
+  podcast_id integer
+  request_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
 Table episode_guests {
   id integer [pk]
   position integer
@@ -81,40 +115,6 @@ Table episode_topics {
   updated_at timestamp
 }
 
-Table episodes {
-  id integer [pk]
-  slug varchar
-  guid varchar
-  title varchar
-  subtitle varchar
-  type integer
-  featured boolean
-  highlight varchar
-  subhighlight varchar
-  summary varchar
-  notes varchar
-  doc_url varchar
-  published boolean
-  published_at timestamp
-  recorded_at timestamp
-  recorded_live boolean
-  youtube_id varchar
-  audio_file varchar
-  audio_bytes integer
-  audio_duration integer
-  plusplus_file varchar
-  plusplus_bytes integer
-  plusplus_duration integer
-  download_count float
-  import_count float
-  reach_count integer
-  transcript array
-  podcast_id integer
-  request_id integer
-  inserted_at timestamp
-  updated_at timestamp
-}
-
 Table metacasts {
   id integer [pk]
   name varchar
@@ -143,6 +143,17 @@ Table news_ads {
   updated_at timestamp
 }
 
+Table news_issues {
+  id integer [pk]
+  slug varchar
+  note varchar
+  teaser varchar
+  published boolean
+  published_at timestamp
+  inserted_at timestamp
+  updated_at timestamp
+}
+
 Table news_issue_ads {
   id integer [pk]
   position integer
@@ -159,39 +170,6 @@ Table news_issue_items {
   image boolean
   issue_id integer
   item_id integer
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Table news_issues {
-  id integer [pk]
-  slug varchar
-  note varchar
-  teaser varchar
-  published boolean
-  published_at timestamp
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Table news_item_comments {
-  id integer [pk]
-  content varchar
-  approved boolean
-  edited_at timestamp
-  deleted_at timestamp
-  item_id integer
-  author_id integer
-  parent_id integer
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Table news_item_topics {
-  id integer [pk]
-  position integer
-  item_id integer
-  topic_id integer
   inserted_at timestamp
   updated_at timestamp
 }
@@ -216,6 +194,28 @@ Table news_items {
   logger_id integer
   submitter_id integer
   source_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table news_item_comments {
+  id integer [pk]
+  content varchar
+  approved boolean
+  edited_at timestamp
+  deleted_at timestamp
+  item_id integer
+  author_id integer
+  parent_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table news_item_topics {
+  id integer [pk]
+  position integer
+  item_id integer
+  topic_id integer
   inserted_at timestamp
   updated_at timestamp
 }
@@ -251,27 +251,6 @@ Table news_sponsorships {
   updated_at timestamp
 }
 
-Table oban_jobs {
-  id integer [pk]
-  state varchar
-  queue varchar
-  worker varchar
-  args jsonb
-  meta jsonb
-  tags array
-  errors array
-  attempt integer
-  attempted_by array
-  max_attempts integer
-  priority integer
-  attempted_at timestamp
-  cancelled_at timestamp
-  completed_at timestamp
-  discarded_at timestamp
-  inserted_at timestamp
-  scheduled_at timestamp
-}
-
 Table people {
   id integer [pk]
   name varchar
@@ -295,25 +274,6 @@ Table people {
   editor boolean
   public_profile boolean
   settings jsonb
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Table podcast_hosts {
-  id integer [pk]
-  position integer
-  retired boolean
-  person_id integer
-  podcast_id integer
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Table podcast_topics {
-  id integer [pk]
-  position integer
-  podcast_id integer
-  topic_id integer
   inserted_at timestamp
   updated_at timestamp
 }
@@ -344,11 +304,21 @@ Table podcasts {
   updated_at timestamp
 }
 
-Table post_topics {
+Table podcast_hosts {
   id integer [pk]
   position integer
+  retired boolean
+  person_id integer
+  podcast_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table podcast_topics {
+  id integer [pk]
+  position integer
+  podcast_id integer
   topic_id integer
-  post_id integer
   inserted_at timestamp
   updated_at timestamp
 }
@@ -371,9 +341,13 @@ Table posts {
   updated_at timestamp
 }
 
-Table schema_migrations {
-  version integer
+Table post_topics {
+  id integer [pk]
+  position integer
+  topic_id integer
+  post_id integer
   inserted_at timestamp
+  updated_at timestamp
 }
 
 Table sponsors {
@@ -414,45 +388,71 @@ Table topics {
   updated_at timestamp
 }
 
-Ref: podcasts.id < episode_stats.podcast_id
-Ref: news_items.id - news_queue.item_id
-Ref: sponsors.id < benefits.sponsor_id
-Ref: topics.id < podcast_topics.topic_id
-Ref: episodes.id < episode_sponsors.episode_id
-Ref: podcasts.id < podcast_topics.podcast_id
-Ref: people.id < news_item_comments.author_id
-Ref: news_items.id < news_item_topics.item_id
-Ref: news_sources.id < news_items.source_id
-Ref: people.id < episode_guests.person_id
-Ref: news_issues.id < news_issue_items.issue_id
-Ref: people.id < posts.author_id
-Ref: people.id < podcast_hosts.person_id
-Ref: posts.id < post_topics.post_id
-Ref: news_issues.id < news_issue_ads.issue_id
-Ref: people.id < posts.editor_id
-Ref: podcasts.id < episodes.podcast_id
-Ref: news_items.id < news_item_comments.item_id
+Table schema_migrations {
+  version integer
+  inserted_at timestamp
+}
+
+Table oban_jobs {
+  id integer [pk]
+  state varchar
+  queue varchar
+  worker varchar
+  args jsonb
+  meta jsonb
+  tags array
+  errors array
+  attempt integer
+  attempted_by array
+  max_attempts integer
+  priority integer
+  attempted_at timestamp
+  cancelled_at timestamp
+  completed_at timestamp
+  discarded_at timestamp
+  inserted_at timestamp
+  scheduled_at timestamp
+}
+
 Ref: episode_requests.id - episodes.request_id
-Ref: sponsors.id < episode_sponsors.sponsor_id
-Ref: episodes.id < episode_hosts.episode_id
-Ref: topics.id < post_topics.topic_id
-Ref: news_items.id < news_issue_items.item_id
-Ref: people.id < subscriptions.person_id
-Ref: news_item_comments.id < news_item_comments.parent_id
-Ref: episodes.id < episode_stats.episode_id
-Ref: people.id < news_items.logger_id
-Ref: news_ads.id < news_issue_ads.ad_id
-Ref: podcasts.id < podcast_hosts.podcast_id
-Ref: people.id < news_items.author_id
-Ref: people.id < episode_requests.submitter_id
-Ref: podcasts.id < episode_requests.podcast_id
-Ref: people.id < news_items.submitter_id
-Ref: episodes.id < episode_topics.episode_id
-Ref: people.id < episode_hosts.person_id
 Ref: episodes.id < episode_guests.episode_id
-Ref: topics.id < episode_topics.topic_id
-Ref: news_sponsorships.id < news_ads.sponsorship_id
-Ref: topics.id < news_item_topics.topic_id
-Ref: podcasts.id < subscriptions.podcast_id
-Ref: sponsors.id < news_sponsorships.sponsor_id
+Ref: episodes.id < episode_hosts.episode_id
+Ref: episodes.id < episode_sponsors.episode_id
+Ref: episodes.id < episode_stats.episode_id
+Ref: episodes.id < episode_topics.episode_id
+Ref: news_ads.id < news_issue_ads.ad_id
+Ref: news_issues.id < news_issue_ads.issue_id
+Ref: news_issues.id < news_issue_items.issue_id
+Ref: news_item_comments.id < news_item_comments.parent_id
+Ref: news_items.id < news_issue_items.item_id
+Ref: news_items.id < news_item_comments.item_id
+Ref: news_items.id < news_item_topics.item_id
+Ref: news_items.id - news_queue.item_id
 Ref: news_items.id < subscriptions.item_id
+Ref: news_sources.id < news_items.source_id
+Ref: news_sponsorships.id < news_ads.sponsorship_id
+Ref: people.id < episode_guests.person_id
+Ref: people.id < episode_hosts.person_id
+Ref: people.id < episode_requests.submitter_id
+Ref: people.id < news_item_comments.author_id
+Ref: people.id < news_items.author_id
+Ref: people.id < news_items.logger_id
+Ref: people.id < news_items.submitter_id
+Ref: people.id < podcast_hosts.person_id
+Ref: people.id < posts.author_id
+Ref: people.id < posts.editor_id
+Ref: people.id < subscriptions.person_id
+Ref: podcasts.id < episode_requests.podcast_id
+Ref: podcasts.id < episode_stats.podcast_id
+Ref: podcasts.id < episodes.podcast_id
+Ref: podcasts.id < podcast_hosts.podcast_id
+Ref: podcasts.id < podcast_topics.podcast_id
+Ref: podcasts.id < subscriptions.podcast_id
+Ref: posts.id < post_topics.post_id
+Ref: sponsors.id < benefits.sponsor_id
+Ref: sponsors.id < episode_sponsors.sponsor_id
+Ref: sponsors.id < news_sponsorships.sponsor_id
+Ref: topics.id < episode_topics.topic_id
+Ref: topics.id < news_item_topics.topic_id
+Ref: topics.id < podcast_topics.topic_id
+Ref: topics.id < post_topics.topic_id

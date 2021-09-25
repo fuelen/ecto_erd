@@ -1,3 +1,29 @@
+schema_migrations
+---
+version integer
+inserted_at timestamp
+
+oban_jobs
+---
+id integer PK
+state varchar
+queue varchar
+worker varchar
+args jsonb
+meta jsonb
+tags array
+errors array
+attempt integer
+attempted_by array
+max_attempts integer
+priority integer
+attempted_at timestamp
+cancelled_at timestamp
+completed_at timestamp
+discarded_at timestamp
+inserted_at timestamp
+scheduled_at timestamp
+
 api_keys
 ---
 id integer PK
@@ -10,12 +36,43 @@ user_id integer FK >- users.id
 inserted_at timestamp
 updated_at timestamp
 
-custom_domains
+invitations
 ---
 id integer PK
-domain varchar
-has_ssl_certificate boolean
-site_id integer FK - sites.id
+invitation_id varchar
+email varchar
+role "enum(admin,owner,viewer)"
+inviter_id integer FK >- users.id
+site_id integer FK >- sites.id
+inserted_at timestamp
+updated_at timestamp
+
+users
+---
+id integer PK
+email varchar
+password_hash varchar
+name varchar
+last_seen timestamp
+trial_expiry_date date
+theme varchar
+email_verified boolean
+inserted_at timestamp
+updated_at timestamp
+
+subscriptions
+---
+id integer PK
+paddle_subscription_id varchar
+paddle_plan_id varchar
+update_url varchar
+cancel_url varchar
+status varchar
+next_bill_amount varchar
+next_bill_date date
+last_bill_date date
+currency_code varchar
+user_id integer FK - users.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -41,73 +98,6 @@ browser varchar
 browser_version varchar
 "meta.key" array
 "meta.value" array
-
-goals
----
-id integer PK
-domain varchar
-event_name varchar
-page_path varchar
-inserted_at timestamp
-updated_at timestamp
-
-google_auth
----
-id integer PK
-email varchar
-property varchar
-refresh_token varchar
-access_token varchar
-expires timestamp
-user_id integer FK - users.id
-site_id integer FK - sites.id
-inserted_at timestamp
-updated_at timestamp
-
-invitations
----
-id integer PK
-invitation_id varchar
-email varchar
-role "enum(admin,owner,viewer)"
-inviter_id integer FK >- users.id
-site_id integer FK >- sites.id
-inserted_at timestamp
-updated_at timestamp
-
-monthly_reports
----
-id integer PK
-recipients array
-site_id integer FK - sites.id
-inserted_at timestamp
-updated_at timestamp
-
-oban_jobs
----
-id integer PK
-state varchar
-queue varchar
-worker varchar
-args jsonb
-meta jsonb
-tags array
-errors array
-attempt integer
-attempted_by array
-max_attempts integer
-priority integer
-attempted_at timestamp
-cancelled_at timestamp
-completed_at timestamp
-discarded_at timestamp
-inserted_at timestamp
-scheduled_at timestamp
-
-schema_migrations
----
-version integer
-inserted_at timestamp
 
 sessions
 ---
@@ -136,22 +126,12 @@ browser varchar
 browser_version varchar
 timestamp timestamp
 
-shared_links
+goals
 ---
 id integer PK
-site_id integer FK >- sites.id
-name varchar
-slug varchar
-password_hash varchar
-inserted_at timestamp
-updated_at timestamp
-
-site_memberships
----
-id integer PK
-role "enum(admin,owner,viewer)"
-site_id integer FK >- sites.id
-user_id integer FK >- users.id
+domain varchar
+event_name varchar
+page_path varchar
 inserted_at timestamp
 updated_at timestamp
 
@@ -165,6 +145,55 @@ locked boolean
 inserted_at timestamp
 updated_at timestamp
 
+custom_domains
+---
+id integer PK
+domain varchar
+has_ssl_certificate boolean
+site_id integer FK - sites.id
+inserted_at timestamp
+updated_at timestamp
+
+google_auth
+---
+id integer PK
+email varchar
+property varchar
+refresh_token varchar
+access_token varchar
+expires timestamp
+user_id integer FK - users.id
+site_id integer FK - sites.id
+inserted_at timestamp
+updated_at timestamp
+
+site_memberships
+---
+id integer PK
+role "enum(admin,owner,viewer)"
+site_id integer FK >- sites.id
+user_id integer FK >- users.id
+inserted_at timestamp
+updated_at timestamp
+
+monthly_reports
+---
+id integer PK
+recipients array
+site_id integer FK - sites.id
+inserted_at timestamp
+updated_at timestamp
+
+shared_links
+---
+id integer PK
+site_id integer FK >- sites.id
+name varchar
+slug varchar
+password_hash varchar
+inserted_at timestamp
+updated_at timestamp
+
 spike_notifications
 ---
 id integer PK
@@ -175,19 +204,11 @@ site_id integer FK - sites.id
 inserted_at timestamp
 updated_at timestamp
 
-subscriptions
+weekly_reports
 ---
 id integer PK
-paddle_subscription_id varchar
-paddle_plan_id varchar
-update_url varchar
-cancel_url varchar
-status varchar
-next_bill_amount varchar
-next_bill_date date
-last_bill_date date
-currency_code varchar
-user_id integer FK - users.id
+recipients array
+site_id integer FK - sites.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -201,26 +222,5 @@ author_name varchar
 author_image varchar
 text varchar
 created timestamp
-inserted_at timestamp
-updated_at timestamp
-
-users
----
-id integer PK
-email varchar
-password_hash varchar
-name varchar
-last_seen timestamp
-trial_expiry_date date
-theme varchar
-email_verified boolean
-inserted_at timestamp
-updated_at timestamp
-
-weekly_reports
----
-id integer PK
-recipients array
-site_id integer FK - sites.id
 inserted_at timestamp
 updated_at timestamp

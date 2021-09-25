@@ -1,0 +1,79 @@
+strict digraph {
+  ranksep=1.0; rankdir=LR;
+  node [shape = none, fontname="Roboto Mono"];
+  "Changelog.Benefit" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Benefit   </font></td></tr><tr><td><font point-size='14'><i>benefits</i></font></td></tr></table>>]
+  "Changelog.Episode" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Episode   </font></td></tr><tr><td><font point-size='14'><i>episodes</i></font></td></tr></table>>]
+  "Changelog.EpisodeGuest" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.EpisodeGuest   </font></td></tr><tr><td><font point-size='14'><i>episode_guests</i></font></td></tr></table>>]
+  "Changelog.EpisodeHost" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.EpisodeHost   </font></td></tr><tr><td><font point-size='14'><i>episode_hosts</i></font></td></tr></table>>]
+  "Changelog.EpisodeRequest" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.EpisodeRequest   </font></td></tr><tr><td><font point-size='14'><i>episode_requests</i></font></td></tr></table>>]
+  "Changelog.EpisodeSponsor" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.EpisodeSponsor   </font></td></tr><tr><td><font point-size='14'><i>episode_sponsors</i></font></td></tr></table>>]
+  "Changelog.EpisodeStat" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.EpisodeStat   </font></td></tr><tr><td><font point-size='14'><i>episode_stats</i></font></td></tr></table>>]
+  "Changelog.EpisodeTopic" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.EpisodeTopic   </font></td></tr><tr><td><font point-size='14'><i>episode_topics</i></font></td></tr></table>>]
+  "Changelog.Metacast" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Metacast   </font></td></tr><tr><td><font point-size='14'><i>metacasts</i></font></td></tr></table>>]
+  "Changelog.NewsAd" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsAd   </font></td></tr><tr><td><font point-size='14'><i>news_ads</i></font></td></tr></table>>]
+  "Changelog.NewsIssue" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsIssue   </font></td></tr><tr><td><font point-size='14'><i>news_issues</i></font></td></tr></table>>]
+  "Changelog.NewsIssueAd" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsIssueAd   </font></td></tr><tr><td><font point-size='14'><i>news_issue_ads</i></font></td></tr></table>>]
+  "Changelog.NewsIssueItem" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsIssueItem   </font></td></tr><tr><td><font point-size='14'><i>news_issue_items</i></font></td></tr></table>>]
+  "Changelog.NewsItem" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsItem   </font></td></tr><tr><td><font point-size='14'><i>news_items</i></font></td></tr></table>>]
+  "Changelog.NewsItemComment" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsItemComment   </font></td></tr><tr><td><font point-size='14'><i>news_item_comments</i></font></td></tr></table>>]
+  "Changelog.NewsItemTopic" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsItemTopic   </font></td></tr><tr><td><font point-size='14'><i>news_item_topics</i></font></td></tr></table>>]
+  "Changelog.NewsQueue" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsQueue   </font></td></tr><tr><td><font point-size='14'><i>news_queue</i></font></td></tr></table>>]
+  "Changelog.NewsSource" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsSource   </font></td></tr><tr><td><font point-size='14'><i>news_sources</i></font></td></tr></table>>]
+  "Changelog.NewsSponsorship" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.NewsSponsorship   </font></td></tr><tr><td><font point-size='14'><i>news_sponsorships</i></font></td></tr></table>>]
+  "Changelog.Person" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Person   </font></td></tr><tr><td><font point-size='14'><i>people</i></font></td></tr></table>>]
+  "Changelog.Person.Settings" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Person.Settings   </font></td></tr></table>>]
+  "Changelog.Podcast" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Podcast   </font></td></tr><tr><td><font point-size='14'><i>podcasts</i></font></td></tr></table>>]
+  "Changelog.PodcastHost" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.PodcastHost   </font></td></tr><tr><td><font point-size='14'><i>podcast_hosts</i></font></td></tr></table>>]
+  "Changelog.PodcastTopic" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.PodcastTopic   </font></td></tr><tr><td><font point-size='14'><i>podcast_topics</i></font></td></tr></table>>]
+  "Changelog.Post" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Post   </font></td></tr><tr><td><font point-size='14'><i>posts</i></font></td></tr></table>>]
+  "Changelog.PostTopic" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.PostTopic   </font></td></tr><tr><td><font point-size='14'><i>post_topics</i></font></td></tr></table>>]
+  "Changelog.Sponsor" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Sponsor   </font></td></tr><tr><td><font point-size='14'><i>sponsors</i></font></td></tr></table>>]
+  "Changelog.Subscription" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Subscription   </font></td></tr><tr><td><font point-size='14'><i>subscriptions</i></font></td></tr></table>>]
+  "Changelog.Topic" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Changelog.Topic   </font></td></tr><tr><td><font point-size='14'><i>topics</i></font></td></tr></table>>]
+  "Ecto.Migration.SchemaMigration" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.Migration.SchemaMigration   </font></td></tr><tr><td><font point-size='14'><i>schema_migrations</i></font></td></tr></table>>]
+  "Oban.Job" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Oban.Job   </font></td></tr><tr><td><font point-size='14'><i>oban_jobs</i></font></td></tr></table>>]
+
+  "Changelog.EpisodeRequest":e -> "Changelog.Episode":w [dir=none]
+  "Changelog.Episode":e -> "Changelog.EpisodeGuest":w
+  "Changelog.Episode":e -> "Changelog.EpisodeHost":w
+  "Changelog.Episode":e -> "Changelog.EpisodeSponsor":w
+  "Changelog.Episode":e -> "Changelog.EpisodeStat":w
+  "Changelog.Episode":e -> "Changelog.EpisodeTopic":w
+  "Changelog.NewsAd":e -> "Changelog.NewsIssueAd":w
+  "Changelog.NewsIssue":e -> "Changelog.NewsIssueAd":w
+  "Changelog.NewsIssue":e -> "Changelog.NewsIssueItem":w
+  "Changelog.NewsItemComment":e -> "Changelog.NewsItemComment":w
+  "Changelog.NewsItem":e -> "Changelog.NewsIssueItem":w
+  "Changelog.NewsItem":e -> "Changelog.NewsItemComment":w
+  "Changelog.NewsItem":e -> "Changelog.NewsItemTopic":w
+  "Changelog.NewsItem":e -> "Changelog.NewsQueue":w [dir=none]
+  "Changelog.NewsItem":e -> "Changelog.Subscription":w
+  "Changelog.NewsSource":e -> "Changelog.NewsItem":w
+  "Changelog.NewsSponsorship":e -> "Changelog.NewsAd":w
+  "Changelog.Person":e -> "Changelog.EpisodeGuest":w
+  "Changelog.Person":e -> "Changelog.EpisodeHost":w
+  "Changelog.Person":e -> "Changelog.EpisodeRequest":w
+  "Changelog.Person":e -> "Changelog.NewsItemComment":w
+  "Changelog.Person":e -> "Changelog.NewsItem":w
+  "Changelog.Person":e -> "Changelog.NewsItem":w
+  "Changelog.Person":e -> "Changelog.NewsItem":w
+  "Changelog.Person":e -> "Changelog.PodcastHost":w
+  "Changelog.Person":e -> "Changelog.Post":w
+  "Changelog.Person":e -> "Changelog.Post":w
+  "Changelog.Person":e -> "Changelog.Subscription":w
+  "Changelog.Person":e -> "Changelog.Person.Settings":w [dir=none]
+  "Changelog.Podcast":e -> "Changelog.EpisodeRequest":w
+  "Changelog.Podcast":e -> "Changelog.EpisodeStat":w
+  "Changelog.Podcast":e -> "Changelog.Episode":w
+  "Changelog.Podcast":e -> "Changelog.PodcastHost":w
+  "Changelog.Podcast":e -> "Changelog.PodcastTopic":w
+  "Changelog.Podcast":e -> "Changelog.Subscription":w
+  "Changelog.Post":e -> "Changelog.PostTopic":w
+  "Changelog.Sponsor":e -> "Changelog.Benefit":w
+  "Changelog.Sponsor":e -> "Changelog.EpisodeSponsor":w
+  "Changelog.Sponsor":e -> "Changelog.NewsSponsorship":w
+  "Changelog.Topic":e -> "Changelog.EpisodeTopic":w
+  "Changelog.Topic":e -> "Changelog.NewsItemTopic":w
+  "Changelog.Topic":e -> "Changelog.PodcastTopic":w
+  "Changelog.Topic":e -> "Changelog.PostTopic":w
+}

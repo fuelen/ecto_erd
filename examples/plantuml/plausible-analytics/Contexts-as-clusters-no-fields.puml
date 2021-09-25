@@ -1,0 +1,61 @@
+@startuml
+
+hide circle
+hide methods
+hide fields
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+namespace Ecto.Migration #f0f8ff {
+  entity Ecto.Migration.SchemaMigration
+}
+namespace Oban.Job #b4eeb4 {
+  entity Oban.Job
+}
+namespace Plausible.Auth #ffefd5 {
+  entity Plausible.Auth.ApiKey
+  entity Plausible.Auth.Invitation
+  entity Plausible.Auth.User
+}
+namespace Plausible.Billing #f0ffff {
+  entity Plausible.Billing.Subscription
+}
+namespace Plausible.ClickhouseEvent #f0ffff {
+  entity Plausible.ClickhouseEvent
+}
+namespace Plausible.ClickhouseSession #f0f8ff {
+  entity Plausible.ClickhouseSession
+}
+namespace Plausible.Goal #b4eeb4 {
+  entity Plausible.Goal
+}
+namespace Plausible.Site #f0f8ff {
+  entity Plausible.Site
+  entity Plausible.Site.CustomDomain
+  entity Plausible.Site.GoogleAuth
+  entity Plausible.Site.Membership
+  entity Plausible.Site.MonthlyReport
+  entity Plausible.Site.SharedLink
+  entity Plausible.Site.SpikeNotification
+  entity Plausible.Site.WeeklyReport
+}
+namespace Plausible.Twitter #b4eeb4 {
+  entity Plausible.Twitter.Tweet
+}
+
+
+Plausible.Site ||--o| Plausible.Site.CustomDomain
+Plausible.Site ||--o| Plausible.Site.GoogleAuth
+Plausible.Site ||--|{ Plausible.Auth.Invitation
+Plausible.Site ||--o| Plausible.Site.MonthlyReport
+Plausible.Site ||--|{ Plausible.Site.SharedLink
+Plausible.Site ||--|{ Plausible.Site.Membership
+Plausible.Site ||--o| Plausible.Site.SpikeNotification
+Plausible.Site ||--o| Plausible.Site.WeeklyReport
+Plausible.Auth.User ||--|{ Plausible.Auth.ApiKey
+Plausible.Auth.User ||--o| Plausible.Site.GoogleAuth
+Plausible.Auth.User ||--|{ Plausible.Auth.Invitation
+Plausible.Auth.User ||--|{ Plausible.Site.Membership
+Plausible.Auth.User ||--o| Plausible.Billing.Subscription
+@enduml

@@ -69,6 +69,7 @@ defmodule Ecto.ERD.QuickDBD do
       :binary -> "bytea"
       :map -> "jsonb"
       {:map, _} -> "jsonb"
+      {:embed, _} -> "jsonb"
       :time_usec -> "time"
       :utc_datetime -> "timestamp"
       :utc_datetime_usec -> "timestamp"

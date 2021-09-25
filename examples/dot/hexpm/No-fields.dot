@@ -1,0 +1,72 @@
+strict digraph {
+  ranksep=1.0; rankdir=LR;
+  node [shape = none, fontname="Roboto Mono"];
+  "Ecto.Migration.SchemaMigration" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.Migration.SchemaMigration   </font></td></tr><tr><td><font point-size='14'><i>schema_migrations</i></font></td></tr></table>>]
+  "Hexpm.Accounts.AuditLog" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.AuditLog   </font></td></tr><tr><td><font point-size='14'><i>audit_logs</i></font></td></tr></table>>]
+  "Hexpm.Accounts.Email" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.Email   </font></td></tr><tr><td><font point-size='14'><i>emails</i></font></td></tr></table>>]
+  "Hexpm.Accounts.Key" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.Key   </font></td></tr><tr><td><font point-size='14'><i>keys</i></font></td></tr></table>>]
+  "Hexpm.Accounts.Key.Use" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.Key.Use   </font></td></tr></table>>]
+  "Hexpm.Accounts.KeyPermission" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.KeyPermission   </font></td></tr></table>>]
+  "Hexpm.Accounts.Organization" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.Organization   </font></td></tr><tr><td><font point-size='14'><i>organizations</i></font></td></tr></table>>]
+  "Hexpm.Accounts.OrganizationUser" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.OrganizationUser   </font></td></tr><tr><td><font point-size='14'><i>organization_users</i></font></td></tr></table>>]
+  "Hexpm.Accounts.PasswordReset" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.PasswordReset   </font></td></tr><tr><td><font point-size='14'><i>password_resets</i></font></td></tr></table>>]
+  "Hexpm.Accounts.RecoveryCode" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.RecoveryCode   </font></td></tr></table>>]
+  "Hexpm.Accounts.Session" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.Session   </font></td></tr><tr><td><font point-size='14'><i>sessions</i></font></td></tr></table>>]
+  "Hexpm.Accounts.TFA" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.TFA   </font></td></tr></table>>]
+  "Hexpm.Accounts.User" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.User   </font></td></tr><tr><td><font point-size='14'><i>users</i></font></td></tr></table>>]
+  "Hexpm.Accounts.UserHandles" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Accounts.UserHandles   </font></td></tr></table>>]
+  "Hexpm.BlockAddress.Entry" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.BlockAddress.Entry   </font></td></tr><tr><td><font point-size='14'><i>blocked_addresses</i></font></td></tr></table>>]
+  "Hexpm.Repository.Download" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.Download   </font></td></tr><tr><td><font point-size='14'><i>downloads</i></font></td></tr></table>>]
+  "Hexpm.Repository.Install" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.Install   </font></td></tr><tr><td><font point-size='14'><i>installs</i></font></td></tr></table>>]
+  "Hexpm.Repository.Package" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.Package   </font></td></tr><tr><td><font point-size='14'><i>packages</i></font></td></tr></table>>]
+  "Hexpm.Repository.PackageDependant" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.PackageDependant   </font></td></tr><tr><td><font point-size='14'><i>package_dependants</i></font></td></tr></table>>]
+  "Hexpm.Repository.PackageDownload" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.PackageDownload   </font></td></tr><tr><td><font point-size='14'><i>package_downloads</i></font></td></tr></table>>]
+  "Hexpm.Repository.PackageMetadata" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.PackageMetadata   </font></td></tr></table>>]
+  "Hexpm.Repository.PackageOwner" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.PackageOwner   </font></td></tr><tr><td><font point-size='14'><i>package_owners</i></font></td></tr></table>>]
+  "Hexpm.Repository.PackageReport" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.PackageReport   </font></td></tr><tr><td><font point-size='14'><i>package_reports</i></font></td></tr></table>>]
+  "Hexpm.Repository.PackageReportComment" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.PackageReportComment   </font></td></tr><tr><td><font point-size='14'><i>package_report_comments</i></font></td></tr></table>>]
+  "Hexpm.Repository.PackageReportRelease" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.PackageReportRelease   </font></td></tr><tr><td><font point-size='14'><i>package_report_releases</i></font></td></tr></table>>]
+  "Hexpm.Repository.Release" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.Release   </font></td></tr><tr><td><font point-size='14'><i>releases</i></font></td></tr></table>>]
+  "Hexpm.Repository.ReleaseDownload" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.ReleaseDownload   </font></td></tr><tr><td><font point-size='14'><i>release_downloads</i></font></td></tr></table>>]
+  "Hexpm.Repository.ReleaseMetadata" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.ReleaseMetadata   </font></td></tr></table>>]
+  "Hexpm.Repository.ReleaseRetirement" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.ReleaseRetirement   </font></td></tr></table>>]
+  "Hexpm.Repository.Repository" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.Repository   </font></td></tr><tr><td><font point-size='14'><i>repositories</i></font></td></tr></table>>]
+  "Hexpm.Repository.Requirement" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.Repository.Requirement   </font></td></tr><tr><td><font point-size='14'><i>requirements</i></font></td></tr></table>>]
+  "Hexpm.ShortURLs.ShortURL" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Hexpm.ShortURLs.ShortURL   </font></td></tr><tr><td><font point-size='14'><i>short_urls</i></font></td></tr></table>>]
+
+  "Hexpm.Accounts.TFA":e -> "Hexpm.Accounts.RecoveryCode":w
+  "Hexpm.Accounts.Key":e -> "Hexpm.Accounts.Key.Use":w [dir=none]
+  "Hexpm.Accounts.Key":e -> "Hexpm.Accounts.KeyPermission":w
+  "Hexpm.Accounts.Organization":e -> "Hexpm.Accounts.AuditLog":w
+  "Hexpm.Accounts.Organization":e -> "Hexpm.Accounts.Key":w
+  "Hexpm.Accounts.Organization":e -> "Hexpm.Accounts.OrganizationUser":w
+  "Hexpm.Accounts.Organization":e -> "Hexpm.Repository.Repository":w [dir=none]
+  "Hexpm.Accounts.Organization":e -> "Hexpm.Accounts.User":w [dir=none]
+  "Hexpm.Repository.PackageReport":e -> "Hexpm.Repository.PackageReportComment":w
+  "Hexpm.Repository.PackageReport":e -> "Hexpm.Repository.PackageReportRelease":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageDependant":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageDownload":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageOwner":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageReport":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.Release":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.Requirement":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageMetadata":w [dir=none]
+  "Hexpm.Repository.Release":e -> "Hexpm.Repository.Download":w
+  "Hexpm.Repository.Release":e -> "Hexpm.Repository.PackageReportRelease":w
+  "Hexpm.Repository.Release":e -> "Hexpm.Repository.ReleaseDownload":w [dir=none]
+  "Hexpm.Repository.Release":e -> "Hexpm.Repository.Requirement":w
+  "Hexpm.Repository.Release":e -> "Hexpm.Repository.ReleaseMetadata":w [dir=none]
+  "Hexpm.Repository.Release":e -> "Hexpm.Repository.ReleaseRetirement":w [dir=none]
+  "Hexpm.Repository.Repository":e -> "Hexpm.Repository.Package":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Accounts.UserHandles":w [dir=none]
+  "Hexpm.Accounts.User":e -> "Hexpm.Accounts.AuditLog":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Accounts.Email":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Accounts.Key":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Accounts.OrganizationUser":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Repository.PackageOwner":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Repository.PackageReportComment":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Repository.PackageReport":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Accounts.PasswordReset":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Repository.Release":w
+  "Hexpm.Accounts.User":e -> "Hexpm.Accounts.TFA":w [dir=none]
+}

@@ -1,0 +1,122 @@
+@startuml
+
+hide circle
+hide methods
+
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+namespace Conduit.Accounts #eee685 {
+  entity Conduit.Accounts.Projections.User {
+    uuid : binary_id
+    --
+    username : string
+    email : string
+    hashed_password : string
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Conduit.Accounts.Projectors.User.ProjectionVersion {
+    projection_name : string
+    --
+    last_seen_event_number : integer
+    inserted_at : naive_datetime_usec
+    updated_at : naive_datetime_usec
+  }
+
+}
+namespace Conduit.Blog #f0ffff {
+  entity Conduit.Blog.Projections.Article {
+    uuid : binary_id
+    --
+    slug : string
+    title : string
+    description : string
+    body : string
+    tag_list : array
+    favorite_count : integer
+    published_at : utc_datetime_usec
+    author_uuid : binary_id
+    author_bio : string
+    author_image : string
+    author_username : string
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Conduit.Blog.Projections.Author {
+    uuid : binary_id
+    --
+    user_uuid : binary_id
+    username : string
+    bio : string
+    image : string
+    followers : array
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Conduit.Blog.Projections.Comment {
+    uuid : binary_id
+    --
+    body : string
+    article_uuid : binary_id
+    author_uuid : binary_id
+    author_bio : string
+    author_image : string
+    author_username : string
+    commented_at : utc_datetime_usec
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Conduit.Blog.Projections.FavoritedArticle {
+    article_uuid : binary_id
+    favorited_by_author_uuid : binary_id
+    --
+    favorited_by_username : string
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Conduit.Blog.Projections.Feed {
+    article_uuid : binary_id
+    follower_uuid : binary_id
+    --
+    author_uuid : binary_id
+    published_at : utc_datetime_usec
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Conduit.Blog.Projections.Tag {
+    uuid : binary_id
+    --
+    name : string
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Conduit.Blog.Projectors.Article.ProjectionVersion {
+    projection_name : string
+    --
+    last_seen_event_number : integer
+    inserted_at : naive_datetime_usec
+    updated_at : naive_datetime_usec
+  }
+
+  entity Conduit.Blog.Projectors.Tag.ProjectionVersion {
+    projection_name : string
+    --
+    last_seen_event_number : integer
+    inserted_at : naive_datetime_usec
+    updated_at : naive_datetime_usec
+  }
+
+}
+
+
+
+@enduml

@@ -1,3 +1,8 @@
+schema_migrations
+---
+version integer
+inserted_at timestamp
+
 audit_logs
 ---
 id integer PK
@@ -7,19 +12,6 @@ params jsonb
 user_id integer FK >- users.id
 organization_id integer FK >- organizations.id
 inserted_at timestamp
-
-blocked_addresses
----
-id integer PK
-ip varchar
-comment varchar
-
-downloads
----
-id integer PK
-release_id integer FK >- releases.id
-downloads integer
-day date
 
 emails
 ---
@@ -34,12 +26,6 @@ verification_expiry timestamp
 user_id integer FK >- users.id
 inserted_at timestamp
 updated_at timestamp
-
-installs
----
-id integer PK
-hex varchar
-elixirs array
 
 keys
 ---
@@ -57,6 +43,14 @@ user_id integer FK >- users.id
 organization_id integer FK >- organizations.id
 permissions jsonb
 
+organizations
+---
+id integer PK
+name varchar
+billing_active boolean
+inserted_at timestamp
+updated_at timestamp
+
 organization_users
 ---
 id integer PK
@@ -66,13 +60,65 @@ user_id integer FK >- users.id
 inserted_at timestamp
 updated_at timestamp
 
-organizations
+password_resets
+---
+id integer PK
+key varchar
+primary_email varchar
+user_id integer FK >- users.id
+inserted_at timestamp
+
+sessions
+---
+id integer PK
+token bytea
+data jsonb
+inserted_at timestamp
+updated_at timestamp
+
+users
+---
+id integer PK
+username varchar
+full_name varchar
+password varchar
+service boolean
+deactivated_at timestamp
+role varchar
+inserted_at timestamp
+updated_at timestamp
+handles jsonb
+tfa jsonb
+organization_id integer FK - organizations.id
+
+blocked_addresses
+---
+id integer PK
+ip varchar
+comment varchar
+
+downloads
+---
+id integer PK
+release_id integer FK >- releases.id
+downloads integer
+day date
+
+installs
+---
+id integer PK
+hex varchar
+elixirs array
+
+packages
 ---
 id integer PK
 name varchar
-billing_active boolean
+docs_updated_at timestamp
 inserted_at timestamp
 updated_at timestamp
+repository_id integer FK >- repositories.id
+meta jsonb
 
 package_dependants
 ---
@@ -96,6 +142,16 @@ user_id integer FK >- users.id
 inserted_at timestamp
 updated_at timestamp
 
+package_reports
+---
+id integer PK
+state varchar
+description varchar
+author_id integer FK >- users.id
+package_id integer FK >- packages.id
+inserted_at timestamp
+updated_at timestamp
+
 package_report_comments
 ---
 id integer PK
@@ -113,39 +169,6 @@ package_report_id integer FK >- package_reports.id
 inserted_at timestamp
 updated_at timestamp
 
-package_reports
----
-id integer PK
-state varchar
-description varchar
-author_id integer FK >- users.id
-package_id integer FK >- packages.id
-inserted_at timestamp
-updated_at timestamp
-
-packages
----
-id integer PK
-name varchar
-docs_updated_at timestamp
-inserted_at timestamp
-updated_at timestamp
-repository_id integer FK >- repositories.id
-meta jsonb
-
-password_resets
----
-id integer PK
-key varchar
-primary_email varchar
-user_id integer FK >- users.id
-inserted_at timestamp
-
-release_downloads
----
-release_id integer FK - releases.id
-downloads integer
-
 releases
 ---
 id integer PK
@@ -159,6 +182,11 @@ package_id integer FK >- packages.id
 publisher_id integer FK >- users.id
 meta jsonb
 retirement jsonb
+
+release_downloads
+---
+release_id integer FK - releases.id
+downloads integer
 
 repositories
 ---
@@ -178,37 +206,9 @@ optional boolean
 release_id integer FK >- releases.id
 dependency_id integer FK >- packages.id
 
-schema_migrations
----
-version integer
-inserted_at timestamp
-
-sessions
----
-id integer PK
-token bytea
-data jsonb
-inserted_at timestamp
-updated_at timestamp
-
 short_urls
 ---
 id integer PK
 url varchar
 short_code varchar
 inserted_at timestamp
-
-users
----
-id integer PK
-username varchar
-full_name varchar
-password varchar
-service boolean
-deactivated_at timestamp
-role varchar
-inserted_at timestamp
-updated_at timestamp
-handles jsonb
-tfa jsonb
-organization_id integer FK - organizations.id

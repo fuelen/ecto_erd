@@ -1,0 +1,266 @@
+@startuml
+
+hide circle
+hide methods
+
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+
+entity Ecto.Migration.SchemaMigration {
+  version : integer
+  inserted_at : naive_datetime
+}
+
+entity Oban.Job {
+  id : id
+  --
+  state : string
+  queue : string
+  worker : string
+  args : map
+  meta : map
+  tags : array
+  errors : array
+  attempt : integer
+  attempted_by : array
+  max_attempts : integer
+  priority : integer
+  attempted_at : utc_datetime_usec
+  cancelled_at : utc_datetime_usec
+  completed_at : utc_datetime_usec
+  discarded_at : utc_datetime_usec
+  inserted_at : utc_datetime_usec
+  scheduled_at : utc_datetime_usec
+}
+
+entity Plausible.Auth.ApiKey {
+  id : id
+  --
+  name : string
+  scopes : array
+  hourly_request_limit : integer
+  key_hash : string
+  key_prefix : string
+  user_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Auth.Invitation {
+  id : id
+  --
+  invitation_id : string
+  email : string
+  role : enum(admin,owner,viewer)
+  inviter_id : id
+  site_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Auth.User {
+  id : id
+  --
+  email : string
+  password_hash : string
+  name : string
+  last_seen : naive_datetime
+  trial_expiry_date : date
+  theme : string
+  email_verified : boolean
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Billing.Subscription {
+  id : id
+  --
+  paddle_subscription_id : string
+  paddle_plan_id : string
+  update_url : string
+  cancel_url : string
+  status : string
+  next_bill_amount : string
+  next_bill_date : date
+  last_bill_date : date
+  currency_code : string
+  user_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.ClickhouseEvent {
+  name : string
+  domain : string
+  hostname : string
+  pathname : string
+  user_id : integer
+  session_id : integer
+  timestamp : naive_datetime
+  referrer : string
+  referrer_source : string
+  utm_medium : string
+  utm_source : string
+  utm_campaign : string
+  country_code : string
+  screen_size : string
+  operating_system : string
+  operating_system_version : string
+  browser : string
+  browser_version : string
+  meta.key : array
+  meta.value : array
+}
+
+entity Plausible.ClickhouseSession {
+  hostname : string
+  domain : string
+  user_id : integer
+  session_id : integer
+  start : naive_datetime
+  duration : integer
+  is_bounce : boolean
+  entry_page : string
+  exit_page : string
+  pageviews : integer
+  events : integer
+  sign : integer
+  utm_medium : string
+  utm_source : string
+  utm_campaign : string
+  referrer : string
+  referrer_source : string
+  country_code : string
+  screen_size : string
+  operating_system : string
+  operating_system_version : string
+  browser : string
+  browser_version : string
+  timestamp : naive_datetime
+}
+
+entity Plausible.Goal {
+  id : id
+  --
+  domain : string
+  event_name : string
+  page_path : string
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Site {
+  id : id
+  --
+  domain : string
+  timezone : string
+  public : boolean
+  locked : boolean
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Site.CustomDomain {
+  id : id
+  --
+  domain : string
+  has_ssl_certificate : boolean
+  site_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Site.GoogleAuth {
+  id : id
+  --
+  email : string
+  property : string
+  refresh_token : string
+  access_token : string
+  expires : naive_datetime
+  user_id : id
+  site_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Site.Membership {
+  id : id
+  --
+  role : enum(admin,owner,viewer)
+  site_id : id
+  user_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Site.MonthlyReport {
+  id : id
+  --
+  recipients : array
+  site_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Site.SharedLink {
+  id : id
+  --
+  site_id : id
+  name : string
+  slug : string
+  password_hash : string
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Site.SpikeNotification {
+  id : id
+  --
+  recipients : array
+  threshold : integer
+  last_sent : naive_datetime
+  site_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Site.WeeklyReport {
+  id : id
+  --
+  recipients : array
+  site_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Plausible.Twitter.Tweet {
+  id : id
+  --
+  link : string
+  tweet_id : string
+  author_handle : string
+  author_name : string
+  author_image : string
+  text : string
+  created : naive_datetime
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+Plausible.Site ||--o| Plausible.Site.CustomDomain
+Plausible.Site ||--o| Plausible.Site.GoogleAuth
+Plausible.Site ||--|{ Plausible.Auth.Invitation
+Plausible.Site ||--o| Plausible.Site.MonthlyReport
+Plausible.Site ||--|{ Plausible.Site.SharedLink
+Plausible.Site ||--|{ Plausible.Site.Membership
+Plausible.Site ||--o| Plausible.Site.SpikeNotification
+Plausible.Site ||--o| Plausible.Site.WeeklyReport
+Plausible.Auth.User ||--|{ Plausible.Auth.ApiKey
+Plausible.Auth.User ||--o| Plausible.Site.GoogleAuth
+Plausible.Auth.User ||--|{ Plausible.Auth.Invitation
+Plausible.Auth.User ||--|{ Plausible.Site.Membership
+Plausible.Auth.User ||--o| Plausible.Billing.Subscription
+@enduml

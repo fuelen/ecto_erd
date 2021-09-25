@@ -5,8 +5,8 @@ TableGroup "Hexpm.Accounts" {
   audit_logs
   emails
   keys
-  organization_users
   organizations
+  organization_users
   password_resets
   sessions
   users
@@ -17,15 +17,15 @@ TableGroup "Hexpm.BlockAddress" {
 TableGroup "Hexpm.Repository" {
   downloads
   installs
+  packages
   package_dependants
   package_downloads
   package_owners
+  package_reports
   package_report_comments
   package_report_releases
-  package_reports
-  packages
-  release_downloads
   releases
+  release_downloads
   repositories
   requirements
 }
@@ -33,6 +33,11 @@ TableGroup "Hexpm.ShortURLs" {
   short_urls
 }
 
+
+Table schema_migrations {
+  version integer
+  inserted_at timestamp
+}
 
 Table audit_logs {
   id integer [pk]
@@ -42,19 +47,6 @@ Table audit_logs {
   user_id integer
   organization_id integer
   inserted_at timestamp
-}
-
-Table blocked_addresses {
-  id integer [pk]
-  ip varchar
-  comment varchar
-}
-
-Table downloads {
-  id integer [pk]
-  release_id integer
-  downloads integer
-  day date
 }
 
 Table emails {
@@ -69,12 +61,6 @@ Table emails {
   user_id integer
   inserted_at timestamp
   updated_at timestamp
-}
-
-Table installs {
-  id integer [pk]
-  hex varchar
-  elixirs array
 }
 
 Table keys {
@@ -93,6 +79,14 @@ Table keys {
   permissions jsonb
 }
 
+Table organizations {
+  id integer [pk]
+  name varchar
+  billing_active boolean
+  inserted_at timestamp
+  updated_at timestamp
+}
+
 Table organization_users {
   id integer [pk]
   role varchar
@@ -102,12 +96,64 @@ Table organization_users {
   updated_at timestamp
 }
 
-Table organizations {
+Table password_resets {
   id integer [pk]
-  name varchar
-  billing_active boolean
+  key varchar
+  primary_email varchar
+  user_id integer
+  inserted_at timestamp
+}
+
+Table sessions {
+  id integer [pk]
+  token bytea
+  data jsonb
   inserted_at timestamp
   updated_at timestamp
+}
+
+Table users {
+  id integer [pk]
+  username varchar
+  full_name varchar
+  password varchar
+  service boolean
+  deactivated_at timestamp
+  role varchar
+  inserted_at timestamp
+  updated_at timestamp
+  handles jsonb
+  tfa jsonb
+  organization_id integer
+}
+
+Table blocked_addresses {
+  id integer [pk]
+  ip varchar
+  comment varchar
+}
+
+Table downloads {
+  id integer [pk]
+  release_id integer
+  downloads integer
+  day date
+}
+
+Table installs {
+  id integer [pk]
+  hex varchar
+  elixirs array
+}
+
+Table packages {
+  id integer [pk]
+  name varchar
+  docs_updated_at timestamp
+  inserted_at timestamp
+  updated_at timestamp
+  repository_id integer
+  meta jsonb
 }
 
 Table package_dependants {
@@ -132,6 +178,16 @@ Table package_owners {
   updated_at timestamp
 }
 
+Table package_reports {
+  id integer [pk]
+  state varchar
+  description varchar
+  author_id integer
+  package_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
 Table package_report_comments {
   id integer [pk]
   text varchar
@@ -149,39 +205,6 @@ Table package_report_releases {
   updated_at timestamp
 }
 
-Table package_reports {
-  id integer [pk]
-  state varchar
-  description varchar
-  author_id integer
-  package_id integer
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Table packages {
-  id integer [pk]
-  name varchar
-  docs_updated_at timestamp
-  inserted_at timestamp
-  updated_at timestamp
-  repository_id integer
-  meta jsonb
-}
-
-Table password_resets {
-  id integer [pk]
-  key varchar
-  primary_email varchar
-  user_id integer
-  inserted_at timestamp
-}
-
-Table release_downloads {
-  release_id integer
-  downloads integer
-}
-
 Table releases {
   id integer [pk]
   version varchar
@@ -194,6 +217,11 @@ Table releases {
   publisher_id integer
   meta jsonb
   retirement jsonb
+}
+
+Table release_downloads {
+  release_id integer
+  downloads integer
 }
 
 Table repositories {
@@ -214,39 +242,11 @@ Table requirements {
   dependency_id integer
 }
 
-Table schema_migrations {
-  version integer
-  inserted_at timestamp
-}
-
-Table sessions {
-  id integer [pk]
-  token bytea
-  data jsonb
-  inserted_at timestamp
-  updated_at timestamp
-}
-
 Table short_urls {
   id integer [pk]
   url varchar
   short_code varchar
   inserted_at timestamp
-}
-
-Table users {
-  id integer [pk]
-  username varchar
-  full_name varchar
-  password varchar
-  service boolean
-  deactivated_at timestamp
-  role varchar
-  inserted_at timestamp
-  updated_at timestamp
-  handles jsonb
-  tfa jsonb
-  organization_id integer
 }
 
 Ref: organizations.id < audit_logs.organization_id

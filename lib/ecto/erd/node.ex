@@ -34,7 +34,11 @@ defmodule Ecto.ERD.Node do
   @doc false
   def id(source, schema_module)
       when (is_nil(source) or is_binary(source)) and is_atom(schema_module) do
-    inspect({source, schema_module})
+    if schema_module do
+      inspect(schema_module)
+    else
+      source
+    end
   end
 
   @doc false

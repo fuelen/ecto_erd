@@ -1,0 +1,357 @@
+@startuml
+
+hide circle
+hide methods
+
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+namespace Ecto.Migration #f0f8ff {
+  entity Ecto.Migration.SchemaMigration {
+    version : integer
+    inserted_at : naive_datetime
+  }
+
+}
+namespace Hexpm.Accounts #8deeee {
+  entity Hexpm.Accounts.AuditLog {
+    id : id
+    --
+    user_agent : string
+    action : string
+    params : map
+    user_id : id
+    organization_id : id
+    inserted_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.Email {
+    id : id
+    --
+    email : string
+    verified : boolean
+    primary : boolean
+    public : boolean
+    gravatar : boolean
+    verification_key : string
+    verification_expiry : utc_datetime_usec
+    user_id : id
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.Key {
+    id : id
+    --
+    name : string
+    secret_first : string
+    secret_second : string
+    public : boolean
+    revoke_at : utc_datetime_usec
+    revoked_at : utc_datetime_usec
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+    last_use : map
+    user_id : id
+    organization_id : id
+    permissions : map
+  }
+
+  entity Hexpm.Accounts.Key.Use {
+    id : binary_id
+    --
+    used_at : utc_datetime_usec
+    user_agent : string
+    ip : string
+  }
+
+  entity Hexpm.Accounts.KeyPermission {
+    id : binary_id
+    --
+    domain : string
+    resource : string
+  }
+
+  entity Hexpm.Accounts.Organization {
+    id : id
+    --
+    name : string
+    billing_active : boolean
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.OrganizationUser {
+    id : id
+    --
+    role : string
+    organization_id : id
+    user_id : id
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.PasswordReset {
+    id : id
+    --
+    key : string
+    primary_email : string
+    user_id : id
+    inserted_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.RecoveryCode {
+    id : binary_id
+    --
+    code : string
+    used_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.Session {
+    id : id
+    --
+    token : binary
+    data : map
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Accounts.TFA {
+    secret : string
+    tfa_enabled : boolean
+    app_enabled : boolean
+    recovery_codes : map
+  }
+
+  entity Hexpm.Accounts.User {
+    id : id
+    --
+    username : string
+    full_name : string
+    password : string
+    service : boolean
+    deactivated_at : utc_datetime_usec
+    role : string
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+    handles : map
+    tfa : map
+    organization_id : id
+  }
+
+  entity Hexpm.Accounts.UserHandles {
+    id : binary_id
+    --
+    twitter : string
+    github : string
+    elixirforum : string
+    freenode : string
+    slack : string
+  }
+
+}
+namespace Hexpm.BlockAddress #fffafa {
+  entity Hexpm.BlockAddress.Entry {
+    id : id
+    --
+    ip : string
+    comment : string
+  }
+
+}
+namespace Hexpm.Repository #eedfcc {
+  entity Hexpm.Repository.Download {
+    id : id
+    --
+    release_id : id
+    downloads : integer
+    day : date
+  }
+
+  entity Hexpm.Repository.Install {
+    id : id
+    --
+    hex : string
+    elixirs : array
+  }
+
+  entity Hexpm.Repository.Package {
+    id : id
+    --
+    name : string
+    docs_updated_at : utc_datetime_usec
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+    repository_id : id
+    meta : map
+  }
+
+  entity Hexpm.Repository.PackageDependant {
+    id : id
+    --
+    package_id : id
+    name : string
+    repo : string
+  }
+
+  entity Hexpm.Repository.PackageDownload {
+    package_id : id
+    view : string
+    downloads : integer
+  }
+
+  entity Hexpm.Repository.PackageMetadata {
+    id : binary_id
+    --
+    description : string
+    licenses : array
+    links : map
+    maintainers : array
+    extra : map
+  }
+
+  entity Hexpm.Repository.PackageOwner {
+    id : id
+    --
+    level : string
+    package_id : id
+    user_id : id
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Repository.PackageReport {
+    id : id
+    --
+    state : string
+    description : string
+    author_id : id
+    package_id : id
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Repository.PackageReportComment {
+    id : id
+    --
+    text : string
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+    package_report_id : id
+    author_id : id
+  }
+
+  entity Hexpm.Repository.PackageReportRelease {
+    id : id
+    --
+    release_id : id
+    package_report_id : id
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+  }
+
+  entity Hexpm.Repository.Release {
+    id : id
+    --
+    version : string
+    inner_checksum : binary
+    outer_checksum : binary
+    has_docs : boolean
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+    package_id : id
+    publisher_id : id
+    meta : map
+    retirement : map
+  }
+
+  entity Hexpm.Repository.ReleaseDownload {
+    release_id : id
+    downloads : integer
+  }
+
+  entity Hexpm.Repository.ReleaseMetadata {
+    id : binary_id
+    --
+    app : string
+    build_tools : array
+    elixir : string
+  }
+
+  entity Hexpm.Repository.ReleaseRetirement {
+    id : binary_id
+    --
+    reason : string
+    message : string
+  }
+
+  entity Hexpm.Repository.Repository {
+    id : id
+    --
+    name : string
+    public : boolean
+    inserted_at : utc_datetime_usec
+    updated_at : utc_datetime_usec
+    organization_id : id
+  }
+
+  entity Hexpm.Repository.Requirement {
+    id : id
+    --
+    app : string
+    requirement : string
+    optional : boolean
+    release_id : id
+    dependency_id : id
+  }
+
+}
+namespace Hexpm.ShortURLs #b4eeb4 {
+  entity Hexpm.ShortURLs.ShortURL {
+    id : id
+    --
+    url : string
+    short_code : string
+    inserted_at : utc_datetime_usec
+  }
+
+}
+
+
+Hexpm.Accounts.TFA ||--|{ Hexpm.Accounts.RecoveryCode
+Hexpm.Accounts.Key ||--o| Hexpm.Accounts.Key.Use
+Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.KeyPermission
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.AuditLog
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.Key
+Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.OrganizationUser
+Hexpm.Accounts.Organization ||--o| Hexpm.Repository.Repository
+Hexpm.Accounts.Organization ||--o| Hexpm.Accounts.User
+Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportComment
+Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportRelease
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDependant
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDownload
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageOwner
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageReport
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.Release
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.Requirement
+Hexpm.Repository.Package ||--o| Hexpm.Repository.PackageMetadata
+Hexpm.Repository.Release ||--|{ Hexpm.Repository.Download
+Hexpm.Repository.Release ||--|{ Hexpm.Repository.PackageReportRelease
+Hexpm.Repository.Release ||--o| Hexpm.Repository.ReleaseDownload
+Hexpm.Repository.Release ||--|{ Hexpm.Repository.Requirement
+Hexpm.Repository.Release ||--o| Hexpm.Repository.ReleaseMetadata
+Hexpm.Repository.Release ||--o| Hexpm.Repository.ReleaseRetirement
+Hexpm.Repository.Repository ||--|{ Hexpm.Repository.Package
+Hexpm.Accounts.User ||--o| Hexpm.Accounts.UserHandles
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.AuditLog
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.Email
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.Key
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.OrganizationUser
+Hexpm.Accounts.User ||--|{ Hexpm.Repository.PackageOwner
+Hexpm.Accounts.User ||--|{ Hexpm.Repository.PackageReportComment
+Hexpm.Accounts.User ||--|{ Hexpm.Repository.PackageReport
+Hexpm.Accounts.User ||--|{ Hexpm.Accounts.PasswordReset
+Hexpm.Accounts.User ||--|{ Hexpm.Repository.Release
+Hexpm.Accounts.User ||--o| Hexpm.Accounts.TFA
+@enduml

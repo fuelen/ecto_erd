@@ -1,5 +1,5 @@
+# examples_generator.exs is needed only for docs and is not shipped in package
 if File.exists?("examples_generator.exs") do
-  # This module is needed only for docs and is not shipped in package
   Code.compile_file("examples_generator.exs")
 else
   defmodule Ecto.ERD.ExamplesGenerator do
@@ -11,7 +11,7 @@ end
 defmodule Ecto.ERD.MixProject do
   use Mix.Project
   @source_url "https://github.com/fuelen/ecto_erd/"
-  @version "0.3.0"
+  @version "0.4.0"
 
   def project do
     [
@@ -49,7 +49,7 @@ defmodule Ecto.ERD.MixProject do
 
   defp package do
     [
-      licenses: ["Apache 2"],
+      licenses: ["Apache-2.0"],
       links: %{
         GitHub: @source_url
       }

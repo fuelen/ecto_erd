@@ -19,6 +19,13 @@ defmodule Ecto.ERD.Graph do
     }
   end
 
+  def sort(%__MODULE__{nodes: nodes, edges: edges}) do
+    %__MODULE__{
+      nodes: Enum.sort_by(nodes, &{&1.cluster, &1.schema_module, &1.source}),
+      edges: Enum.sort_by(edges, &{&1.from, &1.to})
+    }
+  end
+
   def map_nodes(%__MODULE__{nodes: nodes, edges: edges}, map_node_callback)
       when is_function(map_node_callback, 1) do
     {nodes, removed_nodes} =

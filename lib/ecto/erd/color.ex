@@ -1,14 +1,16 @@
 defmodule Ecto.ERD.Color do
   @moduledoc false
   @colors ~w(
-      antiquewhite1
-      azure
-      seashell2
-      snow1
-      aliceblue
-      darkslategray1
-      khaki2
-      seashell1
+      #eedfcc
+      #f0ffff
+      #eee5de
+      #fffafa
+      #f0f8ff
+      #8deeee
+      #b4eeb4
+      #eee685
+      #eee5de
+      #ffefd5
     )
   def get(term) do
     Enum.at(@colors, :erlang.phash2(term, length(@colors)))

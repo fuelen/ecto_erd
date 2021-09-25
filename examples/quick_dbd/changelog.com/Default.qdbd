@@ -9,6 +9,40 @@ sponsor_id integer FK >- sponsors.id
 inserted_at timestamp
 updated_at timestamp
 
+episodes
+---
+id integer PK
+slug varchar
+guid varchar
+title varchar
+subtitle varchar
+type integer
+featured boolean
+highlight varchar
+subhighlight varchar
+summary varchar
+notes varchar
+doc_url varchar
+published boolean
+published_at timestamp
+recorded_at timestamp
+recorded_live boolean
+youtube_id varchar
+audio_file varchar
+audio_bytes integer
+audio_duration integer
+plusplus_file varchar
+plusplus_bytes integer
+plusplus_duration integer
+download_count float
+import_count float
+reach_count integer
+transcript array
+podcast_id integer FK >- podcasts.id
+request_id integer FK - episode_requests.id
+inserted_at timestamp
+updated_at timestamp
+
 episode_guests
 ---
 id integer PK
@@ -79,40 +113,6 @@ episode_id integer FK >- episodes.id
 inserted_at timestamp
 updated_at timestamp
 
-episodes
----
-id integer PK
-slug varchar
-guid varchar
-title varchar
-subtitle varchar
-type integer
-featured boolean
-highlight varchar
-subhighlight varchar
-summary varchar
-notes varchar
-doc_url varchar
-published boolean
-published_at timestamp
-recorded_at timestamp
-recorded_live boolean
-youtube_id varchar
-audio_file varchar
-audio_bytes integer
-audio_duration integer
-plusplus_file varchar
-plusplus_bytes integer
-plusplus_duration integer
-download_count float
-import_count float
-reach_count integer
-transcript array
-podcast_id integer FK >- podcasts.id
-request_id integer FK - episode_requests.id
-inserted_at timestamp
-updated_at timestamp
-
 metacasts
 ---
 id integer PK
@@ -141,6 +141,17 @@ sponsorship_id integer FK >- news_sponsorships.id
 inserted_at timestamp
 updated_at timestamp
 
+news_issues
+---
+id integer PK
+slug varchar
+note varchar
+teaser varchar
+published boolean
+published_at timestamp
+inserted_at timestamp
+updated_at timestamp
+
 news_issue_ads
 ---
 id integer PK
@@ -158,39 +169,6 @@ position integer
 image boolean
 issue_id integer FK >- news_issues.id
 item_id integer FK >- news_items.id
-inserted_at timestamp
-updated_at timestamp
-
-news_issues
----
-id integer PK
-slug varchar
-note varchar
-teaser varchar
-published boolean
-published_at timestamp
-inserted_at timestamp
-updated_at timestamp
-
-news_item_comments
----
-id integer PK
-content varchar
-approved boolean
-edited_at timestamp
-deleted_at timestamp
-item_id integer FK >- news_items.id
-author_id integer FK >- people.id
-parent_id integer FK >- news_item_comments.id
-inserted_at timestamp
-updated_at timestamp
-
-news_item_topics
----
-id integer PK
-position integer
-item_id integer FK >- news_items.id
-topic_id integer FK >- topics.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -215,6 +193,28 @@ author_id integer FK >- people.id
 logger_id integer FK >- people.id
 submitter_id integer FK >- people.id
 source_id integer FK >- news_sources.id
+inserted_at timestamp
+updated_at timestamp
+
+news_item_comments
+---
+id integer PK
+content varchar
+approved boolean
+edited_at timestamp
+deleted_at timestamp
+item_id integer FK >- news_items.id
+author_id integer FK >- people.id
+parent_id integer FK >- news_item_comments.id
+inserted_at timestamp
+updated_at timestamp
+
+news_item_topics
+---
+id integer PK
+position integer
+item_id integer FK >- news_items.id
+topic_id integer FK >- topics.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -249,27 +249,6 @@ sponsor_id integer FK >- sponsors.id
 inserted_at timestamp
 updated_at timestamp
 
-oban_jobs
----
-id integer PK
-state varchar
-queue varchar
-worker varchar
-args jsonb
-meta jsonb
-tags array
-errors array
-attempt integer
-attempted_by array
-max_attempts integer
-priority integer
-attempted_at timestamp
-cancelled_at timestamp
-completed_at timestamp
-discarded_at timestamp
-inserted_at timestamp
-scheduled_at timestamp
-
 people
 ---
 id integer PK
@@ -294,25 +273,6 @@ host boolean
 editor boolean
 public_profile boolean
 settings jsonb
-inserted_at timestamp
-updated_at timestamp
-
-podcast_hosts
----
-id integer PK
-position integer
-retired boolean
-person_id integer FK >- people.id
-podcast_id integer FK >- podcasts.id
-inserted_at timestamp
-updated_at timestamp
-
-podcast_topics
----
-id integer PK
-position integer
-podcast_id integer FK >- podcasts.id
-topic_id integer FK >- topics.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -342,12 +302,22 @@ cover varchar
 inserted_at timestamp
 updated_at timestamp
 
-post_topics
+podcast_hosts
 ---
 id integer PK
 position integer
+retired boolean
+person_id integer FK >- people.id
+podcast_id integer FK >- podcasts.id
+inserted_at timestamp
+updated_at timestamp
+
+podcast_topics
+---
+id integer PK
+position integer
+podcast_id integer FK >- podcasts.id
 topic_id integer FK >- topics.id
-post_id integer FK >- posts.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -369,10 +339,14 @@ editor_id integer FK >- people.id
 inserted_at timestamp
 updated_at timestamp
 
-schema_migrations
+post_topics
 ---
-version integer
+id integer PK
+position integer
+topic_id integer FK >- topics.id
+post_id integer FK >- posts.id
 inserted_at timestamp
+updated_at timestamp
 
 sponsors
 ---
@@ -411,3 +385,29 @@ twitter_handle varchar
 icon varchar
 inserted_at timestamp
 updated_at timestamp
+
+schema_migrations
+---
+version integer
+inserted_at timestamp
+
+oban_jobs
+---
+id integer PK
+state varchar
+queue varchar
+worker varchar
+args jsonb
+meta jsonb
+tags array
+errors array
+attempt integer
+attempted_by array
+max_attempts integer
+priority integer
+attempted_at timestamp
+cancelled_at timestamp
+completed_at timestamp
+discarded_at timestamp
+inserted_at timestamp
+scheduled_at timestamp

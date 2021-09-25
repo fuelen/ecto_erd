@@ -2,7 +2,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
   require Logger
 
   @shared_examples [
-    [name: "Default", formats: [:dbml, :dot, :qdbd]],
+    [name: "Default", formats: [:dbml, :dot, :qdbd, :puml]],
     [
       name: "No fields",
       formats: [:dot],
@@ -14,7 +14,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
     ],
     [
       name: "Contexts as clusters",
-      formats: [:dbml, :dot],
+      formats: [:dbml, :dot, :puml],
       config: """
       alias Ecto.ERD.Node
 
@@ -28,7 +28,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
     ],
     [
       name: "Contexts as clusters (no fields)",
-      formats: [:dot],
+      formats: [:dot, :puml],
       config: """
       alias Ecto.ERD.Node
 
@@ -59,7 +59,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
           [
             [
               name: "Clusters",
-              formats: [:dbml, :dot],
+              formats: [:dbml, :dot, :puml],
               config: """
               alias Ecto.ERD.Node
 
@@ -122,7 +122,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
           [
             [
               name: "Only selected cluster (Accounts context)",
-              formats: [:dbml, :dot, :qdbd],
+              formats: [:dbml, :dot, :qdbd, :puml],
               config: """
               alias Ecto.ERD.Node
 
@@ -140,7 +140,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
             ],
             [
               name: "Only embedded schemas",
-              formats: [:dot],
+              formats: [:dot, :puml],
               config: """
               alias Ecto.ERD.Node
 
@@ -156,21 +156,25 @@ defmodule Ecto.ERD.ExamplesGenerator do
     }
   }
 
+  @formats %{
+    dot: %{examples_dir: "examples/dot", name: "DOT", image?: true},
+    dbml: %{examples_dir: "examples/dbml", name: "DBML", image?: false},
+    qdbd: %{examples_dir: "examples/quick_dbd", name: "QuickDBD", image?: false},
+    puml: %{examples_dir: "examples/plantuml", name: "PlantUML", image?: true}
+  }
+
   def run(source_url_root) do
     File.mkdir_p("tmp/docs")
-    File.mkdir_p("examples/dot_images")
-    File.mkdir_p("examples/dbml")
-    File.mkdir_p("examples/quick_dbd")
+    Enum.each(@formats, fn {_, %{examples_dir: dir}} -> File.mkdir_p(dir) end)
     File.mkdir("tmp/repos")
-    File.mkdir("tmp/dot")
     File.mkdir("tmp/config_files")
 
     @data
     |> Enum.each(fn {project_name, %{repo: repo, examples: examples}} = data_item ->
-      File.mkdir(Path.join("examples/dot_images", project_name))
-      File.mkdir(Path.join("examples/dbml", project_name))
-      File.mkdir(Path.join("examples/quick_dbd", project_name))
-      File.mkdir(Path.join("tmp/dot", project_name))
+      Enum.each(@formats, fn {_, %{examples_dir: dir}} ->
+        File.mkdir(Path.join(dir, project_name))
+      end)
+
       File.mkdir(Path.join("tmp/config_files", project_name))
       init_project(project_name, repo)
 
@@ -198,47 +202,36 @@ defmodule Ecto.ERD.ExamplesGenerator do
             """
           end
 
-        links_to_output =
+        output =
           example[:formats]
           |> Enum.map(fn
-            :dbml ->
-              url =
+            format ->
+              document_url =
                 Path.join([
                   source_url_root,
-                  "examples/dbml",
+                  @formats[format].examples_dir,
                   project_name,
-                  slugify(example[:name]) <> ".dbml"
+                  slugify(example[:name]) <> ".#{format}"
                 ])
 
-              "DBML: [View document on GitHub](#{url})"
+              image_url =
+                if @formats[format].image? do
+                  Path.rootname(document_url) <> ".png"
+                end
 
-            :qdbd ->
-              url =
-                Path.join([
-                  source_url_root,
-                  "examples/quick_dbd",
-                  project_name,
-                  slugify(example[:name]) <> ".qdbd"
-                ])
-
-              "QuickDBD: [View document on GitHub](#{url})"
-
-            :dot ->
-              url =
-                Path.join([
-                  source_url_root,
-                  "examples/dot_images",
-                  project_name,
-                  slugify(example[:name]) <> ".png"
-                ])
-
-              "DOT: [View image on GitHub](#{url})"
+              [
+                "**#{@formats[format].name}**"
+                | Enum.map([document_url, image_url], fn
+                    nil -> "—"
+                    url -> "[View](#{url})"
+                  end)
+              ]
           end)
 
         output_content = """
         #### Output
 
-        #{Enum.join(links_to_output, "\n\n")}
+        #{as_table(output, ["Format", "Document", "Image"])}
         """
 
         """
@@ -267,9 +260,11 @@ defmodule Ecto.ERD.ExamplesGenerator do
 
     example[:formats]
     |> Enum.map(fn
-      :dot -> {:dot, Path.expand(Path.join(["tmp/dot", project_name, slug <> ".dot"]))}
-      :dbml -> {:dbml, Path.expand(Path.join(["examples/dbml", project_name, slug <> ".dbml"]))}
-      :qdbd -> {:qdbd, Path.expand(Path.join(["examples/quick_dbd", project_name, slug <> ".qdbd"]))}
+      format ->
+        {format,
+         Path.expand(
+           Path.join([@formats[format].examples_dir, project_name, slug <> ".#{format}"])
+         )}
     end)
     |> Enum.each(fn {format, output_path} ->
       if example[:config] do
@@ -283,50 +278,41 @@ defmodule Ecto.ERD.ExamplesGenerator do
             "--output-path=#{output_path}",
             "--config-path=#{config_path}"
           ],
-          cd: Path.join("tmp/repos", project_name),
-          stderr_to_stdout: true
+          cd: Path.join("tmp/repos", project_name)
         )
       else
         System.cmd("mix", ["ecto.gen.erd", "--output-path=#{output_path}"],
-          cd: Path.join("tmp/repos", project_name),
-          stderr_to_stdout: true
+          cd: Path.join("tmp/repos", project_name)
         )
       end
 
-      if format == :dot do
-        System.cmd(
-          "dot",
-          [
-            "-Tpng",
-            output_path,
-            "-o",
-            Path.join(["examples/dot_images", project_name, slug <> ".png"])
-          ],
-          stderr_to_stdout: true
-        )
+      if @formats[format].image? do
+        generate_image(format, output_path)
       end
     end)
 
     Logger.debug("#{project_name}: generated #{example[:name]}")
   end
 
+  defp generate_image(:dot, file) do
+    System.cmd("dot", ["-Tpng", file, "-o", Path.rootname(file) <> ".png"])
+  end
+
+  defp generate_image(:puml, file) do
+    System.cmd("plantuml", [file], env: %{"PLANTUML_LIMIT_SIZE"=> "8192"})
+  end
+
   defp init_project(project_name, repo) do
     Logger.debug("#{project_name}: clone repo")
-    System.cmd("git", ["clone", repo, project_name], cd: "tmp/repos", stderr_to_stdout: true)
+    System.cmd("git", ["clone", repo, project_name], cd: "tmp/repos")
     add_ecto_erd_to_dependencies(Path.join(["tmp/repos", project_name, "mix.exs"]))
     Logger.debug("#{project_name}: get dependencies")
 
-    System.cmd("mix", ["deps.get"],
-      cd: Path.join("tmp/repos", project_name),
-      stderr_to_stdout: true
-    )
+    System.cmd("mix", ["deps.get"], cd: Path.join("tmp/repos", project_name))
 
     Logger.debug("#{project_name}: compile")
 
-    System.cmd("mix", ["compile"],
-      cd: Path.join("tmp/repos", project_name),
-      stderr_to_stdout: true
-    )
+    System.cmd("mix", ["compile"], cd: Path.join("tmp/repos", project_name))
   end
 
   defp slugify(name) do
@@ -350,4 +336,38 @@ defmodule Ecto.ERD.ExamplesGenerator do
   end
 
   def projects, do: Map.keys(@data)
+
+  defp as_table(rows, header) do
+    columns_number = length(header)
+
+    column_widths =
+      1..columns_number
+      |> Map.new(fn column_number ->
+        max_length =
+          [header | rows]
+          |> Enum.map(fn row ->
+            row |> Enum.at(column_number - 1) |> to_string |> String.length()
+          end)
+          |> Enum.max()
+
+        {column_number, max_length}
+      end)
+
+    header_delimiter =
+      1..columns_number
+      |> Enum.map(fn column_number -> String.duplicate("-", column_widths[column_number]) end)
+
+    ([header, header_delimiter] ++ rows)
+    |> Enum.map(fn row ->
+      body =
+        row
+        |> Enum.with_index(1)
+        |> Enum.map_join(" | ", fn {cell, column_number} ->
+          cell |> to_string() |> String.pad_trailing(column_widths[column_number])
+        end)
+
+      "| " <> body <> " |"
+    end)
+    |> Enum.intersperse("\n")
+  end
 end

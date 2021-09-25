@@ -1,0 +1,503 @@
+@startuml
+
+hide circle
+hide methods
+
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+
+entity Changelog.Benefit {
+  id : id
+  --
+  offer : string
+  code : string
+  link_url : string
+  notes : string
+  sponsor_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.Episode {
+  id : id
+  --
+  slug : string
+  guid : string
+  title : string
+  subtitle : string
+  type : integer
+  featured : boolean
+  highlight : string
+  subhighlight : string
+  summary : string
+  notes : string
+  doc_url : string
+  published : boolean
+  published_at : utc_datetime
+  recorded_at : utc_datetime
+  recorded_live : boolean
+  youtube_id : string
+  audio_file : string
+  audio_bytes : integer
+  audio_duration : integer
+  plusplus_file : string
+  plusplus_bytes : integer
+  plusplus_duration : integer
+  download_count : float
+  import_count : float
+  reach_count : integer
+  transcript : array
+  podcast_id : id
+  request_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.EpisodeGuest {
+  id : id
+  --
+  position : integer
+  thanks : boolean
+  discount_code : string
+  episode_id : id
+  person_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.EpisodeHost {
+  id : id
+  --
+  position : integer
+  person_id : id
+  episode_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.EpisodeRequest {
+  id : id
+  --
+  status : integer
+  hosts : string
+  guests : string
+  topics : string
+  pitch : string
+  pronunciation : string
+  decline_message : string
+  podcast_id : id
+  submitter_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.EpisodeSponsor {
+  id : id
+  --
+  position : integer
+  title : string
+  link_url : string
+  description : string
+  episode_id : id
+  sponsor_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.EpisodeStat {
+  id : id
+  --
+  date : date
+  episode_bytes : integer
+  total_bytes : integer
+  downloads : float
+  uniques : integer
+  demographics : map
+  episode_id : id
+  podcast_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.EpisodeTopic {
+  id : id
+  --
+  position : integer
+  topic_id : id
+  episode_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.Metacast {
+  id : id
+  --
+  name : string
+  description : string
+  keywords : string
+  slug : string
+  is_official : boolean
+  cover : string
+  filter_query : string
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsAd {
+  id : id
+  --
+  url : string
+  headline : string
+  story : string
+  image : string
+  active : boolean
+  newsletter : boolean
+  impression_count : integer
+  click_count : integer
+  sponsorship_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsIssue {
+  id : id
+  --
+  slug : string
+  note : string
+  teaser : string
+  published : boolean
+  published_at : utc_datetime
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsIssueAd {
+  id : id
+  --
+  position : integer
+  image : boolean
+  ad_id : id
+  issue_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsIssueItem {
+  id : id
+  --
+  position : integer
+  image : boolean
+  issue_id : id
+  item_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsItem {
+  id : id
+  --
+  status : integer
+  type : integer
+  url : string
+  headline : string
+  story : string
+  image : string
+  object_id : string
+  feed_only : boolean
+  pinned : boolean
+  published_at : utc_datetime
+  refreshed_at : utc_datetime
+  impression_count : integer
+  click_count : integer
+  decline_message : string
+  author_id : id
+  logger_id : id
+  submitter_id : id
+  source_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsItemComment {
+  id : id
+  --
+  content : string
+  approved : boolean
+  edited_at : utc_datetime
+  deleted_at : utc_datetime
+  item_id : id
+  author_id : id
+  parent_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsItemTopic {
+  id : id
+  --
+  position : integer
+  item_id : id
+  topic_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsQueue {
+  id : id
+  --
+  position : float
+  item_id : id
+}
+
+entity Changelog.NewsSource {
+  id : id
+  --
+  name : string
+  slug : string
+  website : string
+  twitter_handle : string
+  description : string
+  feed : string
+  regex : string
+  icon : string
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.NewsSponsorship {
+  id : id
+  --
+  name : string
+  weeks : array
+  impression_count : integer
+  click_count : integer
+  sponsor_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.Person {
+  id : id
+  --
+  name : string
+  email : string
+  handle : string
+  github_handle : string
+  linkedin_handle : string
+  twitter_handle : string
+  slack_id : string
+  website : string
+  bio : string
+  location : string
+  auth_token : string
+  auth_token_expires_at : utc_datetime
+  joined_at : utc_datetime
+  signed_in_at : utc_datetime
+  approved : boolean
+  avatar : string
+  admin : boolean
+  host : boolean
+  editor : boolean
+  public_profile : boolean
+  settings : map
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.Person.Settings {
+  subscribe_to_contributed_news : boolean
+  subscribe_to_participated_episodes : boolean
+  email_on_authored_news : boolean
+  email_on_submitted_news : boolean
+  email_on_comment_replies : boolean
+  email_on_comment_mentions : boolean
+}
+
+entity Changelog.Podcast {
+  id : id
+  --
+  name : string
+  slug : string
+  status : integer
+  welcome : string
+  description : string
+  extended_description : string
+  vanity_domain : string
+  keywords : string
+  twitter_handle : string
+  apple_url : string
+  spotify_url : string
+  riverside_url : string
+  schedule_note : string
+  download_count : float
+  reach_count : integer
+  recorded_live : boolean
+  partner : boolean
+  position : integer
+  subscribers : map
+  cover : string
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.PodcastHost {
+  id : id
+  --
+  position : integer
+  retired : boolean
+  person_id : id
+  podcast_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.PodcastTopic {
+  id : id
+  --
+  position : integer
+  podcast_id : id
+  topic_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.Post {
+  id : id
+  --
+  title : string
+  subtitle : string
+  slug : string
+  guid : string
+  canonical_url : string
+  image : string
+  tldr : string
+  body : string
+  published : boolean
+  published_at : utc_datetime
+  author_id : id
+  editor_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.PostTopic {
+  id : id
+  --
+  position : integer
+  topic_id : id
+  post_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.Sponsor {
+  id : id
+  --
+  name : string
+  description : string
+  website : string
+  github_handle : string
+  twitter_handle : string
+  avatar : string
+  color_logo : string
+  dark_logo : string
+  light_logo : string
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.Subscription {
+  id : id
+  --
+  unsubscribed_at : utc_datetime
+  context : string
+  person_id : id
+  podcast_id : id
+  item_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Changelog.Topic {
+  id : id
+  --
+  name : string
+  slug : string
+  description : string
+  website : string
+  twitter_handle : string
+  icon : string
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
+entity Ecto.Migration.SchemaMigration {
+  version : integer
+  inserted_at : naive_datetime
+}
+
+entity Oban.Job {
+  id : id
+  --
+  state : string
+  queue : string
+  worker : string
+  args : map
+  meta : map
+  tags : array
+  errors : array
+  attempt : integer
+  attempted_by : array
+  max_attempts : integer
+  priority : integer
+  attempted_at : utc_datetime_usec
+  cancelled_at : utc_datetime_usec
+  completed_at : utc_datetime_usec
+  discarded_at : utc_datetime_usec
+  inserted_at : utc_datetime_usec
+  scheduled_at : utc_datetime_usec
+}
+
+Changelog.EpisodeRequest ||--o| Changelog.Episode
+Changelog.Episode ||--|{ Changelog.EpisodeGuest
+Changelog.Episode ||--|{ Changelog.EpisodeHost
+Changelog.Episode ||--|{ Changelog.EpisodeSponsor
+Changelog.Episode ||--|{ Changelog.EpisodeStat
+Changelog.Episode ||--|{ Changelog.EpisodeTopic
+Changelog.NewsAd ||--|{ Changelog.NewsIssueAd
+Changelog.NewsIssue ||--|{ Changelog.NewsIssueAd
+Changelog.NewsIssue ||--|{ Changelog.NewsIssueItem
+Changelog.NewsItemComment ||--|{ Changelog.NewsItemComment
+Changelog.NewsItem ||--|{ Changelog.NewsIssueItem
+Changelog.NewsItem ||--|{ Changelog.NewsItemComment
+Changelog.NewsItem ||--|{ Changelog.NewsItemTopic
+Changelog.NewsItem ||--o| Changelog.NewsQueue
+Changelog.NewsItem ||--|{ Changelog.Subscription
+Changelog.NewsSource ||--|{ Changelog.NewsItem
+Changelog.NewsSponsorship ||--|{ Changelog.NewsAd
+Changelog.Person ||--|{ Changelog.EpisodeGuest
+Changelog.Person ||--|{ Changelog.EpisodeHost
+Changelog.Person ||--|{ Changelog.EpisodeRequest
+Changelog.Person ||--|{ Changelog.NewsItemComment
+Changelog.Person ||--|{ Changelog.NewsItem
+Changelog.Person ||--|{ Changelog.PodcastHost
+Changelog.Person ||--|{ Changelog.Post
+Changelog.Person ||--|{ Changelog.Subscription
+Changelog.Person ||--o| Changelog.Person.Settings
+Changelog.Podcast ||--|{ Changelog.EpisodeRequest
+Changelog.Podcast ||--|{ Changelog.EpisodeStat
+Changelog.Podcast ||--|{ Changelog.Episode
+Changelog.Podcast ||--|{ Changelog.PodcastHost
+Changelog.Podcast ||--|{ Changelog.PodcastTopic
+Changelog.Podcast ||--|{ Changelog.Subscription
+Changelog.Post ||--|{ Changelog.PostTopic
+Changelog.Sponsor ||--|{ Changelog.Benefit
+Changelog.Sponsor ||--|{ Changelog.EpisodeSponsor
+Changelog.Sponsor ||--|{ Changelog.NewsSponsorship
+Changelog.Topic ||--|{ Changelog.EpisodeTopic
+Changelog.Topic ||--|{ Changelog.NewsItemTopic
+Changelog.Topic ||--|{ Changelog.PodcastTopic
+Changelog.Topic ||--|{ Changelog.PostTopic
+@enduml
