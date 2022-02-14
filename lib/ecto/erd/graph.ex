@@ -2,6 +2,7 @@ defmodule Ecto.ERD.Graph do
   @moduledoc false
   alias Ecto.ERD.{Edge, Node, Field}
   defstruct [:edges, :nodes]
+  require Logger
 
   def new(modules, relation_types) do
     data =
@@ -75,28 +76,33 @@ defmodule Ecto.ERD.Graph do
   end
 
   defp components(schema_module, relation_types) do
-    relation_components =
-      Enum.flat_map(relation_types, &components_from_relations(schema_module, &1))
+    if function_exported?(schema_module, :__schema__, 1) do
+      relation_components =
+        Enum.flat_map(relation_types, &components_from_relations(schema_module, &1))
 
-    primary_keys = schema_module.__schema__(:primary_key)
+      primary_keys = schema_module.__schema__(:primary_key)
 
-    node =
-      Node.new(
-        schema_module,
-        schema_module.__schema__(:source),
-        Enum.map(
-          schema_module.__schema__(:fields),
-          fn field ->
-            Field.new(%{
-              name: field,
-              type: schema_module.__schema__(:type, field),
-              primary?: field in primary_keys
-            })
-          end
+      node =
+        Node.new(
+          schema_module,
+          schema_module.__schema__(:source),
+          Enum.map(
+            schema_module.__schema__(:fields),
+            fn field ->
+              Field.new(%{
+                name: field,
+                type: schema_module.__schema__(:type, field),
+                primary?: field in primary_keys
+              })
+            end
+          )
         )
-      )
 
-    [node | relation_components]
+      [node | relation_components]
+    else
+      Logger.warn("Skipping schema #{schema_module}: not found")
+      []
+    end
   end
 
   defp components_from_relations(module, :associations) do
@@ -115,32 +121,43 @@ defmodule Ecto.ERD.Graph do
     end)
   end
 
-  defp from_relation_struct(%Ecto.Embedded{} = embedded) do
-    [
-      Edge.new(%{
-        from: {embedded.owner.__schema__(:source), embedded.owner, {:field, embedded.field}},
-        to: {embedded.related.__schema__(:source), embedded.related, {:header, :schema_module}},
-        assoc_types: [has: embedded.cardinality]
-      })
-    ]
+  defp from_relation_struct(%Ecto.Embedded{owner: owner, related: related} = embedded) do
+    if function_exported?(related, :__schema__, 1) do
+      [
+        Edge.new(%{
+          from: {owner.__schema__(:source), owner, {:field, embedded.field}},
+          to: {related.__schema__(:source), related, {:header, :schema_module}},
+          assoc_types: [has: embedded.cardinality]
+        })
+      ]
+    else
+      Logger.warn("Skipping embed #{owner}.#{embedded.field} (#{related}): schema not found")
+      []
+    end
   end
 
   defp from_relation_struct(%Ecto.Association.BelongsTo{
          owner: owner,
          owner_key: owner_key,
          related: related,
-         related_key: related_key
+         related_key: related_key,
+         field: field,
        }) do
-    related_source = related.__schema__(:source)
-    owner_source = owner.__schema__(:source)
+    if function_exported?(related, :__schema__, 1) do
+      related_source = related.__schema__(:source)
+      owner_source = owner.__schema__(:source)
 
-    [
-      Edge.new(%{
-        from: {related_source, related, {:field, related_key}},
-        to: {owner_source, owner, {:field, owner_key}},
-        assoc_types: [:belongs_to]
-      })
-    ]
+      [
+        Edge.new(%{
+          from: {related_source, related, {:field, related_key}},
+          to: {owner_source, owner, {:field, owner_key}},
+          assoc_types: [:belongs_to]
+        })
+      ]
+    else
+      Logger.warn("Skipping belongs_to association #{owner}.#{field} (#{related}): schema not found")
+      []
+    end
   end
 
   defp from_relation_struct(%Ecto.Association.Has{
@@ -148,18 +165,24 @@ defmodule Ecto.ERD.Graph do
          owner_key: owner_key,
          related: related,
          related_key: related_key,
-         cardinality: cardinality
+         cardinality: cardinality,
+         field: field,
        }) do
-    related_source = related.__schema__(:source)
-    owner_source = owner.__schema__(:source)
+    if function_exported?(related, :__schema__, 1) do
+      related_source = related.__schema__(:source)
+      owner_source = owner.__schema__(:source)
 
-    [
-      Edge.new(%{
-        from: {owner_source, owner, {:field, owner_key}},
-        to: {related_source, related, {:field, related_key}},
-        assoc_types: [has: cardinality]
-      })
-    ]
+      [
+        Edge.new(%{
+          from: {owner_source, owner, {:field, owner_key}},
+          to: {related_source, related, {:field, related_key}},
+          assoc_types: [has: cardinality]
+        })
+      ]
+    else
+      Logger.warn("Skipping has association #{owner}.#{field} (#{related}): schema not found")
+      []
+    end
   end
 
   defp from_relation_struct(%Ecto.Association.ManyToMany{
