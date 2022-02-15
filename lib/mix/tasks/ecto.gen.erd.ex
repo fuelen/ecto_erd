@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   A mix task to generate an ERD (Entity Relationship Diagram) in various formats.
 
   Supported formats:
-  * [DOT](#module-dot)
+  * [DOT](#module-dot) (default)
   * [PlantUML](#module-plantuml)
   * [DBML](#module-dbml)
   * [QuickDBD](#module-quickdbd)

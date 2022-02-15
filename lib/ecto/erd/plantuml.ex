@@ -59,8 +59,8 @@ defmodule Ecto.ERD.PlantUML do
            fields: fields,
            schema_module: schema_module
          },
-    columns,
-    padding
+         columns,
+         padding
        ) do
     case columns do
       [] ->
