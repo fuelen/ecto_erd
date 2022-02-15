@@ -76,7 +76,7 @@ defmodule Ecto.ERD.Graph do
   end
 
   defp components(schema_module, relation_types) do
-    if function_exported?(schema_module, :__schema__, 1) do
+    if ecto_schema?(schema_module) do
       relation_components =
         Enum.flat_map(relation_types, &components_from_relations(schema_module, &1))
 
@@ -121,17 +121,25 @@ defmodule Ecto.ERD.Graph do
     end)
   end
 
-  defp from_relation_struct(%Ecto.Embedded{owner: owner, related: related} = embedded) do
-    if function_exported?(related, :__schema__, 1) do
+  defp from_relation_struct(%Ecto.Embedded{
+         owner: owner,
+         related: related,
+         field: field,
+         cardinality: cardinality
+       }) do
+    if ecto_schema?(related) do
       [
         Edge.new(%{
-          from: {owner.__schema__(:source), owner, {:field, embedded.field}},
+          from: {owner.__schema__(:source), owner, {:field, field}},
           to: {related.__schema__(:source), related, {:header, :schema_module}},
-          assoc_types: [has: embedded.cardinality]
+          assoc_types: [has: cardinality]
         })
       ]
     else
-      Logger.warn("Skipping embed #{owner}.#{embedded.field} (#{related}): schema not found")
+      Logger.warn(
+        "Skipping association `embeds_#{cardinality} #{inspect(field)}` in schema #{inspect(owner)}: #{inspect(related)} is not an Ecto schema"
+      )
+
       []
     end
   end
@@ -141,9 +149,9 @@ defmodule Ecto.ERD.Graph do
          owner_key: owner_key,
          related: related,
          related_key: related_key,
-         field: field,
+         field: field
        }) do
-    if function_exported?(related, :__schema__, 1) do
+    if ecto_schema?(related) do
       related_source = related.__schema__(:source)
       owner_source = owner.__schema__(:source)
 
@@ -155,7 +163,10 @@ defmodule Ecto.ERD.Graph do
         })
       ]
     else
-      Logger.warn("Skipping belongs_to association #{owner}.#{field} (#{related}): schema not found")
+      Logger.warn(
+        "Skipping association `belongs_to #{inspect(field)}` in schema #{inspect(owner)}: #{inspect(related)} is not an Ecto schema"
+      )
+
       []
     end
   end
@@ -166,9 +177,9 @@ defmodule Ecto.ERD.Graph do
          related: related,
          related_key: related_key,
          cardinality: cardinality,
-         field: field,
+         field: field
        }) do
-    if function_exported?(related, :__schema__, 1) do
+    if ecto_schema?(related) do
       related_source = related.__schema__(:source)
       owner_source = owner.__schema__(:source)
 
@@ -180,7 +191,10 @@ defmodule Ecto.ERD.Graph do
         })
       ]
     else
-      Logger.warn("Skipping has association #{owner}.#{field} (#{related}): schema not found")
+      Logger.warn(
+        "Skipping association `has_#{cardinality} #{inspect(field)}` in schema #{inspect(owner)}: #{inspect(related)} is not an Ecto schema"
+      )
+
       []
     end
   end
@@ -188,53 +202,77 @@ defmodule Ecto.ERD.Graph do
   defp from_relation_struct(%Ecto.Association.ManyToMany{
          join_through: join_through,
          owner: owner,
+         field: field,
          related: related,
          join_keys: [{join_source_owner_fk, owner_pk}, {join_source_related_fk, related_pk}]
        }) do
-    {join_module, join_source} =
-      case join_through do
-        value when is_atom(value) -> {value, value.__schema__(:source)}
-        value when is_binary(value) -> {nil, value}
-      end
+    if ecto_schema?(related) do
+      if is_atom(join_through) and not ecto_schema?(join_through) do
+        Logger.warn(
+          "Skipping association `many_to_many #{inspect(field)}` in schema #{inspect(owner)}: #{inspect(join_through)} is not an Ecto schema"
+        )
 
-    nodes =
-      case join_module do
-        nil ->
-          fields = [
-            Field.new(%{
-              name: join_source_owner_fk,
-              type: owner.__schema__(:type, owner_pk),
-              primary?: false
+        []
+      else
+        {join_module, join_source} =
+          case join_through do
+            value when is_atom(value) ->
+              {value, value.__schema__(:source)}
+
+            value when is_binary(value) ->
+              {nil, value}
+          end
+
+        nodes =
+          case join_module do
+            nil ->
+              fields = [
+                Field.new(%{
+                  name: join_source_owner_fk,
+                  type: owner.__schema__(:type, owner_pk),
+                  primary?: false
+                }),
+                Field.new(%{
+                  name: join_source_related_fk,
+                  type: related.__schema__(:type, related_pk),
+                  primary?: false
+                })
+              ]
+
+              [Node.new(join_source, Enum.sort(fields))]
+
+            _join_module ->
+              []
+          end
+
+        nodes ++
+          [
+            Edge.new(%{
+              from: {owner.__schema__(:source), owner, {:field, owner_pk}},
+              to: {join_source, join_module, {:field, join_source_owner_fk}},
+              assoc_types: [has: :many]
             }),
-            Field.new(%{
-              name: join_source_related_fk,
-              type: related.__schema__(:type, related_pk),
-              primary?: false
+            Edge.new(%{
+              from: {related.__schema__(:source), related, {:field, related_pk}},
+              to: {join_source, join_module, {:field, join_source_related_fk}},
+              assoc_types: [has: :many]
             })
           ]
-
-          [Node.new(join_source, Enum.sort(fields))]
-
-        _join_module ->
-          []
       end
+    else
+      Logger.warn(
+        "Skipping association `many_to_many #{inspect(field)}` in schema #{inspect(owner)}: module #{inspect(related)} is not an Ecto schema"
+      )
 
-    nodes ++
-      [
-        Edge.new(%{
-          from: {owner.__schema__(:source), owner, {:field, owner_pk}},
-          to: {join_source, join_module, {:field, join_source_owner_fk}},
-          assoc_types: [has: :many]
-        }),
-        Edge.new(%{
-          from: {related.__schema__(:source), related, {:field, related_pk}},
-          to: {join_source, join_module, {:field, join_source_related_fk}},
-          assoc_types: [has: :many]
-        })
-      ]
+      []
+    end
   end
 
   defp from_relation_struct(%Ecto.Association.HasThrough{}) do
     []
+  end
+
+  defp ecto_schema?(module) do
+    function_exported?(module, :__schema__, 1)
   end
 end
