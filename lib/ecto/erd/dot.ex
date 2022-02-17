@@ -138,14 +138,8 @@ defmodule Ecto.ERD.Dot do
 
   defp format_field(%Field{name: name}, :name), do: inspect(name)
 
-  defp format_field(%Field{type: {:parameterized, Ecto.Enum, %{values: values}}}, :type) do
-    "#Enum<#{inspect(values)}>"
-  end
-
-  defp format_field(%Field{type: {:parameterized, Ecto.Enum, %{mappings: mappings}}}, :type) do
-    keys = mappings |> Enum.into(%{}) |> Map.keys()
-
-    "#Enum<#{inspect(keys)}>"
+  defp format_field(%Field{type: {:parameterized, Ecto.Enum, %{on_dump: on_dump}}}, :type) do
+    "#Enum<#{inspect(Map.keys(on_dump))}>"
   end
 
   defp format_field(
