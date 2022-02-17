@@ -142,6 +142,12 @@ defmodule Ecto.ERD.Dot do
     "#Enum<#{inspect(values)}>"
   end
 
+  defp format_field(%Field{type: {:parameterized, Ecto.Enum, %{mappings: mappings}}}, :type) do
+    keys = mappings |> Enum.into(%{}) |> Map.keys()
+
+    "#Enum<#{inspect(keys)}>"
+  end
+
   defp format_field(
          %Field{
            type:
