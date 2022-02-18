@@ -25,6 +25,8 @@ defmodule Ecto.ERD.Node do
 
   @doc """
   Set a `cluster` for a given `node`.
+
+  Cluster is a group of nodes which are displayed together.
   """
   @spec set_cluster(t(), nil | String.t()) :: t()
   def set_cluster(%__MODULE__{} = node, cluster) when is_nil(cluster) or is_binary(cluster) do
