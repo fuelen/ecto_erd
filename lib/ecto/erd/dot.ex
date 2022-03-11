@@ -137,32 +137,28 @@ defmodule Ecto.ERD.Dot do
   end
 
   defp format_field(%Field{name: name}, :name), do: inspect(name)
+  defp format_field(%Field{type: type}, :type), do: format_type(type)
 
-  defp format_field(%Field{type: {:parameterized, Ecto.Enum, %{on_dump: on_dump}}}, :type) do
+  defp format_type({:parameterized, Ecto.Enum, %{on_dump: on_dump}}) do
     "#Enum<#{inspect(Map.keys(on_dump))}>"
   end
 
-  defp format_field(
-         %Field{
-           type:
-             {:parameterized, Ecto.Embedded,
-              %Ecto.Embedded{cardinality: cardinality, related: related}}
-         },
-         :type
+  defp format_type(
+         {:parameterized, Ecto.Embedded,
+          %Ecto.Embedded{cardinality: cardinality, related: related}}
        ) do
     "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
   end
 
   # format_field for older Ecto versions, this format was removed in this commit:
   # https://github.com/elixir-ecto/ecto/commit/59962034a25835a40d15d6c7d8eae23e64fd4eba
-  defp format_field(
-         %Field{
-           type: {:embed, %Ecto.Embedded{cardinality: cardinality, related: related}}
-         },
-         :type
-       ) do
+  defp format_type({:embed, %Ecto.Embedded{cardinality: cardinality, related: related}}) do
     "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
   end
 
-  defp format_field(%Field{type: type}, :type), do: inspect(type)
+  defp format_type({:array, type}) do
+    "{:array, #{format_type(type)}}"
+  end
+
+  defp format_type(type), do: inspect(type)
 end
