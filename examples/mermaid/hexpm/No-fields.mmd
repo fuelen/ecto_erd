@@ -1,0 +1,52 @@
+erDiagram
+  schema_migrations
+  audit_logs
+  emails
+  keys
+  organizations
+  organization_users
+  password_resets
+  sessions
+  users
+  blocked_addresses
+  downloads
+  installs
+  packages
+  package_dependants
+  package_downloads
+  package_owners
+  package_reports
+  package_report_comments
+  package_report_releases
+  releases
+  release_downloads
+  repositories
+  requirements
+  short_urls
+  organizations ||--|{ audit_logs : ""
+  organizations ||--|{ keys : ""
+  organizations ||--|{ organization_users : ""
+  organizations ||--o| repositories : ""
+  organizations ||--o| users : ""
+  package_reports ||--|{ package_report_comments : ""
+  package_reports ||--|{ package_report_releases : ""
+  packages ||--|{ package_dependants : ""
+  packages ||--|{ package_downloads : ""
+  packages ||--|{ package_owners : ""
+  packages ||--|{ package_reports : ""
+  packages ||--|{ releases : ""
+  packages ||--|{ requirements : ""
+  releases ||--|{ downloads : ""
+  releases ||--|{ package_report_releases : ""
+  releases ||--o| release_downloads : ""
+  releases ||--|{ requirements : ""
+  repositories ||--|{ packages : ""
+  users ||--|{ audit_logs : ""
+  users ||--|{ emails : ""
+  users ||--|{ keys : ""
+  users ||--|{ organization_users : ""
+  users ||--|{ package_owners : ""
+  users ||--|{ package_report_comments : ""
+  users ||--|{ package_reports : ""
+  users ||--|{ password_resets : ""
+  users ||--|{ releases : ""

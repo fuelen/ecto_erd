@@ -3,6 +3,7 @@ defmodule Ecto.ERD.Graph do
   alias Ecto.ERD.{Edge, Node, Field}
   defstruct [:edges, :nodes]
   require Logger
+  @type t :: %__MODULE__{}
 
   def new(modules, relation_types) do
     data =

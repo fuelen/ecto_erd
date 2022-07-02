@@ -1,0 +1,73 @@
+erDiagram
+  benefits
+  episodes
+  episode_guests
+  episode_hosts
+  episode_requests
+  episode_sponsors
+  episode_stats
+  episode_topics
+  metacasts
+  news_ads
+  news_issues
+  news_issue_ads
+  news_issue_items
+  news_items
+  news_item_comments
+  news_item_topics
+  news_queue
+  news_sources
+  news_sponsorships
+  people
+  podcasts
+  podcast_hosts
+  podcast_topics
+  posts
+  post_topics
+  sponsors
+  subscriptions
+  topics
+  schema_migrations
+  oban_jobs
+  episode_requests ||--o| episodes : ""
+  episodes ||--|{ episode_guests : ""
+  episodes ||--|{ episode_hosts : ""
+  episodes ||--|{ episode_sponsors : ""
+  episodes ||--|{ episode_stats : ""
+  episodes ||--|{ episode_topics : ""
+  news_ads ||--|{ news_issue_ads : ""
+  news_issues ||--|{ news_issue_ads : ""
+  news_issues ||--|{ news_issue_items : ""
+  news_item_comments ||--|{ news_item_comments : ""
+  news_items ||--|{ news_issue_items : ""
+  news_items ||--|{ news_item_comments : ""
+  news_items ||--|{ news_item_topics : ""
+  news_items ||--o| news_queue : ""
+  news_items ||--|{ subscriptions : ""
+  news_sources ||--|{ news_items : ""
+  news_sponsorships ||--|{ news_ads : ""
+  people ||--|{ episode_guests : ""
+  people ||--|{ episode_hosts : ""
+  people ||--|{ episode_requests : ""
+  people ||--|{ news_item_comments : ""
+  people ||--|{ news_items : ""
+  people ||--|{ news_items : ""
+  people ||--|{ news_items : ""
+  people ||--|{ podcast_hosts : ""
+  people ||--|{ posts : ""
+  people ||--|{ posts : ""
+  people ||--|{ subscriptions : ""
+  podcasts ||--|{ episode_requests : ""
+  podcasts ||--|{ episode_stats : ""
+  podcasts ||--|{ episodes : ""
+  podcasts ||--|{ podcast_hosts : ""
+  podcasts ||--|{ podcast_topics : ""
+  podcasts ||--|{ subscriptions : ""
+  posts ||--|{ post_topics : ""
+  sponsors ||--|{ benefits : ""
+  sponsors ||--|{ episode_sponsors : ""
+  sponsors ||--|{ news_sponsorships : ""
+  topics ||--|{ episode_topics : ""
+  topics ||--|{ news_item_topics : ""
+  topics ||--|{ podcast_topics : ""
+  topics ||--|{ post_topics : ""

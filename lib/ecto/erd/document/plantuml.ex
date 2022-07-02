@@ -1,12 +1,18 @@
-defmodule Ecto.ERD.PlantUML do
+defmodule Ecto.ERD.Document.PlantUML do
   @moduledoc false
   alias Ecto.ERD.{Node, Edge, Graph, Render, Color}
 
+  @behaviour Ecto.ERD.Document
   @safe_name_pattern ~r/^[a-z\d_\.:\?]+$/i
 
-  def render(%Graph{nodes: nodes, edges: edges}, options) do
-    columns = Keyword.fetch!(options, :columns)
-    fontname = Keyword.fetch!(options, :fontname)
+  @impl true
+  def schemaless?, do: false
+
+  @impl true
+  def render(%Graph{nodes: nodes, edges: edges}, opts) do
+    fontname = opts[:fontname] || "Roboto Mono"
+    columns = opts[:columns] || [:name, :type]
+
     clusters = Enum.group_by(nodes, & &1.cluster)
     {global_nodes, clusters} = Map.pop(clusters, nil)
     ensure_cluster_names_valid!(Map.keys(clusters))

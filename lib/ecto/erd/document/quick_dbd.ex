@@ -1,8 +1,13 @@
-defmodule Ecto.ERD.QuickDBD do
+defmodule Ecto.ERD.Document.QuickDBD do
   @moduledoc false
   alias Ecto.ERD.{Node, Field, Edge, Graph, Render}
+  @behaviour Ecto.ERD.Document
 
-  def render(%Graph{nodes: nodes, edges: edges}) do
+  @impl true
+  def schemaless?, do: true
+
+  @impl true
+  def render(%Graph{nodes: nodes, edges: edges}, _opts) do
     foreign_keys_mapping =
       Map.new(edges, fn %Edge{to: {to_source, _to_schema, {:field, to_field}}} = edge ->
         {{to_source, to_field}, edge}
@@ -68,8 +73,9 @@ defmodule Ecto.ERD.QuickDBD do
       :string -> "varchar"
       :binary -> "bytea"
       :map -> "jsonb"
-      {:map, _} -> "jsonb"
-      {:embed, _} -> "jsonb"
+      # TODO: remove :embed support when apps in examples won't use legacy ecto version
+      # for :map and legacy :embed. It is not written in code explicitly to shut up dialyzer
+      {_, _} -> "jsonb"
       :time_usec -> "time"
       :utc_datetime -> "timestamp"
       :utc_datetime_usec -> "timestamp"

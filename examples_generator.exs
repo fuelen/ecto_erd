@@ -2,10 +2,10 @@ defmodule Ecto.ERD.ExamplesGenerator do
   require Logger
 
   @shared_examples [
-    [name: "Default", formats: [:dbml, :dot, :qdbd, :puml]],
+    [name: "Default", formats: [:dbml, :dot, :qdbd, :puml, :mmd]],
     [
       name: "No fields",
-      formats: [:dot],
+      formats: [:dot, :mmd],
       config: """
       [
         columns: []
@@ -111,10 +111,6 @@ defmodule Ecto.ERD.ExamplesGenerator do
             ]
           ]
     },
-    "conduit" => %{
-      repo: "git@github.com:slashdotdash/conduit.git",
-      examples: @shared_examples
-    },
     "hexpm" => %{
       repo: "git@github.com:hexpm/hexpm.git",
       examples:
@@ -160,7 +156,8 @@ defmodule Ecto.ERD.ExamplesGenerator do
     dot: %{examples_dir: "examples/dot", name: "DOT", image?: true},
     dbml: %{examples_dir: "examples/dbml", name: "DBML", image?: false},
     qdbd: %{examples_dir: "examples/quick_dbd", name: "QuickDBD", image?: false},
-    puml: %{examples_dir: "examples/plantuml", name: "PlantUML", image?: true}
+    puml: %{examples_dir: "examples/plantuml", name: "PlantUML", image?: true},
+    mmd: %{examples_dir: "examples/mermaid", name: "Mermaid", image?: false}
   }
 
   def run(source_url_root) do
@@ -267,6 +264,12 @@ defmodule Ecto.ERD.ExamplesGenerator do
          )}
     end)
     |> Enum.each(fn {format, output_path} ->
+      old_output_content =
+        case File.read(output_path) do
+          {:ok, content} -> content
+          {:error, _} -> nil
+        end
+
       if example[:config] do
         config_path = Path.expand(Path.join(["tmp/config_files", project_name, slug <> ".exs"]))
         File.write!(config_path, example[:config])
@@ -286,7 +289,12 @@ defmodule Ecto.ERD.ExamplesGenerator do
         )
       end
 
-      if @formats[format].image? do
+      {:ok, new_output_content} = File.read(output_path)
+
+      if @formats[format].image? and
+           (old_output_content != new_output_content or
+              not File.exists?(Path.rootname(output_path) <> ".png")) do
+        Logger.debug("Generating image from #{output_path}")
         generate_image(format, output_path)
       end
     end)
@@ -299,7 +307,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
   end
 
   defp generate_image(:puml, file) do
-    System.cmd("plantuml", [file], env: %{"PLANTUML_LIMIT_SIZE"=> "8192"})
+    System.cmd("plantuml", [file], env: %{"PLANTUML_LIMIT_SIZE" => "8192"})
   end
 
   defp init_project(project_name, repo) do

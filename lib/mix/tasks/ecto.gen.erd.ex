@@ -7,6 +7,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   * [PlantUML](#module-plantuml)
   * [DBML](#module-dbml)
   * [QuickDBD](#module-quickdbd)
+  * [Mermaid](#module-mermaid)
 
   Configuration examples and output for a couple of open-source projects can be found in EXAMPLES group of PAGES section.
 
@@ -62,6 +63,21 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   ```
   $ mix ecto.gen.erd --output-path=ecto_erd.qdbd
   ```
+  ## Mermaid
+
+  [Mermaid](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram) is also limited, comparing to [DOT](#module-dot) and [PlantUML](#module-plantuml), and focused on tables only.
+  Multiple schemas that use the same table are merged into one table. Embedded schemas, cannot be displayed.
+  Clusters are not supported.
+  The benefit of this format is that it is [supported by Github](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/).
+  ```
+  $ mix ecto.gen.erd --output-path=ecto_erd.mmd
+  ```
+  If you have installed [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) locally, the output `*.mmd` file can be
+  coverted to image using the following command:
+  ```
+  $ mmdc -i ecto_erd.mmd -o erd.png -w 6000 -H 6000
+  ```
+  Default `-w` and `-H` values are quite small (`800` and `600` respectively), so it is better to provide bigger values from the very beginning.
 
   ## Command line options
 
@@ -78,20 +94,24 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   * `:fontname` - font name, defaults to `Roboto Mono`. Must be monospaced font if output format is `dot` and more than 1 column is displayed.
   The option is only supported for `dot` and `puml` files.
   * `:columns` - list of columns which will be displayed for each node (schema/source). Set to `[]` to hide fields completelly.
-  Available columns: `:name` and `:type`. Defaults to `[:name, :type]`.  The option is only supported for `dot` and `puml` files.
+  Available columns: `:name` and `:type`. The option is only supported for `dot`, `puml` and `mmd`(`mmd` only allows usage of `[]` and the default value).
+  Default values:
+    * `[:name, :type]` for `dot` and `puml`.
+    * `[:type, :name]` for `mmd`
   * `:map_node` - function which allows to remove the node from the diagram or to move the node to the cluster. Defaults to `Function.identity/1`,
   which means that all nodes should be displayed and all of them are outside any cluster.
-  Use `Ecto.ERD.Node.set_cluster/2` in this function to set a cluster (not supported by [QuickDBD](#module-quickdbd)).
-  In order to remove the node, the function must return `nil`.
+  Use `Ecto.ERD.Node.set_cluster/2` in this function to set a cluster. Only supported by [DOT](#module-dot), [PlantUML](#module-plantuml)
+  and [DBML](#module-dbml).
+  In order to remove the node from diagram, the function must return `nil`.
   * `:otp_app` - an application which will be scanned alongside with dependent applications in order to get a list of Ecto schemas.
   Defaults to `Mix.Project.config()[:app]`. You need to configure this option only if you run a task from the umbrella root.
 
-  Default values can be represented as follows:
+  Configuration file file with default values for `dot` and `puml` can be represented as follows:
 
       # .ecto_erd.exs
       [
-        fontname: "Roboto Mono", # used only by dot and puml
-        columns: [:name, :type], # used only by dot and puml
+        fontname: "Roboto Mono",
+        columns: [:name, :type],
         map_node: &Function.identity/1,
         otp_app: Mix.Project.config()[:app]
       ]
@@ -126,47 +146,14 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
     output_path = cli_opts[:output_path] || file_opts[:output_path] || "ecto_erd.dot"
     map_node_callback = file_opts[:map_node] || (&Function.identity/1)
 
-    schema_modules = Ecto.ERD.SchemaModules.scan(otp_app)
-
     output =
-      case Path.extname(output_path) do
-        ".dot" ->
-          fontname = file_opts[:fontname] || "Roboto Mono"
-          columns = file_opts[:columns] || [:name, :type]
-
-          schema_modules
-          |> Ecto.ERD.Graph.new([:associations, :embeds])
-          |> Ecto.ERD.Graph.map_nodes(map_node_callback)
-          |> Ecto.ERD.Graph.sort()
-          |> Ecto.ERD.Dot.render(fontname: fontname, columns: columns)
-
-
-        ".puml" ->
-          fontname = file_opts[:fontname] || "Roboto Mono"
-          columns = file_opts[:columns] || [:name, :type]
-
-          schema_modules
-          |> Ecto.ERD.Graph.new([:associations, :embeds])
-          |> Ecto.ERD.Graph.map_nodes(map_node_callback)
-          |> Ecto.ERD.Graph.sort()
-          |> Ecto.ERD.PlantUML.render(fontname: fontname, columns: columns)
-
-        ".dbml" ->
-          schema_modules
-          |> Ecto.ERD.Graph.new([:associations])
-          |> Ecto.ERD.Graph.map_nodes(map_node_callback)
-          |> Ecto.ERD.Graph.make_schemaless()
-          |> Ecto.ERD.Graph.sort()
-          |> Ecto.ERD.DBML.render()
-
-        ".qdbd" ->
-          schema_modules
-          |> Ecto.ERD.Graph.new([:associations])
-          |> Ecto.ERD.Graph.map_nodes(map_node_callback)
-          |> Ecto.ERD.Graph.make_schemaless()
-          |> Ecto.ERD.Graph.sort()
-          |> Ecto.ERD.QuickDBD.render()
-      end
+      otp_app
+      |> Ecto.ERD.SchemaModules.scan()
+      |> Ecto.ERD.Document.render(
+        Path.extname(output_path),
+        map_node_callback,
+        Keyword.take(file_opts, [:fontname, :columns])
+      )
 
     File.write!(output_path, output)
   end

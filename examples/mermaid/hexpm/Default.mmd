@@ -1,0 +1,219 @@
+erDiagram
+  schema_migrations {
+    integer version
+    timestamp inserted_at
+  }
+  audit_logs {
+    integer id PK
+    varchar user_agent
+    varchar action
+    jsonb params
+    integer user_id
+    integer organization_id
+    timestamp inserted_at
+  }
+  emails {
+    integer id PK
+    varchar email
+    boolean verified
+    boolean primary
+    boolean public
+    boolean gravatar
+    varchar verification_key
+    timestamp verification_expiry
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  keys {
+    integer id PK
+    varchar name
+    varchar secret_first
+    varchar secret_second
+    boolean public
+    timestamp revoke_at
+    timestamp revoked_at
+    timestamp inserted_at
+    timestamp updated_at
+    jsonb last_use
+    integer user_id
+    integer organization_id
+    jsonb permissions
+  }
+  organizations {
+    integer id PK
+    varchar name
+    boolean billing_active
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  organization_users {
+    integer id PK
+    varchar role
+    integer organization_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  password_resets {
+    integer id PK
+    varchar key
+    varchar primary_email
+    integer user_id
+    timestamp inserted_at
+  }
+  sessions {
+    integer id PK
+    bytea token
+    jsonb data
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  users {
+    integer id PK
+    varchar username
+    varchar full_name
+    varchar password
+    boolean service
+    timestamp deactivated_at
+    varchar role
+    timestamp inserted_at
+    timestamp updated_at
+    jsonb handles
+    jsonb tfa
+    integer organization_id
+  }
+  blocked_addresses {
+    integer id PK
+    varchar ip
+    varchar comment
+  }
+  downloads {
+    integer id PK
+    integer release_id
+    integer downloads
+    date day
+  }
+  installs {
+    integer id PK
+    varchar hex
+    array elixirs
+  }
+  packages {
+    integer id PK
+    varchar name
+    timestamp docs_updated_at
+    timestamp inserted_at
+    timestamp updated_at
+    integer repository_id
+    jsonb meta
+  }
+  package_dependants {
+    integer id PK
+    integer package_id
+    varchar name
+    varchar repo
+  }
+  package_downloads {
+    integer package_id
+    varchar view
+    integer downloads
+  }
+  package_owners {
+    integer id PK
+    varchar level
+    integer package_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  package_reports {
+    integer id PK
+    varchar state
+    varchar description
+    integer author_id
+    integer package_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  package_report_comments {
+    integer id PK
+    varchar text
+    timestamp inserted_at
+    timestamp updated_at
+    integer package_report_id
+    integer author_id
+  }
+  package_report_releases {
+    integer id PK
+    integer release_id
+    integer package_report_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  releases {
+    integer id PK
+    varchar version
+    bytea inner_checksum
+    bytea outer_checksum
+    boolean has_docs
+    timestamp inserted_at
+    timestamp updated_at
+    integer package_id
+    integer publisher_id
+    jsonb meta
+    jsonb retirement
+  }
+  release_downloads {
+    integer release_id
+    integer downloads
+  }
+  repositories {
+    integer id PK
+    varchar name
+    boolean public
+    timestamp inserted_at
+    timestamp updated_at
+    integer organization_id
+  }
+  requirements {
+    integer id PK
+    varchar app
+    varchar requirement
+    boolean optional
+    integer release_id
+    integer dependency_id
+  }
+  short_urls {
+    integer id PK
+    varchar url
+    varchar short_code
+    timestamp inserted_at
+  }
+  organizations ||--|{ audit_logs : ""
+  organizations ||--|{ keys : ""
+  organizations ||--|{ organization_users : ""
+  organizations ||--o| repositories : ""
+  organizations ||--o| users : ""
+  package_reports ||--|{ package_report_comments : ""
+  package_reports ||--|{ package_report_releases : ""
+  packages ||--|{ package_dependants : ""
+  packages ||--|{ package_downloads : ""
+  packages ||--|{ package_owners : ""
+  packages ||--|{ package_reports : ""
+  packages ||--|{ releases : ""
+  packages ||--|{ requirements : ""
+  releases ||--|{ downloads : ""
+  releases ||--|{ package_report_releases : ""
+  releases ||--o| release_downloads : ""
+  releases ||--|{ requirements : ""
+  repositories ||--|{ packages : ""
+  users ||--|{ audit_logs : ""
+  users ||--|{ emails : ""
+  users ||--|{ keys : ""
+  users ||--|{ organization_users : ""
+  users ||--|{ package_owners : ""
+  users ||--|{ package_report_comments : ""
+  users ||--|{ package_reports : ""
+  users ||--|{ password_resets : ""
+  users ||--|{ releases : ""

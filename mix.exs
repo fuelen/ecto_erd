@@ -11,7 +11,7 @@ end
 defmodule Ecto.ERD.MixProject do
   use Mix.Project
   @source_url "https://github.com/fuelen/ecto_erd/"
-  @version "0.4.2"
+  @version "0.5.0"
 
   def project do
     [
@@ -24,7 +24,8 @@ defmodule Ecto.ERD.MixProject do
       description: description(),
       name: "Ecto ERD",
       docs: docs(),
-      aliases: [docs: [&generate_examples/1, "docs"]]
+      aliases: [docs: [&generate_examples/1, "docs"]],
+      dialyzer: [plt_add_apps: [:mix]]
     ]
   end
 
@@ -74,7 +75,8 @@ defmodule Ecto.ERD.MixProject do
     [
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:html_entities, "~> 0.5"},
-      {:ecto, "~> 3.3"}
+      {:ecto, "~> 3.3"},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 end

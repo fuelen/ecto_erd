@@ -1,10 +1,15 @@
-defmodule Ecto.ERD.Dot do
+defmodule Ecto.ERD.Document.Dot do
   @moduledoc false
   alias Ecto.ERD.{HTML, Edge, Node, Field, Graph, Render}
+  @behaviour Ecto.ERD.Document
 
+  @impl true
+  def schemaless?, do: false
+
+  @impl true
   def render(%Graph{nodes: nodes, edges: edges}, opts) do
-    fontname = Keyword.fetch!(opts, :fontname)
-    columns = Keyword.fetch!(opts, :columns)
+    fontname = opts[:fontname] || "Roboto Mono"
+    columns = opts[:columns] || [:name, :type]
 
     clusters = Enum.group_by(nodes, & &1.cluster)
     {global_nodes, clusters} = Map.pop(clusters, nil)
@@ -140,7 +145,7 @@ defmodule Ecto.ERD.Dot do
   defp format_field(%Field{type: type}, :type), do: format_type(type)
 
   defp format_type({:parameterized, Ecto.Enum, %{on_dump: on_dump}}) do
-    "#Enum<#{inspect(Map.keys(on_dump))}>"
+    "#Enum<#{inspect(Enum.sort(Map.keys(on_dump)))}>"
   end
 
   defp format_type(
@@ -150,6 +155,7 @@ defmodule Ecto.ERD.Dot do
     "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
   end
 
+  # TODO: remove {:embed, _} support when apps in examples won't use legacy ecto version.
   # format_field for older Ecto versions, this format was removed in this commit:
   # https://github.com/elixir-ecto/ecto/commit/59962034a25835a40d15d6c7d8eae23e64fd4eba
   defp format_type({:embed, %Ecto.Embedded{cardinality: cardinality, related: related}}) do

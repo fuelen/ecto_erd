@@ -1,0 +1,550 @@
+erDiagram
+  accounts {
+    uuid id PK
+    varchar company_name
+    varchar company_logo_url
+    varchar time_zone
+    varchar subscription_plan
+    varchar stripe_customer_id
+    varchar stripe_subscription_id
+    varchar stripe_product_id
+    varchar stripe_default_payment_method_id
+    jsonb settings
+    jsonb working_hours
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  personal_api_keys {
+    uuid id PK
+    varchar label
+    varchar value
+    timestamp last_used_at
+    uuid account_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  pow_sessions {
+    varchar namespace
+    array key
+    bytea original_key
+    bytea value
+    timestamp expires_at
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  browser_replay_events {
+    uuid id PK
+    jsonb event
+    timestamp timestamp
+    uuid account_id
+    uuid browser_session_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  browser_sessions {
+    uuid id PK
+    timestamp finished_at
+    timestamp started_at
+    jsonb metadata
+    uuid account_id
+    uuid customer_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  canned_responses {
+    uuid id PK
+    varchar content
+    varchar name
+    uuid account_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  companies {
+    uuid id PK
+    varchar name
+    varchar description
+    varchar external_id
+    varchar website_url
+    varchar industry
+    varchar logo_image_url
+    varchar slack_channel_id
+    varchar slack_channel_name
+    varchar slack_team_id
+    varchar slack_team_name
+    jsonb metadata
+    uuid account_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  conversations {
+    uuid id PK
+    varchar status
+    varchar priority
+    varchar source
+    varchar subject
+    boolean read
+    timestamp archived_at
+    timestamp first_replied_at
+    timestamp closed_at
+    timestamp last_activity_at
+    jsonb metadata
+    integer assignee_id
+    uuid account_id
+    uuid customer_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  customers {
+    uuid id PK
+    date first_seen
+    varchar email
+    varchar name
+    varchar phone
+    varchar external_id
+    varchar profile_photo_url
+    varchar browser
+    varchar browser_version
+    varchar browser_language
+    varchar os
+    varchar ip
+    timestamp last_seen_at
+    varchar current_url
+    varchar host
+    varchar pathname
+    integer screen_height
+    integer screen_width
+    varchar lib
+    varchar time_zone
+    jsonb metadata
+    uuid account_id
+    uuid company_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  event_subscriptions {
+    uuid id PK
+    varchar scope
+    varchar webhook_url
+    boolean verified
+    uuid account_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  files {
+    uuid id PK
+    varchar filename
+    varchar file_url
+    varchar unique_filename
+    varchar content_type
+    uuid account_id
+    uuid customer_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  github_authorizations {
+    uuid id PK
+    varchar access_token
+    timestamp access_token_expires_at
+    varchar refresh_token
+    timestamp refresh_token_expires_at
+    varchar token_type
+    varchar scope
+    varchar github_installation_id
+    jsonb metadata
+    jsonb settings
+    uuid account_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  gmail_conversation_threads {
+    uuid id PK
+    varchar gmail_thread_id
+    varchar gmail_initial_subject
+    varchar last_gmail_message_id
+    varchar last_gmail_history_id
+    timestamp last_synced_at
+    jsonb metadata
+    uuid account_id
+    uuid conversation_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  google_authorizations {
+    uuid id PK
+    varchar client
+    varchar access_token
+    varchar refresh_token
+    varchar token_type
+    integer expires_at
+    varchar scope
+    varchar type
+    jsonb metadata
+    jsonb settings
+    uuid account_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  conversation_issues {
+    uuid id PK
+    uuid account_id
+    uuid conversation_id
+    uuid issue_id
+    integer creator_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  customer_issues {
+    uuid id PK
+    uuid account_id
+    uuid customer_id
+    uuid issue_id
+    integer creator_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  issues {
+    uuid id PK
+    varchar title
+    varchar body
+    varchar state
+    timestamp finished_at
+    timestamp closed_at
+    varchar github_issue_url
+    jsonb metadata
+    uuid account_id
+    integer creator_id
+    integer assignee_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  lambdas {
+    uuid id PK
+    varchar code
+    varchar description
+    varchar language
+    timestamp last_deployed_at
+    timestamp last_executed_at
+    jsonb metadata
+    varchar name
+    varchar runtime
+    varchar status
+    varchar lambda_function_name
+    varchar lambda_function_handler
+    varchar lambda_revision_id
+    varchar lambda_last_update_status
+    uuid account_id
+    integer creator_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  mattermost_authorizations {
+    uuid id PK
+    varchar access_token
+    varchar refresh_token
+    varchar bot_token
+    varchar verification_token
+    varchar mattermost_url
+    varchar channel_id
+    varchar channel_name
+    varchar team_id
+    varchar team_domain
+    varchar webhook_url
+    varchar scope
+    jsonb metadata
+    jsonb settings
+    uuid account_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  mattermost_conversation_threads {
+    uuid id PK
+    varchar mattermost_channel_id
+    varchar mattermost_post_root_id
+    uuid account_id
+    uuid conversation_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  mentions {
+    uuid id PK
+    timestamp seen_at
+    uuid account_id
+    uuid conversation_id
+    uuid message_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  messages {
+    uuid id PK
+    varchar body
+    timestamp sent_at
+    timestamp seen_at
+    varchar source
+    varchar type
+    varchar subject
+    boolean private
+    jsonb metadata
+    uuid conversation_id
+    uuid account_id
+    uuid customer_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  message_files {
+    uuid id PK
+    uuid message_id
+    uuid file_id
+    uuid account_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  notes {
+    uuid id PK
+    varchar body
+    uuid account_id
+    uuid customer_id
+    integer author_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  slack_authorizations {
+    uuid id PK
+    varchar access_token
+    varchar type
+    varchar app_id
+    varchar authed_user_id
+    varchar bot_user_id
+    varchar channel
+    varchar channel_id
+    varchar configuration_url
+    varchar scope
+    varchar team_id
+    varchar team_name
+    varchar token_type
+    varchar webhook_url
+    jsonb metadata
+    jsonb settings
+    uuid account_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  slack_conversation_threads {
+    uuid id PK
+    varchar slack_channel
+    varchar slack_team
+    varchar slack_thread_ts
+    uuid account_id
+    uuid conversation_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  conversation_tags {
+    uuid id PK
+    uuid account_id
+    uuid conversation_id
+    uuid tag_id
+    integer creator_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  customer_tags {
+    uuid id PK
+    uuid account_id
+    uuid customer_id
+    uuid tag_id
+    integer creator_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  tags {
+    uuid id PK
+    varchar name
+    varchar description
+    varchar color
+    uuid account_id
+    integer creator_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  twilio_authorizations {
+    uuid id PK
+    varchar twilio_auth_token
+    varchar twilio_account_sid
+    varchar from_phone_number
+    jsonb metadata
+    jsonb settings
+    uuid account_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  user_invitations {
+    uuid id PK
+    timestamp expires_at
+    uuid account_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  users {
+    integer id PK
+    varchar email_confirmation_token
+    varchar password_reset_token
+    timestamp email_confirmed_at
+    timestamp disabled_at
+    timestamp archived_at
+    varchar role
+    boolean has_valid_email
+    uuid account_id
+    varchar password_hash
+    varchar email
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  user_profiles {
+    uuid id PK
+    varchar display_name
+    varchar full_name
+    varchar profile_photo_url
+    varchar slack_user_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  user_settings {
+    uuid id PK
+    boolean email_alert_on_new_message
+    varchar expo_push_token
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  widget_settings {
+    uuid id PK
+    varchar title
+    varchar subtitle
+    varchar color
+    varchar greeting
+    varchar new_message_placeholder
+    boolean show_agent_availability
+    varchar agent_available_text
+    varchar agent_unavailable_text
+    boolean require_email_upfront
+    boolean is_open_by_default
+    boolean is_branding_hidden
+    varchar custom_icon_url
+    varchar iframe_url_override
+    varchar icon_variant
+    varchar email_input_placeholder
+    varchar new_messages_notification_text
+    varchar base_url
+    varchar away_message
+    varchar host
+    varchar pathname
+    timestamp last_seen_at
+    uuid account_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  schema_migrations {
+    integer version
+    timestamp inserted_at
+  }
+  oban_jobs {
+    integer id PK
+    varchar state
+    varchar queue
+    varchar worker
+    jsonb args
+    array errors
+    array tags
+    integer attempt
+    array attempted_by
+    integer max_attempts
+    integer priority
+    timestamp attempted_at
+    timestamp completed_at
+    timestamp discarded_at
+    timestamp inserted_at
+    timestamp scheduled_at
+  }
+  accounts ||--|{ browser_replay_events : ""
+  accounts ||--|{ browser_sessions : ""
+  accounts ||--|{ canned_responses : ""
+  accounts ||--|{ companies : ""
+  accounts ||--|{ conversation_issues : ""
+  accounts ||--|{ conversation_tags : ""
+  accounts ||--|{ conversations : ""
+  accounts ||--|{ customer_issues : ""
+  accounts ||--|{ customer_tags : ""
+  accounts ||--|{ customers : ""
+  accounts ||--|{ event_subscriptions : ""
+  accounts ||--|{ files : ""
+  accounts ||--|{ github_authorizations : ""
+  accounts ||--|{ gmail_conversation_threads : ""
+  accounts ||--|{ google_authorizations : ""
+  accounts ||--|{ issues : ""
+  accounts ||--|{ lambdas : ""
+  accounts ||--|{ mattermost_authorizations : ""
+  accounts ||--|{ mattermost_conversation_threads : ""
+  accounts ||--|{ mentions : ""
+  accounts ||--|{ message_files : ""
+  accounts ||--|{ messages : ""
+  accounts ||--|{ notes : ""
+  accounts ||--|{ personal_api_keys : ""
+  accounts ||--|{ slack_authorizations : ""
+  accounts ||--|{ slack_conversation_threads : ""
+  accounts ||--|{ tags : ""
+  accounts ||--|{ twilio_authorizations : ""
+  accounts ||--|{ user_invitations : ""
+  accounts ||--|{ users : ""
+  accounts ||--o| widget_settings : ""
+  browser_sessions ||--|{ browser_replay_events : ""
+  companies ||--|{ customers : ""
+  conversations ||--|{ conversation_issues : ""
+  conversations ||--|{ conversation_tags : ""
+  conversations ||--|{ gmail_conversation_threads : ""
+  conversations ||--|{ mattermost_conversation_threads : ""
+  conversations ||--|{ mentions : ""
+  conversations ||--|{ messages : ""
+  conversations ||--|{ slack_conversation_threads : ""
+  customers ||--|{ browser_sessions : ""
+  customers ||--|{ conversations : ""
+  customers ||--|{ customer_issues : ""
+  customers ||--|{ customer_tags : ""
+  customers ||--|{ files : ""
+  customers ||--|{ messages : ""
+  customers ||--|{ notes : ""
+  files ||--|{ message_files : ""
+  issues ||--|{ conversation_issues : ""
+  issues ||--|{ customer_issues : ""
+  messages ||--|{ mentions : ""
+  messages ||--|{ message_files : ""
+  tags ||--|{ conversation_tags : ""
+  tags ||--|{ customer_tags : ""
+  users ||--|{ conversation_issues : ""
+  users ||--|{ conversation_tags : ""
+  users ||--|{ conversations : ""
+  users ||--|{ customer_issues : ""
+  users ||--|{ customer_tags : ""
+  users ||--|{ files : ""
+  users ||--|{ github_authorizations : ""
+  users ||--|{ google_authorizations : ""
+  users ||--|{ issues : ""
+  users ||--|{ issues : ""
+  users ||--|{ lambdas : ""
+  users ||--|{ mattermost_authorizations : ""
+  users ||--|{ mentions : ""
+  users ||--|{ messages : ""
+  users ||--|{ notes : ""
+  users ||--|{ personal_api_keys : ""
+  users ||--|{ tags : ""
+  users ||--|{ twilio_authorizations : ""
+  users ||--o| user_profiles : ""
+  users ||--o| user_settings : ""

@@ -1,0 +1,427 @@
+erDiagram
+  benefits {
+    integer id PK
+    varchar offer
+    varchar code
+    varchar link_url
+    varchar notes
+    integer sponsor_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  episodes {
+    integer id PK
+    varchar slug
+    varchar guid
+    varchar title
+    varchar subtitle
+    integer type
+    boolean featured
+    varchar highlight
+    varchar subhighlight
+    varchar summary
+    varchar notes
+    varchar doc_url
+    boolean published
+    timestamp published_at
+    timestamp recorded_at
+    boolean recorded_live
+    varchar youtube_id
+    varchar audio_file
+    integer audio_bytes
+    integer audio_duration
+    varchar plusplus_file
+    integer plusplus_bytes
+    integer plusplus_duration
+    float download_count
+    float import_count
+    integer reach_count
+    array transcript
+    integer podcast_id
+    integer request_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  episode_guests {
+    integer id PK
+    integer position
+    boolean thanks
+    varchar discount_code
+    integer episode_id
+    integer person_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  episode_hosts {
+    integer id PK
+    integer position
+    integer person_id
+    integer episode_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  episode_requests {
+    integer id PK
+    integer status
+    varchar hosts
+    varchar guests
+    varchar topics
+    varchar pitch
+    varchar pronunciation
+    varchar decline_message
+    integer podcast_id
+    integer submitter_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  episode_sponsors {
+    integer id PK
+    integer position
+    varchar title
+    varchar link_url
+    varchar description
+    integer episode_id
+    integer sponsor_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  episode_stats {
+    integer id PK
+    date date
+    integer episode_bytes
+    integer total_bytes
+    float downloads
+    integer uniques
+    jsonb demographics
+    integer episode_id
+    integer podcast_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  episode_topics {
+    integer id PK
+    integer position
+    integer topic_id
+    integer episode_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  metacasts {
+    integer id PK
+    varchar name
+    varchar description
+    varchar keywords
+    varchar slug
+    boolean is_official
+    varchar cover
+    varchar filter_query
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_ads {
+    integer id PK
+    varchar url
+    varchar headline
+    varchar story
+    varchar image
+    boolean active
+    boolean newsletter
+    integer impression_count
+    integer click_count
+    integer sponsorship_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_issues {
+    integer id PK
+    varchar slug
+    varchar note
+    varchar teaser
+    boolean published
+    timestamp published_at
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_issue_ads {
+    integer id PK
+    integer position
+    boolean image
+    integer ad_id
+    integer issue_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_issue_items {
+    integer id PK
+    integer position
+    boolean image
+    integer issue_id
+    integer item_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_items {
+    integer id PK
+    integer status
+    integer type
+    varchar url
+    varchar headline
+    varchar story
+    varchar image
+    varchar object_id
+    boolean feed_only
+    boolean pinned
+    timestamp published_at
+    timestamp refreshed_at
+    integer impression_count
+    integer click_count
+    varchar decline_message
+    integer author_id
+    integer logger_id
+    integer submitter_id
+    integer source_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_item_comments {
+    integer id PK
+    varchar content
+    boolean approved
+    timestamp edited_at
+    timestamp deleted_at
+    integer item_id
+    integer author_id
+    integer parent_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_item_topics {
+    integer id PK
+    integer position
+    integer item_id
+    integer topic_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_queue {
+    integer id PK
+    float position
+    integer item_id
+  }
+  news_sources {
+    integer id PK
+    varchar name
+    varchar slug
+    varchar website
+    varchar twitter_handle
+    varchar description
+    varchar feed
+    varchar regex
+    varchar icon
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  news_sponsorships {
+    integer id PK
+    varchar name
+    array weeks
+    integer impression_count
+    integer click_count
+    integer sponsor_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  people {
+    integer id PK
+    varchar name
+    varchar email
+    varchar handle
+    varchar github_handle
+    varchar linkedin_handle
+    varchar twitter_handle
+    varchar slack_id
+    varchar website
+    varchar bio
+    varchar location
+    varchar auth_token
+    timestamp auth_token_expires_at
+    timestamp joined_at
+    timestamp signed_in_at
+    boolean approved
+    varchar avatar
+    boolean admin
+    boolean host
+    boolean editor
+    boolean public_profile
+    jsonb settings
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  podcasts {
+    integer id PK
+    varchar name
+    varchar slug
+    integer status
+    varchar welcome
+    varchar description
+    varchar extended_description
+    varchar vanity_domain
+    varchar keywords
+    varchar twitter_handle
+    varchar apple_url
+    varchar spotify_url
+    varchar riverside_url
+    varchar schedule_note
+    float download_count
+    integer reach_count
+    boolean recorded_live
+    boolean partner
+    integer position
+    jsonb subscribers
+    varchar cover
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  podcast_hosts {
+    integer id PK
+    integer position
+    boolean retired
+    integer person_id
+    integer podcast_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  podcast_topics {
+    integer id PK
+    integer position
+    integer podcast_id
+    integer topic_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  posts {
+    integer id PK
+    varchar title
+    varchar subtitle
+    varchar slug
+    varchar guid
+    varchar canonical_url
+    varchar image
+    varchar tldr
+    varchar body
+    boolean published
+    timestamp published_at
+    integer author_id
+    integer editor_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  post_topics {
+    integer id PK
+    integer position
+    integer topic_id
+    integer post_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  sponsors {
+    integer id PK
+    varchar name
+    varchar description
+    varchar website
+    varchar github_handle
+    varchar twitter_handle
+    varchar avatar
+    varchar color_logo
+    varchar dark_logo
+    varchar light_logo
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  subscriptions {
+    integer id PK
+    timestamp unsubscribed_at
+    varchar context
+    integer person_id
+    integer podcast_id
+    integer item_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  topics {
+    integer id PK
+    varchar name
+    varchar slug
+    varchar description
+    varchar website
+    varchar twitter_handle
+    varchar icon
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  schema_migrations {
+    integer version
+    timestamp inserted_at
+  }
+  oban_jobs {
+    integer id PK
+    varchar state
+    varchar queue
+    varchar worker
+    jsonb args
+    jsonb meta
+    array tags
+    array errors
+    integer attempt
+    array attempted_by
+    integer max_attempts
+    integer priority
+    timestamp attempted_at
+    timestamp cancelled_at
+    timestamp completed_at
+    timestamp discarded_at
+    timestamp inserted_at
+    timestamp scheduled_at
+  }
+  episode_requests ||--o| episodes : ""
+  episodes ||--|{ episode_guests : ""
+  episodes ||--|{ episode_hosts : ""
+  episodes ||--|{ episode_sponsors : ""
+  episodes ||--|{ episode_stats : ""
+  episodes ||--|{ episode_topics : ""
+  news_ads ||--|{ news_issue_ads : ""
+  news_issues ||--|{ news_issue_ads : ""
+  news_issues ||--|{ news_issue_items : ""
+  news_item_comments ||--|{ news_item_comments : ""
+  news_items ||--|{ news_issue_items : ""
+  news_items ||--|{ news_item_comments : ""
+  news_items ||--|{ news_item_topics : ""
+  news_items ||--o| news_queue : ""
+  news_items ||--|{ subscriptions : ""
+  news_sources ||--|{ news_items : ""
+  news_sponsorships ||--|{ news_ads : ""
+  people ||--|{ episode_guests : ""
+  people ||--|{ episode_hosts : ""
+  people ||--|{ episode_requests : ""
+  people ||--|{ news_item_comments : ""
+  people ||--|{ news_items : ""
+  people ||--|{ news_items : ""
+  people ||--|{ news_items : ""
+  people ||--|{ podcast_hosts : ""
+  people ||--|{ posts : ""
+  people ||--|{ posts : ""
+  people ||--|{ subscriptions : ""
+  podcasts ||--|{ episode_requests : ""
+  podcasts ||--|{ episode_stats : ""
+  podcasts ||--|{ episodes : ""
+  podcasts ||--|{ podcast_hosts : ""
+  podcasts ||--|{ podcast_topics : ""
+  podcasts ||--|{ subscriptions : ""
+  posts ||--|{ post_topics : ""
+  sponsors ||--|{ benefits : ""
+  sponsors ||--|{ episode_sponsors : ""
+  sponsors ||--|{ news_sponsorships : ""
+  topics ||--|{ episode_topics : ""
+  topics ||--|{ news_item_topics : ""
+  topics ||--|{ podcast_topics : ""
+  topics ||--|{ post_topics : ""

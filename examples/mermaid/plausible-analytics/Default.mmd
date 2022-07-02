@@ -1,0 +1,221 @@
+erDiagram
+  schema_migrations {
+    integer version
+    timestamp inserted_at
+  }
+  oban_jobs {
+    integer id PK
+    varchar state
+    varchar queue
+    varchar worker
+    jsonb args
+    jsonb meta
+    array tags
+    array errors
+    integer attempt
+    array attempted_by
+    integer max_attempts
+    integer priority
+    timestamp attempted_at
+    timestamp cancelled_at
+    timestamp completed_at
+    timestamp discarded_at
+    timestamp inserted_at
+    timestamp scheduled_at
+  }
+  api_keys {
+    integer id PK
+    varchar name
+    array scopes
+    integer hourly_request_limit
+    varchar key_hash
+    varchar key_prefix
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  invitations {
+    integer id PK
+    varchar invitation_id
+    varchar email
+    varchar role
+    integer inviter_id
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  users {
+    integer id PK
+    varchar email
+    varchar password_hash
+    varchar name
+    timestamp last_seen
+    date trial_expiry_date
+    varchar theme
+    boolean email_verified
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  subscriptions {
+    integer id PK
+    varchar paddle_subscription_id
+    varchar paddle_plan_id
+    varchar update_url
+    varchar cancel_url
+    varchar status
+    varchar next_bill_amount
+    date next_bill_date
+    date last_bill_date
+    varchar currency_code
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  events {
+    varchar name
+    varchar domain
+    varchar hostname
+    varchar pathname
+    integer user_id
+    integer session_id
+    timestamp timestamp
+    varchar referrer
+    varchar referrer_source
+    varchar utm_medium
+    varchar utm_source
+    varchar utm_campaign
+    varchar country_code
+    varchar screen_size
+    varchar operating_system
+    varchar operating_system_version
+    varchar browser
+    varchar browser_version
+  }
+  sessions {
+    varchar hostname
+    varchar domain
+    integer user_id
+    integer session_id
+    timestamp start
+    integer duration
+    boolean is_bounce
+    varchar entry_page
+    varchar exit_page
+    integer pageviews
+    integer events
+    integer sign
+    varchar utm_medium
+    varchar utm_source
+    varchar utm_campaign
+    varchar referrer
+    varchar referrer_source
+    varchar country_code
+    varchar screen_size
+    varchar operating_system
+    varchar operating_system_version
+    varchar browser
+    varchar browser_version
+    timestamp timestamp
+  }
+  goals {
+    integer id PK
+    varchar domain
+    varchar event_name
+    varchar page_path
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  sites {
+    integer id PK
+    varchar domain
+    varchar timezone
+    boolean public
+    boolean locked
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  custom_domains {
+    integer id PK
+    varchar domain
+    boolean has_ssl_certificate
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  google_auth {
+    integer id PK
+    varchar email
+    varchar property
+    varchar refresh_token
+    varchar access_token
+    timestamp expires
+    integer user_id
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  site_memberships {
+    integer id PK
+    varchar role
+    integer site_id
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  monthly_reports {
+    integer id PK
+    array recipients
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  shared_links {
+    integer id PK
+    integer site_id
+    varchar name
+    varchar slug
+    varchar password_hash
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  spike_notifications {
+    integer id PK
+    array recipients
+    integer threshold
+    timestamp last_sent
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  weekly_reports {
+    integer id PK
+    array recipients
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  tweets {
+    integer id PK
+    varchar link
+    varchar tweet_id
+    varchar author_handle
+    varchar author_name
+    varchar author_image
+    varchar text
+    timestamp created
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  sites ||--o| custom_domains : ""
+  sites ||--o| google_auth : ""
+  sites ||--|{ invitations : ""
+  sites ||--o| monthly_reports : ""
+  sites ||--|{ shared_links : ""
+  sites ||--|{ site_memberships : ""
+  sites ||--o| spike_notifications : ""
+  sites ||--o| weekly_reports : ""
+  users ||--|{ api_keys : ""
+  users ||--o| google_auth : ""
+  users ||--|{ invitations : ""
+  users ||--|{ site_memberships : ""
+  users ||--o| subscriptions : ""

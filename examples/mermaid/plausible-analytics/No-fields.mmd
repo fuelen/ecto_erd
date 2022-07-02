@@ -1,0 +1,32 @@
+erDiagram
+  schema_migrations
+  oban_jobs
+  api_keys
+  invitations
+  users
+  subscriptions
+  events
+  sessions
+  goals
+  sites
+  custom_domains
+  google_auth
+  site_memberships
+  monthly_reports
+  shared_links
+  spike_notifications
+  weekly_reports
+  tweets
+  sites ||--o| custom_domains : ""
+  sites ||--o| google_auth : ""
+  sites ||--|{ invitations : ""
+  sites ||--o| monthly_reports : ""
+  sites ||--|{ shared_links : ""
+  sites ||--|{ site_memberships : ""
+  sites ||--o| spike_notifications : ""
+  sites ||--o| weekly_reports : ""
+  users ||--|{ api_keys : ""
+  users ||--o| google_auth : ""
+  users ||--|{ invitations : ""
+  users ||--|{ site_memberships : ""
+  users ||--o| subscriptions : ""

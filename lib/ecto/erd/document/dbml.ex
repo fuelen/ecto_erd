@@ -1,8 +1,14 @@
-defmodule Ecto.ERD.DBML do
+defmodule Ecto.ERD.Document.DBML do
   @moduledoc false
   alias Ecto.ERD.{Node, Field, Edge, Graph, Render}
 
-  def render(%Graph{nodes: nodes, edges: edges}) do
+  @behaviour Ecto.ERD.Document
+
+  @impl true
+  def schemaless?, do: true
+
+  @impl true
+  def render(%Graph{nodes: nodes, edges: edges}, _options) do
     groups =
       nodes
       |> Enum.group_by(& &1.cluster, & &1.source)
@@ -131,8 +137,9 @@ defmodule Ecto.ERD.DBML do
       :string -> "varchar"
       :binary -> "bytea"
       :map -> "jsonb"
-      {:map, _} -> "jsonb"
-      {:embed, _} -> "jsonb"
+      # TODO: remove :embed support when apps in examples won't use legacy ecto version
+      # for :map and legacy :embed. It is not written in code explicitly to shut up dialyzer
+      {_, _} -> "jsonb"
       :time_usec -> "time"
       :utc_datetime -> "timestamp"
       :utc_datetime_usec -> "timestamp"

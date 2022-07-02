@@ -6,6 +6,7 @@ Supported formats:
 * [PlantUML](https://plantuml.com)
 * [DBML](https://www.dbml.org/)
 * [QuickDBD](https://www.quickdatabasediagrams.com)
+* [Mermaid](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram)
 
 ![Simple blog demo](assets/simple_blog_dot_demo.png)
 <details>
@@ -54,7 +55,7 @@ The package can be installed by adding `ecto_erd` to your list of dependencies i
 ```elixir
 def deps do
   [
-    {:ecto_erd, "~> 0.4", only: :dev}
+    {:ecto_erd, "~> 0.5", only: :dev}
   ]
 end
 ```
