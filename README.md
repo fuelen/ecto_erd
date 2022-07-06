@@ -1,7 +1,10 @@
 # Ecto.ERD
-A mix task for generating an ERD (Entity Relationship Diagram) in various formats for all Ecto schemas available in your project.
+
+A mix task for generating an ERD (Entity Relationship Diagram) in various
+formats for all Ecto schemas available in your project.
 
 Supported formats:
+
 * [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language)) (default)
 * [PlantUML](https://plantuml.com)
 * [DBML](https://www.dbml.org/)
@@ -46,11 +49,13 @@ Supported formats:
     end
   end
   ```
+
 </details>
 
 ## Installation
 
-The package can be installed by adding `ecto_erd` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `ecto_erd` to your list of dependencies
+in `mix.exs`:
 
 ```elixir
 def deps do
@@ -59,18 +64,23 @@ def deps do
   ]
 end
 ```
+
 ## Usage
 
-Just run
+Just run:
+
 ```sh
-$ mix ecto.gen.erd
+mix ecto.gen.erd
 ```
 
-The command above produces a file in DOT format which can be converted to an image using `graphviz` utility:
+The command above produces a file in DOT format which can be converted to an
+image using `graphviz` utility:
+
 ```sh
-$ dot -Tpng ecto_erd.dot -o erd.png
+dot -Tpng ecto_erd.dot -o erd.png
 ```
 
 Configuration is possible via `.ecto_erd.exs` file.
 The docs can be found at [https://hexdocs.pm/ecto_erd](https://hexdocs.pm/ecto_erd).
-Configuration examples and output for a couple of open-source projects can be found in EXAMPLES group of PAGES section.
+Configuration examples and output for a couple of open-source projects can be
+found in EXAMPLES group of PAGES section.
