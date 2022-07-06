@@ -62,7 +62,7 @@ defmodule Ecto.ERD.Node do
         }
       )
       when not is_nil(source) do
-    # if fields have different types with the same name, then only 1 type will be choosen
+    # if fields have different types with the same name, then only 1 type will be chosen
     fields = Enum.uniq_by(fields1 ++ fields2, & &1.name)
 
     cluster =
