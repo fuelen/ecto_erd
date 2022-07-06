@@ -56,7 +56,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   ## QuickDBD
 
   A format that is used by [QuickDBD](https://www.quickdatabasediagrams.com) - a competitor of [dbdiagram.io](https://dbdiagram.io).
-  Similarly to DBML, it is also focused on tables and cannot display embeded schemas. However, this format doesn't support clusters.
+  Similarly to DBML, it is also focused on tables and cannot display embedded schemas. However, this format doesn't support clusters.
 
   It doesn't have a reserved file extension, but we use `*.qdbd`.
 
@@ -73,7 +73,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   $ mix ecto.gen.erd --output-path=ecto_erd.mmd
   ```
   If you have installed [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) locally, the output `*.mmd` file can be
-  coverted to image using the following command:
+  converted to image using the following command:
   ```
   $ mmdc -i ecto_erd.mmd -o erd.png -w 6000 -H 6000
   ```
@@ -93,7 +93,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
 
   * `:fontname` - font name, defaults to `Roboto Mono`. Must be monospaced font if output format is `dot` and more than 1 column is displayed.
   The option is only supported for `dot` and `puml` files.
-  * `:columns` - list of columns which will be displayed for each node (schema/source). Set to `[]` to hide fields completelly.
+  * `:columns` - list of columns which will be displayed for each node (schema/source). Set to `[]` to hide fields completely.
   Available columns: `:name` and `:type`. The option is only supported for `dot`, `puml` and `mmd`(`mmd` only allows usage of `[]` and the default value).
   Default values:
     * `[:name, :type]` for `dot` and `puml`.

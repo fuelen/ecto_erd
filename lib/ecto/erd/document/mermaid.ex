@@ -51,7 +51,7 @@ defmodule Ecto.ERD.Document.Mermaid do
       end
     else
       Logger.warning(
-        "Source #{inspect(source)} countains invalid symbols and cannot be displayed"
+        "Source #{inspect(source)} contains invalid symbols and cannot be displayed"
       )
 
       nil
@@ -94,7 +94,7 @@ defmodule Ecto.ERD.Document.Mermaid do
         end
     else
       Logger.warning(
-        "Field name #{inspect(field.name)} countains invalid symbols and cannot be displayed"
+        "Field name #{inspect(field.name)} contains invalid symbols and cannot be displayed"
       )
 
       nil
