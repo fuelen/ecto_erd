@@ -84,3 +84,14 @@ Configuration is possible via `.ecto_erd.exs` file.
 The docs can be found at [https://hexdocs.pm/ecto_erd](https://hexdocs.pm/ecto_erd).
 Configuration examples and output for a couple of open-source projects can be
 found in EXAMPLES group of PAGES section.
+
+## Troubleshooting
+
+Trying to run `ecto_erd` on an umbrella project? Did you get this error?
+
+```
+$ mix ecto.gen.erd
+** (RuntimeError) Unable to detect `:otp_app`, please specify it explicitly
+```
+
+The easiest solution is to run the command on one of the apps in the `apps/` directory. Another option is to create a configuration file and specify the `:otp_app`. See the [docs for details](https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html#module-configuration-file).
