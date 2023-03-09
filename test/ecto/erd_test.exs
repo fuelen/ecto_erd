@@ -1,6 +1,7 @@
 defmodule Ecto.ERDTest do
   use ExUnit.Case
-  alias Ecto.ERD.{DBML, Node, Field}
+  alias Ecto.ERD.{Node, Field}
+  alias Ecto.ERD.Document.DBML
 
   test inspect(&DBML.enums_mapping/1) do
     result =
@@ -53,7 +54,7 @@ defmodule Ecto.ERDTest do
           ]
         }
       ]
-      |> Ecto.ERD.DBML.enums_mapping()
+      |> DBML.enums_mapping()
 
     assert result == %{
              ["admins", :status] => {"admins_status", ["active", "suspended"]},
