@@ -50,28 +50,35 @@ defmodule Ecto.ERD.Document.DBML do
       end)
 
     refs =
-      Enum.map_join(edges, "\n", fn %Edge{
-                                      from: {from_source, _from_schema, {:field, from_field}},
-                                      to: {to_source, _to_schema, {:field, to_field}},
-                                      assoc_types: assoc_types
-                                    } ->
-        operator =
-          if {:has, :one} in assoc_types do
-            "-"
-          else
-            "<"
-          end
-
-        [
-          "Ref:",
-          Render.in_quotes(from_source) <> "." <> Render.in_quotes(from_field),
-          operator,
-          Render.in_quotes(to_source) <> "." <> Render.in_quotes(to_field)
-        ]
-        |> Enum.join(" ")
-      end)
+      edges
+      |> Enum.map(&render_edge/1)
+      |> Enum.reject(&is_nil/1)
+      |> Enum.join("\n")
 
     groups <> "\n" <> enums <> "\n" <> tables <> "\n" <> refs
+  end
+
+  defp render_edge(%Edge{to: {nil, _, _}}), do: nil
+
+  defp render_edge(%Edge{
+         from: {from_source, _from_schema, {:field, from_field}},
+         to: {to_source, _to_schema, {:field, to_field}},
+         assoc_types: assoc_types
+       }) do
+    operator =
+      if {:has, :one} in assoc_types do
+        "-"
+      else
+        "<"
+      end
+
+    [
+      "Ref:",
+      Render.in_quotes(from_source) <> "." <> Render.in_quotes(from_field),
+      operator,
+      Render.in_quotes(to_source) <> "." <> Render.in_quotes(to_field)
+    ]
+    |> Enum.join(" ")
   end
 
   # tries to cut name from #source_#field format to just #field
