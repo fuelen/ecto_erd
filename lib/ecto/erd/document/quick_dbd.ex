@@ -38,16 +38,39 @@ defmodule Ecto.ERD.Document.QuickDBD do
             from: {from_source, _from_schema, {:field, from_field}},
             assoc_types: assoc_types
           } ->
-            operator =
-              if {:has, :one} in assoc_types do
-                "-"
+            # operator =
+            #   if {:has, :one} in assoc_types do
+            #     "-"
+            #   else
+            #     ">-"
+            #   end
+            #
+            # [
+            #   "FK #{operator} #{Render.in_quotes(from_source)}.#{Render.in_quotes(from_field)}"
+            # ]
+
+            operator = ">-"
+
+            result =
+              if :belongs_to in assoc_types do
+                if {:on_delete, :delete_all} in assoc_types do
+                  [
+                    "FK #{operator} #{Render.in_quotes(from_source)}.#{Render.in_quotes(from_field)}"
+                  ]
+                else
+                  if {:on_delete, :nothing} in assoc_types do
+                    []
+                  else
+                    [
+                      "FK #{operator} #{Render.in_quotes(from_source)}.#{Render.in_quotes(from_field)}"
+                    ]
+                  end
+                end
               else
-                ">-"
+                []
               end
 
-            [
-              "FK #{operator} #{Render.in_quotes(from_source)}.#{Render.in_quotes(from_field)}"
-            ]
+            result
 
           _ ->
             []

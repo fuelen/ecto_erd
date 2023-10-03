@@ -178,6 +178,7 @@ defmodule Ecto.ERD.Graph do
          related: related,
          related_key: related_key,
          cardinality: cardinality,
+         on_delete: on_delete,
          field: field
        }) do
     if ecto_schema?(related) do
@@ -188,7 +189,7 @@ defmodule Ecto.ERD.Graph do
         Edge.new(%{
           from: {owner_source, owner, {:field, owner_key}},
           to: {related_source, related, {:field, related_key}},
-          assoc_types: [has: cardinality]
+          assoc_types: [has: cardinality, on_delete: on_delete]
         })
       ]
     else
