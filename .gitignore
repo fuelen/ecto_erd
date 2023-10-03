@@ -24,3 +24,7 @@ ecto_erd-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Ignore IntelliJ Files
+.idea/
+*.iml
