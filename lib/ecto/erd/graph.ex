@@ -101,7 +101,7 @@ defmodule Ecto.ERD.Graph do
 
       [node | relation_components]
     else
-      Logger.warn("Skipping schema #{schema_module}: not found")
+      Logger.warning("Skipping schema #{schema_module}: not found")
       []
     end
   end
@@ -137,7 +137,7 @@ defmodule Ecto.ERD.Graph do
         })
       ]
     else
-      Logger.warn(
+      Logger.warning(
         "Skipping association `embeds_#{cardinality} #{inspect(field)}` in schema #{inspect(owner)}: #{inspect(related)} is not an Ecto schema"
       )
 
@@ -164,7 +164,7 @@ defmodule Ecto.ERD.Graph do
         })
       ]
     else
-      Logger.warn(
+      Logger.warning(
         "Skipping association `belongs_to #{inspect(field)}` in schema #{inspect(owner)}: #{inspect(related)} is not an Ecto schema"
       )
 
@@ -192,7 +192,7 @@ defmodule Ecto.ERD.Graph do
         })
       ]
     else
-      Logger.warn(
+      Logger.warning(
         "Skipping association `has_#{cardinality} #{inspect(field)}` in schema #{inspect(owner)}: #{inspect(related)} is not an Ecto schema"
       )
 
@@ -209,7 +209,7 @@ defmodule Ecto.ERD.Graph do
        }) do
     if ecto_schema?(related) do
       if is_atom(join_through) and not ecto_schema?(join_through) do
-        Logger.warn(
+        Logger.warning(
           "Skipping association `many_to_many #{inspect(field)}` in schema #{inspect(owner)}: #{inspect(join_through)} is not an Ecto schema"
         )
 
@@ -261,7 +261,7 @@ defmodule Ecto.ERD.Graph do
           ]
       end
     else
-      Logger.warn(
+      Logger.warning(
         "Skipping association `many_to_many #{inspect(field)}` in schema #{inspect(owner)}: module #{inspect(related)} is not an Ecto schema"
       )
 
