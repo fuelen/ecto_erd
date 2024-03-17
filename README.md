@@ -1,5 +1,7 @@
 # Ecto.ERD
 
+[![Hex.pm](https://img.shields.io/hexpm/v/ecto_erd.svg)](https://hex.pm/packages/ecto_erd)
+
 A mix task for generating an ERD (Entity Relationship Diagram) in various
 formats for all Ecto schemas available in your project.
 
