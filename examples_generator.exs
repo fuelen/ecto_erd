@@ -54,10 +54,12 @@ defmodule Ecto.ERD.ExamplesGenerator do
   @data %{
     "plausible-analytics" => %{
       repo: "git@github.com:plausible/analytics.git",
+      commit: "ca25b6c7649c6ab9c9268eb57c7931dca1393b94",
       examples: @shared_examples
     },
     "changelog.com" => %{
       repo: "git@github.com:thechangelog/changelog.com.git",
+      commit: "840f6e4fa69e51b680d5462f99db9f5953bf0fdf",
       examples:
         Enum.filter(@shared_examples, fn example -> example[:name] in ["Default", "No fields"] end) ++
           [
@@ -117,6 +119,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
     },
     "hexpm" => %{
       repo: "git@github.com:hexpm/hexpm.git",
+      commit: "1fb4816abaa8ef23f40795dfa93b9e6b7c569452",
       examples:
         @shared_examples ++
           [
@@ -172,13 +175,13 @@ defmodule Ecto.ERD.ExamplesGenerator do
 
     Logger.debug("Init projects", ansi_color: :yellow)
 
-    Enum.each(@data, fn {project_name, %{repo: repo}} ->
+    Enum.each(@data, fn {project_name, %{repo: repo, commit: commit}} ->
       Enum.each(@formats, fn {_, %{examples_dir: dir}} ->
         File.mkdir(Path.join(dir, project_name))
       end)
 
       File.mkdir(Path.join("tmp/config_files", project_name))
-      init_project(project_name, repo)
+      init_project(project_name, repo, commit)
     end)
 
     Logger.debug("Generating examples", ansi_color: :yellow)
@@ -323,9 +326,10 @@ defmodule Ecto.ERD.ExamplesGenerator do
     System.cmd("plantuml", [file], env: %{"PLANTUML_LIMIT_SIZE" => "8192"})
   end
 
-  defp init_project(project_name, repo) do
+  defp init_project(project_name, repo, commit) do
     Logger.debug("#{project_name}: clone repo")
     System.cmd("git", ["clone", repo, project_name], cd: "tmp/repos")
+    System.cmd("git", ["checkout", commit], cd: Path.join("tmp/repos", project_name))
     add_ecto_erd_to_dependencies(Path.join(["tmp/repos", project_name, "mix.exs"]))
     Logger.debug("#{project_name}: get dependencies")
 
