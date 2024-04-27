@@ -44,10 +44,6 @@ defmodule Ecto.ERD.ExamplesGenerator do
   ]
 
   @data %{
-    "papercups" => %{
-      repo: "git@github.com:papercups-io/papercups.git",
-      examples: @shared_examples
-    },
     "plausible-analytics" => %{
       repo: "git@github.com:plausible/analytics.git",
       examples: @shared_examples
