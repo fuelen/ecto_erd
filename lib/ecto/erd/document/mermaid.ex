@@ -50,9 +50,7 @@ defmodule Ecto.ERD.Document.Mermaid do
           source
       end
     else
-      Logger.warning(
-        "Source #{inspect(source)} contains invalid symbols and cannot be displayed"
-      )
+      Logger.warning("Source #{inspect(source)} contains invalid symbols and cannot be displayed")
 
       nil
     end
