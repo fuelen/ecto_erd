@@ -11,7 +11,7 @@ end
 defmodule Ecto.ERD.MixProject do
   use Mix.Project
   @source_url "https://github.com/fuelen/ecto_erd/"
-  @version "0.5.1"
+  @version "0.6.0"
 
   def project do
     [
