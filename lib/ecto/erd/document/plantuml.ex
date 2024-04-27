@@ -125,7 +125,20 @@ defmodule Ecto.ERD.Document.PlantUML do
   end
 
   defp format_type({:parameterized, Ecto.Enum, %{on_dump: on_dump}}) do
-    "enum(#{Enum.join(Map.values(on_dump), ",")})"
+    elements_limit = 10
+    values = Map.values(on_dump)
+    length = length(values)
+
+    values =
+      if length <= elements_limit do
+        values
+      else
+        values
+        |> Enum.slice(0, elements_limit)
+        |> List.replace_at(-1, "...")
+      end
+
+    "enum(#{Enum.join(values, ",")})"
   end
 
   defp format_type(type) do
