@@ -1,16 +1,18 @@
 schema_migrations
 ---
-version integer
+version integer PK
 inserted_at timestamp
 
 audit_logs
 ---
 id integer PK
 user_agent varchar
+remote_ip varchar
 action varchar
 params jsonb
 user_id integer FK >- users.id
 organization_id integer FK >- organizations.id
+key_id integer FK >- keys.id
 inserted_at timestamp
 
 emails
@@ -35,7 +37,6 @@ secret_first varchar
 secret_second varchar
 public boolean
 revoke_at timestamp
-revoked_at timestamp
 inserted_at timestamp
 updated_at timestamp
 last_use jsonb
@@ -48,6 +49,8 @@ organizations
 id integer PK
 name varchar
 billing_active boolean
+billing_override boolean
+trial_end timestamp
 inserted_at timestamp
 updated_at timestamp
 
@@ -100,6 +103,7 @@ comment varchar
 downloads
 ---
 id integer PK
+package_id integer FK >- packages.id
 release_id integer FK >- releases.id
 downloads integer
 day date
@@ -185,6 +189,7 @@ retirement jsonb
 
 release_downloads
 ---
+package_id integer FK >- packages.id
 release_id integer FK - releases.id
 downloads integer
 
@@ -192,7 +197,6 @@ repositories
 ---
 id integer PK
 name varchar
-public boolean
 inserted_at timestamp
 updated_at timestamp
 organization_id integer FK - organizations.id

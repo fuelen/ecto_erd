@@ -66,6 +66,7 @@ strict digraph {
   }
 
   "Hexpm.Accounts.TFA":e -> "Hexpm.Accounts.RecoveryCode":w
+  "Hexpm.Accounts.Key":e -> "Hexpm.Accounts.AuditLog":w
   "Hexpm.Accounts.Key":e -> "Hexpm.Accounts.Key.Use":w [dir=none]
   "Hexpm.Accounts.Key":e -> "Hexpm.Accounts.KeyPermission":w
   "Hexpm.Accounts.Organization":e -> "Hexpm.Accounts.AuditLog":w
@@ -75,10 +76,12 @@ strict digraph {
   "Hexpm.Accounts.Organization":e -> "Hexpm.Accounts.User":w [dir=none]
   "Hexpm.Repository.PackageReport":e -> "Hexpm.Repository.PackageReportComment":w
   "Hexpm.Repository.PackageReport":e -> "Hexpm.Repository.PackageReportRelease":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.Download":w
   "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageDependant":w
   "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageDownload":w
   "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageOwner":w
   "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageReport":w
+  "Hexpm.Repository.Package":e -> "Hexpm.Repository.ReleaseDownload":w
   "Hexpm.Repository.Package":e -> "Hexpm.Repository.Release":w
   "Hexpm.Repository.Package":e -> "Hexpm.Repository.Requirement":w
   "Hexpm.Repository.Package":e -> "Hexpm.Repository.PackageMetadata":w [dir=none]

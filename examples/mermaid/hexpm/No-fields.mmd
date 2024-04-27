@@ -23,6 +23,7 @@ erDiagram
   repositories
   requirements
   short_urls
+  keys ||--|{ audit_logs : ""
   organizations ||--|{ audit_logs : ""
   organizations ||--|{ keys : ""
   organizations ||--|{ organization_users : ""
@@ -30,10 +31,12 @@ erDiagram
   organizations ||--o| users : ""
   package_reports ||--|{ package_report_comments : ""
   package_reports ||--|{ package_report_releases : ""
+  packages ||--|{ downloads : ""
   packages ||--|{ package_dependants : ""
   packages ||--|{ package_downloads : ""
   packages ||--|{ package_owners : ""
   packages ||--|{ package_reports : ""
+  packages ||--|{ release_downloads : ""
   packages ||--|{ releases : ""
   packages ||--|{ requirements : ""
   releases ||--|{ downloads : ""

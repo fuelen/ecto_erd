@@ -1,32 +1,69 @@
 erDiagram
   schema_migrations
+  fun_with_flags_toggles
   oban_jobs
   api_keys
+  email_activation_codes
   invitations
+  totp_recovery_codes
   users
+  enterprise_plans
   subscriptions
-  events
-  sessions
+  events_v2
+  sessions_v2
+  domains_lookup
+  funnels
+  funnel_steps
   goals
+  imported_browsers
+  imported_devices
+  imported_entry_pages
+  imported_exit_pages
+  imported_locations
+  imported_operating_systems
+  imported_pages
+  site_imports
+  imported_sources
+  imported_visitors
+  ingest_counters
+  plugins_api_tokens
+  shield_rules_country
+  shield_rules_hostname
+  shield_rules_ip
+  shield_rules_page
   sites
-  custom_domains
   google_auth
   site_memberships
   monthly_reports
   shared_links
   spike_notifications
+  site_user_preferences
   weekly_reports
-  tweets
-  sites ||--o| custom_domains : ""
+  funnels ||--|{ funnel_steps : ""
+  goals ||--|{ funnel_steps : ""
+  sites ||--|{ funnels : ""
+  sites ||--|{ goals : ""
   sites ||--o| google_auth : ""
   sites ||--|{ invitations : ""
   sites ||--o| monthly_reports : ""
+  sites ||--|{ plugins_api_tokens : ""
   sites ||--|{ shared_links : ""
-  sites ||--|{ site_memberships : ""
+  sites ||--|{ shield_rules_country : ""
+  sites ||--|{ shield_rules_hostname : ""
+  sites ||--|{ shield_rules_ip : ""
+  sites ||--|{ shield_rules_page : ""
+  sites ||--|{ site_imports : ""
+  sites ||--o| site_memberships : ""
+  sites ||--|{ site_user_preferences : ""
   sites ||--o| spike_notifications : ""
   sites ||--o| weekly_reports : ""
   users ||--|{ api_keys : ""
+  users ||--|{ email_activation_codes : ""
+  users ||--o| enterprise_plans : ""
   users ||--o| google_auth : ""
   users ||--|{ invitations : ""
+  users ||--|{ site_imports : ""
   users ||--|{ site_memberships : ""
+  users ||--|{ site_user_preferences : ""
   users ||--o| subscriptions : ""
+  users ||--|{ totp_recovery_codes : ""

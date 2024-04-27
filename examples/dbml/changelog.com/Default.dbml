@@ -1,16 +1,5 @@
 
 
-Table benefits {
-  id integer [pk]
-  offer varchar
-  code varchar
-  link_url varchar
-  notes varchar
-  sponsor_id integer
-  inserted_at timestamp
-  updated_at timestamp
-}
-
 Table episodes {
   id integer [pk]
   slug varchar
@@ -24,20 +13,29 @@ Table episodes {
   summary varchar
   notes varchar
   doc_url varchar
+  socialize_url varchar
   published boolean
   published_at timestamp
   recorded_at timestamp
   recorded_live boolean
   youtube_id varchar
+  cover varchar
   audio_file varchar
   audio_bytes integer
   audio_duration integer
+  audio_chapters jsonb
   plusplus_file varchar
   plusplus_bytes integer
   plusplus_duration integer
+  plusplus_chapters jsonb
   download_count float
   import_count float
   reach_count integer
+  email_subject varchar
+  email_teaser varchar
+  email_content varchar
+  email_sends integer
+  email_opens integer
   transcript array
   podcast_id integer
   request_id integer
@@ -73,7 +71,7 @@ Table episode_requests {
   topics varchar
   pitch varchar
   pronunciation varchar
-  decline_message varchar
+  message varchar
   podcast_id integer
   submitter_id integer
   inserted_at timestamp
@@ -86,6 +84,8 @@ Table episode_sponsors {
   title varchar
   link_url varchar
   description varchar
+  starts_at float
+  ends_at float
   episode_id integer
   sponsor_id integer
   inserted_at timestamp
@@ -115,15 +115,19 @@ Table episode_topics {
   updated_at timestamp
 }
 
-Table metacasts {
+Table feeds {
   id integer [pk]
   name varchar
-  description varchar
-  keywords varchar
   slug varchar
-  is_official boolean
+  description varchar
+  title_format varchar
+  plusplus boolean
+  autosub boolean
+  starts_at timestamp
   cover varchar
-  filter_query varchar
+  podcast_ids array
+  person_ids array
+  owner_id integer
   inserted_at timestamp
   updated_at timestamp
 }
@@ -189,7 +193,7 @@ Table news_items {
   refreshed_at timestamp
   impression_count integer
   click_count integer
-  decline_message varchar
+  message varchar
   author_id integer
   logger_id integer
   submitter_id integer
@@ -235,6 +239,7 @@ Table news_sources {
   description varchar
   feed varchar
   regex varchar
+  publication boolean
   icon varchar
   inserted_at timestamp
   updated_at timestamp
@@ -258,6 +263,7 @@ Table people {
   handle varchar
   github_handle varchar
   linkedin_handle varchar
+  mastodon_handle varchar
   twitter_handle varchar
   slack_id varchar
   website varchar
@@ -288,10 +294,12 @@ Table podcasts {
   extended_description varchar
   vanity_domain varchar
   keywords varchar
+  mastodon_handle varchar
   twitter_handle varchar
   apple_url varchar
   spotify_url varchar
   riverside_url varchar
+  chartable_id varchar
   schedule_note varchar
   download_count float
   reach_count integer
@@ -365,13 +373,22 @@ Table sponsors {
   updated_at timestamp
 }
 
+Table sponsor_reps {
+  id integer [pk]
+  sponsor_id integer
+  person_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
 Table subscriptions {
   id integer [pk]
   unsubscribed_at timestamp
   context varchar
+  episode_id integer
+  item_id integer
   person_id integer
   podcast_id integer
-  item_id integer
   inserted_at timestamp
   updated_at timestamp
 }
@@ -389,7 +406,7 @@ Table topics {
 }
 
 Table schema_migrations {
-  version integer
+  version integer [pk]
   inserted_at timestamp
 }
 
@@ -420,6 +437,7 @@ Ref: episodes.id < episode_hosts.episode_id
 Ref: episodes.id < episode_sponsors.episode_id
 Ref: episodes.id < episode_stats.episode_id
 Ref: episodes.id < episode_topics.episode_id
+Ref: episodes.id < subscriptions.episode_id
 Ref: news_ads.id < news_issue_ads.ad_id
 Ref: news_issues.id < news_issue_ads.issue_id
 Ref: news_issues.id < news_issue_items.issue_id
@@ -434,6 +452,7 @@ Ref: news_sponsorships.id < news_ads.sponsorship_id
 Ref: people.id < episode_guests.person_id
 Ref: people.id < episode_hosts.person_id
 Ref: people.id < episode_requests.submitter_id
+Ref: people.id < feeds.owner_id
 Ref: people.id < news_item_comments.author_id
 Ref: people.id < news_items.author_id
 Ref: people.id < news_items.logger_id
@@ -441,6 +460,7 @@ Ref: people.id < news_items.submitter_id
 Ref: people.id < podcast_hosts.person_id
 Ref: people.id < posts.author_id
 Ref: people.id < posts.editor_id
+Ref: people.id < sponsor_reps.person_id
 Ref: people.id < subscriptions.person_id
 Ref: podcasts.id < episode_requests.podcast_id
 Ref: podcasts.id < episode_stats.podcast_id
@@ -449,9 +469,9 @@ Ref: podcasts.id < podcast_hosts.podcast_id
 Ref: podcasts.id < podcast_topics.podcast_id
 Ref: podcasts.id < subscriptions.podcast_id
 Ref: posts.id < post_topics.post_id
-Ref: sponsors.id < benefits.sponsor_id
 Ref: sponsors.id < episode_sponsors.sponsor_id
 Ref: sponsors.id < news_sponsorships.sponsor_id
+Ref: sponsors.id < sponsor_reps.sponsor_id
 Ref: topics.id < episode_topics.topic_id
 Ref: topics.id < news_item_topics.topic_id
 Ref: topics.id < podcast_topics.topic_id

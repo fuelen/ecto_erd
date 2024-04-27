@@ -1,5 +1,6 @@
 @startuml
 
+set namespaceSeparator none
 hide circle
 hide methods
 
@@ -10,11 +11,23 @@ skinparam shadowing false
 namespace Ecto.Migration #f0f8ff {
   entity Ecto.Migration.SchemaMigration {
     version : integer
+    --
     inserted_at : naive_datetime
   }
 
 }
-namespace Oban.Job #b4eeb4 {
+namespace FunWithFlags.Store #f0ffff {
+  entity FunWithFlags.Store.Persistent.Ecto.Record {
+    id : id
+    --
+    flag_name : string
+    gate_type : string
+    target : string
+    enabled : boolean
+  }
+
+}
+namespace Oban #f0ffff {
   entity Oban.Job {
     id : id
     --
@@ -38,6 +51,118 @@ namespace Oban.Job #b4eeb4 {
   }
 
 }
+namespace Plausible #eee5de {
+  entity Plausible.ClickhouseEventV2 {
+    name : unknown
+    site_id : unknown
+    hostname : string
+    pathname : string
+    user_id : unknown
+    session_id : unknown
+    timestamp : naive_datetime
+    meta.key : array
+    meta.value : array
+    revenue_source_amount : unknown
+    revenue_source_currency : unknown
+    revenue_reporting_amount : unknown
+    revenue_reporting_currency : unknown
+    referrer : string
+    referrer_source : string
+    utm_medium : string
+    utm_source : string
+    utm_campaign : string
+    utm_content : string
+    utm_term : string
+    country_code : unknown
+    subdivision1_code : unknown
+    subdivision2_code : unknown
+    city_geoname_id : unknown
+    screen_size : unknown
+    operating_system : unknown
+    operating_system_version : unknown
+    browser : unknown
+    browser_version : unknown
+  }
+
+  entity Plausible.ClickhouseSessionV2 {
+    hostname : string
+    site_id : unknown
+    user_id : unknown
+    session_id : unknown
+    start : naive_datetime
+    duration : unknown
+    is_bounce : unknown
+    entry_page : string
+    exit_page : string
+    exit_page_hostname : string
+    pageviews : unknown
+    events : unknown
+    sign : unknown
+    entry_meta.key : array
+    entry_meta.value : array
+    utm_medium : string
+    utm_source : string
+    utm_campaign : string
+    utm_content : string
+    utm_term : string
+    referrer : string
+    referrer_source : string
+    country_code : unknown
+    subdivision1_code : unknown
+    subdivision2_code : unknown
+    city_geoname_id : unknown
+    screen_size : unknown
+    operating_system : unknown
+    operating_system_version : unknown
+    browser : unknown
+    browser_version : unknown
+    timestamp : naive_datetime
+    transferred_from : string
+  }
+
+  entity Plausible.Funnel {
+    id : id
+    --
+    name : string
+    site_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Plausible.Goal {
+    id : id
+    --
+    event_name : string
+    page_path : string
+    currency : enum(XBD,BYN,HKD,XOF,SOS,ARS,EGP,XDR,GMD,...)
+    site_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Plausible.Site {
+    id : id
+    --
+    domain : string
+    timezone : string
+    public : boolean
+    locked : boolean
+    stats_start_date : date
+    native_stats_start_at : naive_datetime
+    allowed_event_props : array
+    conversions_enabled : boolean
+    props_enabled : boolean
+    funnels_enabled : boolean
+    ingest_rate_limit_scale_seconds : integer
+    ingest_rate_limit_threshold : integer
+    domain_changed_from : string
+    domain_changed_at : naive_datetime
+    imported_data : map
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+}
 namespace Plausible.Auth #ffefd5 {
   entity Plausible.Auth.ApiKey {
     id : id
@@ -52,16 +177,40 @@ namespace Plausible.Auth #ffefd5 {
     updated_at : naive_datetime
   }
 
+  entity Plausible.Auth.EmailActivationCode {
+    id : id
+    --
+    code : string
+    issued_at : naive_datetime
+    user_id : id
+  }
+
+  entity Plausible.Auth.GracePeriod {
+    id : binary_id
+    --
+    end_date : date
+    is_over : boolean
+    manual_lock : boolean
+  }
+
   entity Plausible.Auth.Invitation {
     id : id
     --
     invitation_id : string
     email : string
-    role : enum(admin,owner,viewer)
+    role : enum(owner,admin,viewer)
     inviter_id : id
     site_id : id
     inserted_at : naive_datetime
     updated_at : naive_datetime
+  }
+
+  entity Plausible.Auth.TOTP.RecoveryCode {
+    id : id
+    --
+    code_digest : string
+    user_id : id
+    inserted_at : naive_datetime
   }
 
   entity Plausible.Auth.User {
@@ -72,14 +221,54 @@ namespace Plausible.Auth #ffefd5 {
     name : string
     last_seen : naive_datetime
     trial_expiry_date : date
-    theme : string
+    theme : enum(system,light,dark)
     email_verified : boolean
+    previous_email : string
+    accept_traffic_until : date
+    allow_next_upgrade_override : boolean
+    totp_enabled : boolean
+    totp_secret : binary
+    totp_token : string
+    totp_last_used_at : naive_datetime
+    grace_period : map
     inserted_at : naive_datetime
     updated_at : naive_datetime
   }
 
 }
 namespace Plausible.Billing #f0ffff {
+  entity Plausible.Billing.EnterprisePlan {
+    id : id
+    --
+    paddle_plan_id : string
+    billing_interval : enum(yearly,monthly)
+    monthly_pageview_limit : integer
+    site_limit : integer
+    team_member_limit : integer
+    features : array
+    hourly_api_request_limit : integer
+    user_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Plausible.Billing.Plan {
+    id : binary_id
+    --
+    generation : integer
+    kind : enum(growth,business)
+    features : array
+    monthly_pageview_limit : integer
+    site_limit : integer
+    team_member_limit : integer
+    volume : string
+    data_retention_in_years : integer
+    monthly_cost : string
+    monthly_product_id : string
+    yearly_cost : string
+    yearly_product_id : string
+  }
+
   entity Plausible.Billing.Subscription {
     id : id
     --
@@ -87,7 +276,7 @@ namespace Plausible.Billing #f0ffff {
     paddle_plan_id : string
     update_url : string
     cancel_url : string
-    status : string
+    status : enum(active,deleted,past_due,paused)
     next_bill_amount : string
     next_bill_date : date
     last_bill_date : date
@@ -98,94 +287,252 @@ namespace Plausible.Billing #f0ffff {
   }
 
 }
-namespace Plausible.ClickhouseEvent #f0ffff {
-  entity Plausible.ClickhouseEvent {
-    name : string
+namespace Plausible.DataMigration #8deeee {
+  entity Plausible.DataMigration.NumericIDs.DomainsLookup {
+    site_id : unknown
     domain : string
-    hostname : string
-    pathname : string
-    user_id : integer
-    session_id : integer
-    timestamp : naive_datetime
-    referrer : string
-    referrer_source : string
-    utm_medium : string
-    utm_source : string
-    utm_campaign : string
-    country_code : string
-    screen_size : string
-    operating_system : string
-    operating_system_version : string
-    browser : string
-    browser_version : string
-    meta.key : array
-    meta.value : array
   }
 
 }
-namespace Plausible.ClickhouseSession #f0f8ff {
-  entity Plausible.ClickhouseSession {
-    hostname : string
-    domain : string
-    user_id : integer
-    session_id : integer
-    start : naive_datetime
-    duration : integer
-    is_bounce : boolean
-    entry_page : string
-    exit_page : string
-    pageviews : integer
-    events : integer
-    sign : integer
-    utm_medium : string
-    utm_source : string
-    utm_campaign : string
-    referrer : string
-    referrer_source : string
-    country_code : string
-    screen_size : string
-    operating_system : string
-    operating_system_version : string
-    browser : string
-    browser_version : string
-    timestamp : naive_datetime
-  }
-
-}
-namespace Plausible.Goal #b4eeb4 {
-  entity Plausible.Goal {
+namespace Plausible.Funnel #fffafa {
+  entity Plausible.Funnel.Step {
     id : id
     --
-    domain : string
+    step_order : integer
+    funnel_id : id
+    goal_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+}
+namespace Plausible.Imported #eedfcc {
+  entity Plausible.Imported.Browser {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    browser : string
+    browser_version : string
+    visitors : unknown
+    visits : unknown
+    visit_duration : unknown
+    pageviews : unknown
+    bounces : unknown
+  }
+
+  entity Plausible.Imported.Device {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    device : string
+    visitors : unknown
+    visits : unknown
+    visit_duration : unknown
+    pageviews : unknown
+    bounces : unknown
+  }
+
+  entity Plausible.Imported.EntryPage {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    entry_page : string
+    visitors : unknown
+    entrances : unknown
+    visit_duration : unknown
+    pageviews : unknown
+    bounces : unknown
+  }
+
+  entity Plausible.Imported.ExitPage {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    exit_page : string
+    exits : unknown
+    visitors : unknown
+    visit_duration : unknown
+    pageviews : unknown
+    bounces : unknown
+  }
+
+  entity Plausible.Imported.Location {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    country : string
+    region : string
+    city : unknown
+    visitors : unknown
+    visits : unknown
+    visit_duration : unknown
+    pageviews : unknown
+    bounces : unknown
+  }
+
+  entity Plausible.Imported.OperatingSystem {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    operating_system : string
+    operating_system_version : string
+    visitors : unknown
+    visits : unknown
+    visit_duration : unknown
+    pageviews : unknown
+    bounces : unknown
+  }
+
+  entity Plausible.Imported.Page {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    hostname : string
+    page : string
+    visits : unknown
+    visitors : unknown
+    active_visitors : unknown
+    pageviews : unknown
+    exits : unknown
+    time_on_page : unknown
+  }
+
+  entity Plausible.Imported.SiteImport {
+    id : id
+    --
+    start_date : date
+    end_date : date
+    label : string
+    source : enum(noop,csv,universal_analytics,google_analytics_4)
+    status : enum(pending,failed,completed,importing)
+    legacy : boolean
+    site_id : id
+    imported_by_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Plausible.Imported.Source {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    source : string
+    referrer : string
+    utm_source : string
+    utm_medium : string
+    utm_campaign : string
+    utm_content : string
+    utm_term : string
+    visitors : unknown
+    visits : unknown
+    visit_duration : unknown
+    pageviews : unknown
+    bounces : unknown
+  }
+
+  entity Plausible.Imported.Visitor {
+    site_id : unknown
+    import_id : unknown
+    date : date
+    visitors : unknown
+    pageviews : unknown
+    bounces : unknown
+    visits : unknown
+    visit_duration : unknown
+  }
+
+}
+namespace Plausible.Ingestion #8deeee {
+  entity Plausible.Ingestion.Counters.Record {
+    event_timebucket : utc_datetime
+    site_id : unknown
+    domain : unknown
+    metric : unknown
+    value : unknown
+  }
+
+  entity Plausible.Ingestion.Request {
+    remote_ip : string
+    user_agent : string
     event_name : string
+    uri : map
+    hostname : string
+    referrer : string
+    domains : array
+    ip_classification : string
+    hash_mode : integer
+    pathname : string
+    props : map
+    revenue_source : map
+    query_params : map
+    timestamp : naive_datetime
+  }
+
+}
+namespace Plausible.Plugins #eee5de {
+  entity Plausible.Plugins.API.Token {
+    id : binary_id
+    --
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+    token_hash : binary
+    description : string
+    hint : string
+    last_used_at : naive_datetime
+    site_id : id
+  }
+
+}
+namespace Plausible.Shield #8deeee {
+  entity Plausible.Shield.CountryRule {
+    id : binary_id
+    --
+    site_id : id
+    country_code : string
+    action : enum(allow,deny)
+    added_by : string
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Plausible.Shield.HostnameRule {
+    id : binary_id
+    --
+    site_id : id
+    hostname : string
+    hostname_pattern : string
+    action : enum(allow,deny)
+    added_by : string
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Plausible.Shield.IPRule {
+    id : binary_id
+    --
+    site_id : id
+    inet : inet
+    action : enum(allow,deny)
+    description : string
+    added_by : string
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Plausible.Shield.PageRule {
+    id : binary_id
+    --
+    site_id : id
     page_path : string
+    page_path_pattern : string
+    action : enum(allow,deny)
+    added_by : string
     inserted_at : naive_datetime
     updated_at : naive_datetime
   }
 
 }
 namespace Plausible.Site #f0f8ff {
-  entity Plausible.Site {
-    id : id
-    --
-    domain : string
-    timezone : string
-    public : boolean
-    locked : boolean
-    inserted_at : naive_datetime
-    updated_at : naive_datetime
-  }
-
-  entity Plausible.Site.CustomDomain {
-    id : id
-    --
-    domain : string
-    has_ssl_certificate : boolean
-    site_id : id
-    inserted_at : naive_datetime
-    updated_at : naive_datetime
-  }
-
   entity Plausible.Site.GoogleAuth {
     id : id
     --
@@ -200,10 +547,19 @@ namespace Plausible.Site #f0f8ff {
     updated_at : naive_datetime
   }
 
+  entity Plausible.Site.ImportedData {
+    id : binary_id
+    --
+    start_date : date
+    end_date : date
+    source : string
+    status : string
+  }
+
   entity Plausible.Site.Membership {
     id : id
     --
-    role : enum(admin,owner,viewer)
+    role : enum(owner,admin,viewer)
     site_id : id
     user_id : id
     inserted_at : naive_datetime
@@ -241,6 +597,16 @@ namespace Plausible.Site #f0f8ff {
     updated_at : naive_datetime
   }
 
+  entity Plausible.Site.UserPreference {
+    id : id
+    --
+    pinned_at : naive_datetime
+    user_id : id
+    site_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
   entity Plausible.Site.WeeklyReport {
     id : id
     --
@@ -251,35 +617,36 @@ namespace Plausible.Site #f0f8ff {
   }
 
 }
-namespace Plausible.Twitter #b4eeb4 {
-  entity Plausible.Twitter.Tweet {
-    id : id
-    --
-    link : string
-    tweet_id : string
-    author_handle : string
-    author_name : string
-    author_image : string
-    text : string
-    created : naive_datetime
-    inserted_at : naive_datetime
-    updated_at : naive_datetime
-  }
-
-}
 
 
-Plausible.Site ||--o| Plausible.Site.CustomDomain
+Plausible.Funnel ||--|{ Plausible.Funnel.Step
+Plausible.Goal ||--|{ Plausible.Funnel.Step
+Plausible.Site ||--|{ Plausible.Funnel
+Plausible.Site ||--|{ Plausible.Goal
 Plausible.Site ||--o| Plausible.Site.GoogleAuth
 Plausible.Site ||--|{ Plausible.Auth.Invitation
 Plausible.Site ||--o| Plausible.Site.MonthlyReport
+Plausible.Site ||--|{ Plausible.Plugins.API.Token
 Plausible.Site ||--|{ Plausible.Site.SharedLink
-Plausible.Site ||--|{ Plausible.Site.Membership
+Plausible.Site ||--|{ Plausible.Shield.CountryRule
+Plausible.Site ||--|{ Plausible.Shield.HostnameRule
+Plausible.Site ||--|{ Plausible.Shield.IPRule
+Plausible.Site ||--|{ Plausible.Shield.PageRule
+Plausible.Site ||--|{ Plausible.Imported.SiteImport
+Plausible.Site ||--o| Plausible.Site.Membership
+Plausible.Site ||--|{ Plausible.Site.UserPreference
 Plausible.Site ||--o| Plausible.Site.SpikeNotification
 Plausible.Site ||--o| Plausible.Site.WeeklyReport
+Plausible.Site ||--o| Plausible.Site.ImportedData
+Plausible.Auth.User ||--o| Plausible.Auth.GracePeriod
 Plausible.Auth.User ||--|{ Plausible.Auth.ApiKey
+Plausible.Auth.User ||--|{ Plausible.Auth.EmailActivationCode
+Plausible.Auth.User ||--o| Plausible.Billing.EnterprisePlan
 Plausible.Auth.User ||--o| Plausible.Site.GoogleAuth
 Plausible.Auth.User ||--|{ Plausible.Auth.Invitation
+Plausible.Auth.User ||--|{ Plausible.Imported.SiteImport
 Plausible.Auth.User ||--|{ Plausible.Site.Membership
+Plausible.Auth.User ||--|{ Plausible.Site.UserPreference
 Plausible.Auth.User ||--o| Plausible.Billing.Subscription
+Plausible.Auth.User ||--|{ Plausible.Auth.TOTP.RecoveryCode
 @enduml

@@ -1,5 +1,6 @@
 @startuml
 
+set namespaceSeparator none
 hide circle
 hide methods
 
@@ -12,10 +13,12 @@ namespace Hexpm.Accounts #8deeee {
     id : id
     --
     user_agent : string
+    remote_ip : string
     action : string
     params : map
     user_id : id
     organization_id : id
+    key_id : id
     inserted_at : utc_datetime_usec
   }
 
@@ -42,7 +45,6 @@ namespace Hexpm.Accounts #8deeee {
     secret_second : string
     public : boolean
     revoke_at : utc_datetime_usec
-    revoked_at : utc_datetime_usec
     inserted_at : utc_datetime_usec
     updated_at : utc_datetime_usec
     last_use : map
@@ -71,6 +73,8 @@ namespace Hexpm.Accounts #8deeee {
     --
     name : string
     billing_active : boolean
+    billing_override : boolean
+    trial_end : utc_datetime_usec
     inserted_at : utc_datetime_usec
     updated_at : utc_datetime_usec
   }
@@ -147,6 +151,7 @@ namespace Hexpm.Accounts #8deeee {
 
 
 Hexpm.Accounts.TFA ||--|{ Hexpm.Accounts.RecoveryCode
+Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.AuditLog
 Hexpm.Accounts.Key ||--o| Hexpm.Accounts.Key.Use
 Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.KeyPermission
 Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.AuditLog

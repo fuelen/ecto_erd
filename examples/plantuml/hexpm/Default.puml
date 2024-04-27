@@ -1,5 +1,6 @@
 @startuml
 
+set namespaceSeparator none
 hide circle
 hide methods
 
@@ -10,6 +11,7 @@ skinparam shadowing false
 
 entity Ecto.Migration.SchemaMigration {
   version : integer
+  --
   inserted_at : naive_datetime
 }
 
@@ -17,10 +19,12 @@ entity Hexpm.Accounts.AuditLog {
   id : id
   --
   user_agent : string
+  remote_ip : string
   action : string
   params : map
   user_id : id
   organization_id : id
+  key_id : id
   inserted_at : utc_datetime_usec
 }
 
@@ -47,7 +51,6 @@ entity Hexpm.Accounts.Key {
   secret_second : string
   public : boolean
   revoke_at : utc_datetime_usec
-  revoked_at : utc_datetime_usec
   inserted_at : utc_datetime_usec
   updated_at : utc_datetime_usec
   last_use : map
@@ -76,6 +79,8 @@ entity Hexpm.Accounts.Organization {
   --
   name : string
   billing_active : boolean
+  billing_override : boolean
+  trial_end : utc_datetime_usec
   inserted_at : utc_datetime_usec
   updated_at : utc_datetime_usec
 }
@@ -158,6 +163,7 @@ entity Hexpm.BlockAddress.Entry {
 entity Hexpm.Repository.Download {
   id : id
   --
+  package_id : id
   release_id : id
   downloads : integer
   day : date
@@ -261,6 +267,7 @@ entity Hexpm.Repository.Release {
 }
 
 entity Hexpm.Repository.ReleaseDownload {
+  package_id : id
   release_id : id
   downloads : integer
 }
@@ -284,7 +291,6 @@ entity Hexpm.Repository.Repository {
   id : id
   --
   name : string
-  public : boolean
   inserted_at : utc_datetime_usec
   updated_at : utc_datetime_usec
   organization_id : id
@@ -309,6 +315,7 @@ entity Hexpm.ShortURLs.ShortURL {
 }
 
 Hexpm.Accounts.TFA ||--|{ Hexpm.Accounts.RecoveryCode
+Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.AuditLog
 Hexpm.Accounts.Key ||--o| Hexpm.Accounts.Key.Use
 Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.KeyPermission
 Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.AuditLog
@@ -318,10 +325,12 @@ Hexpm.Accounts.Organization ||--o| Hexpm.Repository.Repository
 Hexpm.Accounts.Organization ||--o| Hexpm.Accounts.User
 Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportComment
 Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportRelease
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.Download
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDependant
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDownload
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageOwner
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageReport
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.ReleaseDownload
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.Release
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.Requirement
 Hexpm.Repository.Package ||--o| Hexpm.Repository.PackageMetadata

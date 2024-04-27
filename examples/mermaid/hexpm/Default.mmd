@@ -1,15 +1,17 @@
 erDiagram
   schema_migrations {
-    integer version
+    integer version PK
     timestamp inserted_at
   }
   audit_logs {
     integer id PK
     varchar user_agent
+    varchar remote_ip
     varchar action
     jsonb params
     integer user_id
     integer organization_id
+    integer key_id
     timestamp inserted_at
   }
   emails {
@@ -32,7 +34,6 @@ erDiagram
     varchar secret_second
     boolean public
     timestamp revoke_at
-    timestamp revoked_at
     timestamp inserted_at
     timestamp updated_at
     jsonb last_use
@@ -44,6 +45,8 @@ erDiagram
     integer id PK
     varchar name
     boolean billing_active
+    boolean billing_override
+    timestamp trial_end
     timestamp inserted_at
     timestamp updated_at
   }
@@ -90,6 +93,7 @@ erDiagram
   }
   downloads {
     integer id PK
+    integer package_id
     integer release_id
     integer downloads
     date day
@@ -165,13 +169,13 @@ erDiagram
     jsonb retirement
   }
   release_downloads {
+    integer package_id
     integer release_id
     integer downloads
   }
   repositories {
     integer id PK
     varchar name
-    boolean public
     timestamp inserted_at
     timestamp updated_at
     integer organization_id
@@ -190,6 +194,7 @@ erDiagram
     varchar short_code
     timestamp inserted_at
   }
+  keys ||--|{ audit_logs : ""
   organizations ||--|{ audit_logs : ""
   organizations ||--|{ keys : ""
   organizations ||--|{ organization_users : ""
@@ -197,10 +202,12 @@ erDiagram
   organizations ||--o| users : ""
   package_reports ||--|{ package_report_comments : ""
   package_reports ||--|{ package_report_releases : ""
+  packages ||--|{ downloads : ""
   packages ||--|{ package_dependants : ""
   packages ||--|{ package_downloads : ""
   packages ||--|{ package_owners : ""
   packages ||--|{ package_reports : ""
+  packages ||--|{ release_downloads : ""
   packages ||--|{ releases : ""
   packages ||--|{ requirements : ""
   releases ||--|{ downloads : ""

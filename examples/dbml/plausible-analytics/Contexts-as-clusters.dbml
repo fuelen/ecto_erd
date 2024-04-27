@@ -1,49 +1,306 @@
 TableGroup "Ecto.Migration" {
   schema_migrations
 }
-TableGroup "Oban.Job" {
+TableGroup "FunWithFlags.Store" {
+  fun_with_flags_toggles
+}
+TableGroup Oban {
   oban_jobs
+}
+TableGroup Plausible {
+  events_v2
+  sessions_v2
+  funnels
+  goals
+  sites
 }
 TableGroup "Plausible.Auth" {
   api_keys
+  email_activation_codes
   invitations
+  totp_recovery_codes
   users
 }
 TableGroup "Plausible.Billing" {
+  enterprise_plans
   subscriptions
 }
-TableGroup "Plausible.ClickhouseEvent" {
-  events
+TableGroup "Plausible.DataMigration" {
+  domains_lookup
 }
-TableGroup "Plausible.ClickhouseSession" {
-  sessions
+TableGroup "Plausible.Funnel" {
+  funnel_steps
 }
-TableGroup "Plausible.Goal" {
-  goals
+TableGroup "Plausible.Imported" {
+  imported_browsers
+  imported_devices
+  imported_entry_pages
+  imported_exit_pages
+  imported_locations
+  imported_operating_systems
+  imported_pages
+  site_imports
+  imported_sources
+  imported_visitors
+}
+TableGroup "Plausible.Ingestion" {
+  ingest_counters
+}
+TableGroup "Plausible.Plugins" {
+  plugins_api_tokens
+}
+TableGroup "Plausible.Shield" {
+  shield_rules_country
+  shield_rules_hostname
+  shield_rules_ip
+  shield_rules_page
 }
 TableGroup "Plausible.Site" {
-  sites
-  custom_domains
   google_auth
   site_memberships
   monthly_reports
   shared_links
   spike_notifications
+  site_user_preferences
   weekly_reports
 }
-TableGroup "Plausible.Twitter" {
-  tweets
+
+Enum billing_interval {
+  yearly
+  monthly
+}
+
+Enum currency {
+  XBD
+  BYN
+  HKD
+  XOF
+  SOS
+  ARS
+  EGP
+  XDR
+  GMD
+  MAD
+  XAG
+  XAU
+  COU
+  UYW
+  LKR
+  SAR
+  BBD
+  XCD
+  ZMW
+  ZWL
+  CZK
+  JPY
+  SEK
+  PLN
+  KYD
+  THB
+  QAR
+  SLL
+  RON
+  CUC
+  MOP
+  CHW
+  KGS
+  ALL
+  CLP
+  XXX
+  IDR
+  BZD
+  PYG
+  LAK
+  OMR
+  HRK
+  CHF
+  BTN
+  MRU
+  GEL
+  BOV
+  AFN
+  RSD
+  XTS
+  UYU
+  BHD
+  HNL
+  GBP
+  WST
+  COP
+  MKD
+  ZAR
+  SYP
+  SZL
+  HTG
+  SVC
+  NPR
+  MXV
+  MMK
+  PKR
+  GTQ
+  AWG
+  SGD
+  TWD
+  AOA
+  TOP
+  XBB
+  KRW
+  XBA
+  TRY
+  XPT
+  SBD
+  MUR
+  NIO
+  CNY
+  BWP
+  NOK
+  LSL
+  IRR
+  BOB
+  BRL
+  SDG
+  BIF
+  BDT
+  UYI
+  NGN
+  LBP
+  GYD
+  RWF
+  ILS
+  PGK
+  TTD
+  SSP
+  MWK
+  ETB
+  INR
+  AUD
+  XPD
+  CVE
+  TMT
+  YER
+  BAM
+  XSU
+  MVR
+  SCR
+  JOD
+  CHE
+  CUP
+  PAB
+  MGA
+  VES
+  JMD
+  VUV
+  MNT
+  NZD
+  XBC
+  KES
+  GNF
+  XAF
+  TZS
+  BND
+  MYR
+  LRD
+  KPW
+  PHP
+  IQD
+  CRC
+  UZS
+  TND
+  DJF
+  DOP
+  GIP
+  XUA
+  CLF
+  MDL
+  NAD
+  PEN
+  CDF
+  USD
+  BGN
+  STN
+  UAH
+  EUR
+  FKP
+  GHS
+  BSD
+  CAD
+  FJD
+  SRD
+  KHR
+  MXN
+  HUF
+  UGX
+  AED
+  XPF
+  DZD
+  RUB
+  KZT
+  AZN
+  KMF
+  AMD
+  VND
+  USN
+  BMD
+  ANG
+  KWD
+  TJS
+  LYD
+  DKK
+  ERN
+  ISK
+  MZN
+  SHP
 }
 
 Enum role {
-  admin
   owner
+  admin
   viewer
 }
 
+Enum action {
+  allow
+  deny
+}
+
+Enum source {
+  noop
+  csv
+  universal_analytics
+  google_analytics_4
+}
+
+Enum site_imports_status {
+  pending
+  failed
+  completed
+  importing
+}
+
+Enum subscriptions_status {
+  active
+  deleted
+  past_due
+  paused
+}
+
+Enum theme {
+  system
+  light
+  dark
+}
+
 Table schema_migrations {
-  version integer
+  version integer [pk]
   inserted_at timestamp
+}
+
+Table fun_with_flags_toggles {
+  id integer [pk]
+  flag_name varchar
+  gate_type varchar
+  target varchar
+  enabled boolean
 }
 
 Table oban_jobs {
@@ -67,6 +324,113 @@ Table oban_jobs {
   scheduled_at timestamp
 }
 
+Table events_v2 {
+  name unknown
+  site_id unknown
+  hostname varchar
+  pathname varchar
+  user_id unknown
+  session_id unknown
+  timestamp timestamp
+  "meta.key" array
+  "meta.value" array
+  revenue_source_amount unknown
+  revenue_source_currency unknown
+  revenue_reporting_amount unknown
+  revenue_reporting_currency unknown
+  referrer varchar
+  referrer_source varchar
+  utm_medium varchar
+  utm_source varchar
+  utm_campaign varchar
+  utm_content varchar
+  utm_term varchar
+  country_code unknown
+  subdivision1_code unknown
+  subdivision2_code unknown
+  city_geoname_id unknown
+  screen_size unknown
+  operating_system unknown
+  operating_system_version unknown
+  browser unknown
+  browser_version unknown
+}
+
+Table sessions_v2 {
+  hostname varchar
+  site_id unknown
+  user_id unknown
+  session_id unknown
+  start timestamp
+  duration unknown
+  is_bounce unknown
+  entry_page varchar
+  exit_page varchar
+  exit_page_hostname varchar
+  pageviews unknown
+  events unknown
+  sign unknown
+  "entry_meta.key" array
+  "entry_meta.value" array
+  utm_medium varchar
+  utm_source varchar
+  utm_campaign varchar
+  utm_content varchar
+  utm_term varchar
+  referrer varchar
+  referrer_source varchar
+  country_code unknown
+  subdivision1_code unknown
+  subdivision2_code unknown
+  city_geoname_id unknown
+  screen_size unknown
+  operating_system unknown
+  operating_system_version unknown
+  browser unknown
+  browser_version unknown
+  timestamp timestamp
+  transferred_from varchar
+}
+
+Table funnels {
+  id integer [pk]
+  name varchar
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table goals {
+  id integer [pk]
+  event_name varchar
+  page_path varchar
+  currency currency
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table sites {
+  id integer [pk]
+  domain varchar
+  timezone varchar
+  public boolean
+  locked boolean
+  stats_start_date date
+  native_stats_start_at timestamp
+  allowed_event_props array
+  conversions_enabled boolean
+  props_enabled boolean
+  funnels_enabled boolean
+  ingest_rate_limit_scale_seconds integer
+  ingest_rate_limit_threshold integer
+  domain_changed_from varchar
+  domain_changed_at timestamp
+  imported_data jsonb
+  inserted_at timestamp
+  updated_at timestamp
+}
+
 Table api_keys {
   id integer [pk]
   name varchar
@@ -77,6 +441,13 @@ Table api_keys {
   user_id integer
   inserted_at timestamp
   updated_at timestamp
+}
+
+Table email_activation_codes {
+  id integer [pk]
+  code varchar
+  issued_at timestamp
+  user_id integer
 }
 
 Table invitations {
@@ -90,6 +461,13 @@ Table invitations {
   updated_at timestamp
 }
 
+Table totp_recovery_codes {
+  id integer [pk]
+  code_digest varchar
+  user_id integer
+  inserted_at timestamp
+}
+
 Table users {
   id integer [pk]
   email varchar
@@ -97,8 +475,30 @@ Table users {
   name varchar
   last_seen timestamp
   trial_expiry_date date
-  theme varchar
+  theme theme
   email_verified boolean
+  previous_email varchar
+  accept_traffic_until date
+  allow_next_upgrade_override boolean
+  totp_enabled boolean
+  totp_secret bytea
+  totp_token varchar
+  totp_last_used_at timestamp
+  grace_period jsonb
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table enterprise_plans {
+  id integer [pk]
+  paddle_plan_id varchar
+  billing_interval billing_interval
+  monthly_pageview_limit integer
+  site_limit integer
+  team_member_limit integer
+  features array
+  hourly_api_request_limit integer
+  user_id integer
   inserted_at timestamp
   updated_at timestamp
 }
@@ -109,7 +509,7 @@ Table subscriptions {
   paddle_plan_id varchar
   update_url varchar
   cancel_url varchar
-  status varchar
+  status subscriptions_status
   next_bill_amount varchar
   next_bill_date date
   last_bill_date date
@@ -119,80 +519,211 @@ Table subscriptions {
   updated_at timestamp
 }
 
-Table events {
-  name varchar
+Table domains_lookup {
+  site_id unknown
   domain varchar
-  hostname varchar
-  pathname varchar
-  user_id integer
-  session_id integer
-  timestamp timestamp
-  referrer varchar
-  referrer_source varchar
-  utm_medium varchar
-  utm_source varchar
-  utm_campaign varchar
-  country_code varchar
-  screen_size varchar
-  operating_system varchar
-  operating_system_version varchar
-  browser varchar
-  browser_version varchar
-  "meta.key" array
-  "meta.value" array
 }
 
-Table sessions {
-  hostname varchar
-  domain varchar
-  user_id integer
-  session_id integer
-  start timestamp
-  duration integer
-  is_bounce boolean
+Table funnel_steps {
+  id integer [pk]
+  step_order integer
+  funnel_id integer
+  goal_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table imported_browsers {
+  site_id unknown
+  import_id unknown
+  date date
+  browser varchar
+  browser_version varchar
+  visitors unknown
+  visits unknown
+  visit_duration unknown
+  pageviews unknown
+  bounces unknown
+}
+
+Table imported_devices {
+  site_id unknown
+  import_id unknown
+  date date
+  device varchar
+  visitors unknown
+  visits unknown
+  visit_duration unknown
+  pageviews unknown
+  bounces unknown
+}
+
+Table imported_entry_pages {
+  site_id unknown
+  import_id unknown
+  date date
   entry_page varchar
+  visitors unknown
+  entrances unknown
+  visit_duration unknown
+  pageviews unknown
+  bounces unknown
+}
+
+Table imported_exit_pages {
+  site_id unknown
+  import_id unknown
+  date date
   exit_page varchar
-  pageviews integer
-  events integer
-  sign integer
-  utm_medium varchar
-  utm_source varchar
-  utm_campaign varchar
-  referrer varchar
-  referrer_source varchar
-  country_code varchar
-  screen_size varchar
+  exits unknown
+  visitors unknown
+  visit_duration unknown
+  pageviews unknown
+  bounces unknown
+}
+
+Table imported_locations {
+  site_id unknown
+  import_id unknown
+  date date
+  country varchar
+  region varchar
+  city unknown
+  visitors unknown
+  visits unknown
+  visit_duration unknown
+  pageviews unknown
+  bounces unknown
+}
+
+Table imported_operating_systems {
+  site_id unknown
+  import_id unknown
+  date date
   operating_system varchar
   operating_system_version varchar
-  browser varchar
-  browser_version varchar
-  timestamp timestamp
+  visitors unknown
+  visits unknown
+  visit_duration unknown
+  pageviews unknown
+  bounces unknown
 }
 
-Table goals {
-  id integer [pk]
-  domain varchar
-  event_name varchar
-  page_path varchar
-  inserted_at timestamp
-  updated_at timestamp
+Table imported_pages {
+  site_id unknown
+  import_id unknown
+  date date
+  hostname varchar
+  page varchar
+  visits unknown
+  visitors unknown
+  active_visitors unknown
+  pageviews unknown
+  exits unknown
+  time_on_page unknown
 }
 
-Table sites {
+Table site_imports {
   id integer [pk]
-  domain varchar
-  timezone varchar
-  public boolean
-  locked boolean
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Table custom_domains {
-  id integer [pk]
-  domain varchar
-  has_ssl_certificate boolean
+  start_date date
+  end_date date
+  label varchar
+  source source
+  status site_imports_status
+  legacy boolean
   site_id integer
+  imported_by_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table imported_sources {
+  site_id unknown
+  import_id unknown
+  date date
+  source varchar
+  referrer varchar
+  utm_source varchar
+  utm_medium varchar
+  utm_campaign varchar
+  utm_content varchar
+  utm_term varchar
+  visitors unknown
+  visits unknown
+  visit_duration unknown
+  pageviews unknown
+  bounces unknown
+}
+
+Table imported_visitors {
+  site_id unknown
+  import_id unknown
+  date date
+  visitors unknown
+  pageviews unknown
+  bounces unknown
+  visits unknown
+  visit_duration unknown
+}
+
+Table ingest_counters {
+  event_timebucket timestamp
+  site_id unknown
+  domain unknown
+  metric unknown
+  value unknown
+}
+
+Table plugins_api_tokens {
+  id uuid [pk]
+  inserted_at timestamp
+  updated_at timestamp
+  token_hash bytea
+  description varchar
+  hint varchar
+  last_used_at timestamp
+  site_id integer
+}
+
+Table shield_rules_country {
+  id uuid [pk]
+  site_id integer
+  country_code varchar
+  action action
+  added_by varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table shield_rules_hostname {
+  id uuid [pk]
+  site_id integer
+  hostname varchar
+  hostname_pattern varchar
+  action action
+  added_by varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table shield_rules_ip {
+  id uuid [pk]
+  site_id integer
+  inet inet
+  action action
+  description varchar
+  added_by varchar
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table shield_rules_page {
+  id uuid [pk]
+  site_id integer
+  page_path varchar
+  page_path_pattern varchar
+  action action
+  added_by varchar
   inserted_at timestamp
   updated_at timestamp
 }
@@ -247,6 +778,15 @@ Table spike_notifications {
   updated_at timestamp
 }
 
+Table site_user_preferences {
+  id integer [pk]
+  pinned_at timestamp
+  user_id integer
+  site_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
 Table weekly_reports {
   id integer [pk]
   recipients array
@@ -255,29 +795,31 @@ Table weekly_reports {
   updated_at timestamp
 }
 
-Table tweets {
-  id integer [pk]
-  link varchar
-  tweet_id varchar
-  author_handle varchar
-  author_name varchar
-  author_image varchar
-  text varchar
-  created timestamp
-  inserted_at timestamp
-  updated_at timestamp
-}
-
-Ref: sites.id - custom_domains.site_id
+Ref: funnels.id < funnel_steps.funnel_id
+Ref: goals.id < funnel_steps.goal_id
+Ref: sites.id < funnels.site_id
+Ref: sites.id < goals.site_id
 Ref: sites.id - google_auth.site_id
 Ref: sites.id < invitations.site_id
 Ref: sites.id - monthly_reports.site_id
+Ref: sites.id < plugins_api_tokens.site_id
 Ref: sites.id < shared_links.site_id
-Ref: sites.id < site_memberships.site_id
+Ref: sites.id < shield_rules_country.site_id
+Ref: sites.id < shield_rules_hostname.site_id
+Ref: sites.id < shield_rules_ip.site_id
+Ref: sites.id < shield_rules_page.site_id
+Ref: sites.id < site_imports.site_id
+Ref: sites.id - site_memberships.site_id
+Ref: sites.id < site_user_preferences.site_id
 Ref: sites.id - spike_notifications.site_id
 Ref: sites.id - weekly_reports.site_id
 Ref: users.id < api_keys.user_id
+Ref: users.id < email_activation_codes.user_id
+Ref: users.id - enterprise_plans.user_id
 Ref: users.id - google_auth.user_id
 Ref: users.id < invitations.inviter_id
+Ref: users.id < site_imports.imported_by_id
 Ref: users.id < site_memberships.user_id
+Ref: users.id < site_user_preferences.user_id
 Ref: users.id - subscriptions.user_id
+Ref: users.id < totp_recovery_codes.user_id

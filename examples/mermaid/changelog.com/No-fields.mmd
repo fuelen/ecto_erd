@@ -1,5 +1,4 @@
 erDiagram
-  benefits
   episodes
   episode_guests
   episode_hosts
@@ -7,7 +6,7 @@ erDiagram
   episode_sponsors
   episode_stats
   episode_topics
-  metacasts
+  feeds
   news_ads
   news_issues
   news_issue_ads
@@ -25,6 +24,7 @@ erDiagram
   posts
   post_topics
   sponsors
+  sponsor_reps
   subscriptions
   topics
   schema_migrations
@@ -35,6 +35,7 @@ erDiagram
   episodes ||--|{ episode_sponsors : ""
   episodes ||--|{ episode_stats : ""
   episodes ||--|{ episode_topics : ""
+  episodes ||--|{ subscriptions : ""
   news_ads ||--|{ news_issue_ads : ""
   news_issues ||--|{ news_issue_ads : ""
   news_issues ||--|{ news_issue_items : ""
@@ -49,6 +50,7 @@ erDiagram
   people ||--|{ episode_guests : ""
   people ||--|{ episode_hosts : ""
   people ||--|{ episode_requests : ""
+  people ||--|{ feeds : ""
   people ||--|{ news_item_comments : ""
   people ||--|{ news_items : ""
   people ||--|{ news_items : ""
@@ -56,6 +58,7 @@ erDiagram
   people ||--|{ podcast_hosts : ""
   people ||--|{ posts : ""
   people ||--|{ posts : ""
+  people ||--|{ sponsor_reps : ""
   people ||--|{ subscriptions : ""
   podcasts ||--|{ episode_requests : ""
   podcasts ||--|{ episode_stats : ""
@@ -64,9 +67,9 @@ erDiagram
   podcasts ||--|{ podcast_topics : ""
   podcasts ||--|{ subscriptions : ""
   posts ||--|{ post_topics : ""
-  sponsors ||--|{ benefits : ""
   sponsors ||--|{ episode_sponsors : ""
   sponsors ||--|{ news_sponsorships : ""
+  sponsors ||--|{ sponsor_reps : ""
   topics ||--|{ episode_topics : ""
   topics ||--|{ news_item_topics : ""
   topics ||--|{ podcast_topics : ""

@@ -1,5 +1,6 @@
 @startuml
 
+set namespaceSeparator none
 hide circle
 hide methods
 hide fields
@@ -52,6 +53,7 @@ namespace Hexpm.ShortURLs #b4eeb4 {
 
 
 Hexpm.Accounts.TFA ||--|{ Hexpm.Accounts.RecoveryCode
+Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.AuditLog
 Hexpm.Accounts.Key ||--o| Hexpm.Accounts.Key.Use
 Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.KeyPermission
 Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.AuditLog
@@ -61,10 +63,12 @@ Hexpm.Accounts.Organization ||--o| Hexpm.Repository.Repository
 Hexpm.Accounts.Organization ||--o| Hexpm.Accounts.User
 Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportComment
 Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportRelease
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.Download
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDependant
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDownload
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageOwner
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageReport
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.ReleaseDownload
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.Release
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.Requirement
 Hexpm.Repository.Package ||--o| Hexpm.Repository.PackageMetadata

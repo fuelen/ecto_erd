@@ -35,17 +35,19 @@ TableGroup "Hexpm.ShortURLs" {
 
 
 Table schema_migrations {
-  version integer
+  version integer [pk]
   inserted_at timestamp
 }
 
 Table audit_logs {
   id integer [pk]
   user_agent varchar
+  remote_ip varchar
   action varchar
   params jsonb
   user_id integer
   organization_id integer
+  key_id integer
   inserted_at timestamp
 }
 
@@ -70,7 +72,6 @@ Table keys {
   secret_second varchar
   public boolean
   revoke_at timestamp
-  revoked_at timestamp
   inserted_at timestamp
   updated_at timestamp
   last_use jsonb
@@ -83,6 +84,8 @@ Table organizations {
   id integer [pk]
   name varchar
   billing_active boolean
+  billing_override boolean
+  trial_end timestamp
   inserted_at timestamp
   updated_at timestamp
 }
@@ -135,6 +138,7 @@ Table blocked_addresses {
 
 Table downloads {
   id integer [pk]
+  package_id integer
   release_id integer
   downloads integer
   day date
@@ -220,6 +224,7 @@ Table releases {
 }
 
 Table release_downloads {
+  package_id integer
   release_id integer
   downloads integer
 }
@@ -227,7 +232,6 @@ Table release_downloads {
 Table repositories {
   id integer [pk]
   name varchar
-  public boolean
   inserted_at timestamp
   updated_at timestamp
   organization_id integer
@@ -249,6 +253,7 @@ Table short_urls {
   inserted_at timestamp
 }
 
+Ref: keys.id < audit_logs.key_id
 Ref: organizations.id < audit_logs.organization_id
 Ref: organizations.id < keys.organization_id
 Ref: organizations.id < organization_users.organization_id
@@ -256,10 +261,12 @@ Ref: organizations.id - repositories.organization_id
 Ref: organizations.id - users.organization_id
 Ref: package_reports.id < package_report_comments.package_report_id
 Ref: package_reports.id < package_report_releases.package_report_id
+Ref: packages.id < downloads.package_id
 Ref: packages.id < package_dependants.package_id
 Ref: packages.id < package_downloads.package_id
 Ref: packages.id < package_owners.package_id
 Ref: packages.id < package_reports.package_id
+Ref: packages.id < release_downloads.package_id
 Ref: packages.id < releases.package_id
 Ref: packages.id < requirements.dependency_id
 Ref: releases.id < downloads.release_id

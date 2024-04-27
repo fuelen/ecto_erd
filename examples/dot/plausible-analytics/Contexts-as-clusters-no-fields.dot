@@ -9,12 +9,30 @@ strict digraph {
     label = <<font point-size='24'><b>Ecto.Migration</b></font>>
     "Ecto.Migration.SchemaMigration" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.Migration.SchemaMigration   </font></td></tr><tr><td><font point-size='14'><i>schema_migrations</i></font></td></tr></table>>]
   }
-  subgraph "cluster_Oban.Job" {
+  subgraph "cluster_FunWithFlags.Store" {
     style=filled
     fontname="Roboto Mono"
-    color = "#b4eeb4"
-    label = <<font point-size='24'><b>Oban.Job</b></font>>
+    color = "#f0ffff"
+    label = <<font point-size='24'><b>FunWithFlags.Store</b></font>>
+    "FunWithFlags.Store.Persistent.Ecto.Record" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   FunWithFlags.Store.Persistent.Ecto.Record   </font></td></tr><tr><td><font point-size='14'><i>fun_with_flags_toggles</i></font></td></tr></table>>]
+  }
+  subgraph cluster_Oban {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#f0ffff"
+    label = <<font point-size='24'><b>Oban</b></font>>
     "Oban.Job" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Oban.Job   </font></td></tr><tr><td><font point-size='14'><i>oban_jobs</i></font></td></tr></table>>]
+  }
+  subgraph cluster_Plausible {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>Plausible</b></font>>
+    "Plausible.ClickhouseEventV2" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.ClickhouseEventV2   </font></td></tr><tr><td><font point-size='14'><i>events_v2</i></font></td></tr></table>>]
+  "Plausible.ClickhouseSessionV2" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.ClickhouseSessionV2   </font></td></tr><tr><td><font point-size='14'><i>sessions_v2</i></font></td></tr></table>>]
+  "Plausible.Funnel" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Funnel   </font></td></tr><tr><td><font point-size='14'><i>funnels</i></font></td></tr></table>>]
+  "Plausible.Goal" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Goal   </font></td></tr><tr><td><font point-size='14'><i>goals</i></font></td></tr></table>>]
+  "Plausible.Site" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site   </font></td></tr><tr><td><font point-size='14'><i>sites</i></font></td></tr></table>>]
   }
   subgraph "cluster_Plausible.Auth" {
     style=filled
@@ -22,7 +40,10 @@ strict digraph {
     color = "#ffefd5"
     label = <<font point-size='24'><b>Plausible.Auth</b></font>>
     "Plausible.Auth.ApiKey" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Auth.ApiKey   </font></td></tr><tr><td><font point-size='14'><i>api_keys</i></font></td></tr></table>>]
+  "Plausible.Auth.EmailActivationCode" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Auth.EmailActivationCode   </font></td></tr><tr><td><font point-size='14'><i>email_activation_codes</i></font></td></tr></table>>]
+  "Plausible.Auth.GracePeriod" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Auth.GracePeriod   </font></td></tr></table>>]
   "Plausible.Auth.Invitation" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Auth.Invitation   </font></td></tr><tr><td><font point-size='14'><i>invitations</i></font></td></tr></table>>]
+  "Plausible.Auth.TOTP.RecoveryCode" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Auth.TOTP.RecoveryCode   </font></td></tr><tr><td><font point-size='14'><i>totp_recovery_codes</i></font></td></tr></table>>]
   "Plausible.Auth.User" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Auth.User   </font></td></tr><tr><td><font point-size='14'><i>users</i></font></td></tr></table>>]
   }
   subgraph "cluster_Plausible.Billing" {
@@ -30,62 +51,108 @@ strict digraph {
     fontname="Roboto Mono"
     color = "#f0ffff"
     label = <<font point-size='24'><b>Plausible.Billing</b></font>>
-    "Plausible.Billing.Subscription" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Billing.Subscription   </font></td></tr><tr><td><font point-size='14'><i>subscriptions</i></font></td></tr></table>>]
+    "Plausible.Billing.EnterprisePlan" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Billing.EnterprisePlan   </font></td></tr><tr><td><font point-size='14'><i>enterprise_plans</i></font></td></tr></table>>]
+  "Plausible.Billing.Plan" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Billing.Plan   </font></td></tr></table>>]
+  "Plausible.Billing.Subscription" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Billing.Subscription   </font></td></tr><tr><td><font point-size='14'><i>subscriptions</i></font></td></tr></table>>]
   }
-  subgraph "cluster_Plausible.ClickhouseEvent" {
+  subgraph "cluster_Plausible.DataMigration" {
     style=filled
     fontname="Roboto Mono"
-    color = "#f0ffff"
-    label = <<font point-size='24'><b>Plausible.ClickhouseEvent</b></font>>
-    "Plausible.ClickhouseEvent" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.ClickhouseEvent   </font></td></tr><tr><td><font point-size='14'><i>events</i></font></td></tr></table>>]
+    color = "#8deeee"
+    label = <<font point-size='24'><b>Plausible.DataMigration</b></font>>
+    "Plausible.DataMigration.NumericIDs.DomainsLookup" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.DataMigration.NumericIDs.DomainsLookup   </font></td></tr><tr><td><font point-size='14'><i>domains_lookup</i></font></td></tr></table>>]
   }
-  subgraph "cluster_Plausible.ClickhouseSession" {
+  subgraph "cluster_Plausible.Funnel" {
     style=filled
     fontname="Roboto Mono"
-    color = "#f0f8ff"
-    label = <<font point-size='24'><b>Plausible.ClickhouseSession</b></font>>
-    "Plausible.ClickhouseSession" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.ClickhouseSession   </font></td></tr><tr><td><font point-size='14'><i>sessions</i></font></td></tr></table>>]
+    color = "#fffafa"
+    label = <<font point-size='24'><b>Plausible.Funnel</b></font>>
+    "Plausible.Funnel.Step" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Funnel.Step   </font></td></tr><tr><td><font point-size='14'><i>funnel_steps</i></font></td></tr></table>>]
   }
-  subgraph "cluster_Plausible.Goal" {
+  subgraph "cluster_Plausible.Imported" {
     style=filled
     fontname="Roboto Mono"
-    color = "#b4eeb4"
-    label = <<font point-size='24'><b>Plausible.Goal</b></font>>
-    "Plausible.Goal" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Goal   </font></td></tr><tr><td><font point-size='14'><i>goals</i></font></td></tr></table>>]
+    color = "#eedfcc"
+    label = <<font point-size='24'><b>Plausible.Imported</b></font>>
+    "Plausible.Imported.Browser" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.Browser   </font></td></tr><tr><td><font point-size='14'><i>imported_browsers</i></font></td></tr></table>>]
+  "Plausible.Imported.Device" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.Device   </font></td></tr><tr><td><font point-size='14'><i>imported_devices</i></font></td></tr></table>>]
+  "Plausible.Imported.EntryPage" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.EntryPage   </font></td></tr><tr><td><font point-size='14'><i>imported_entry_pages</i></font></td></tr></table>>]
+  "Plausible.Imported.ExitPage" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.ExitPage   </font></td></tr><tr><td><font point-size='14'><i>imported_exit_pages</i></font></td></tr></table>>]
+  "Plausible.Imported.Location" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.Location   </font></td></tr><tr><td><font point-size='14'><i>imported_locations</i></font></td></tr></table>>]
+  "Plausible.Imported.OperatingSystem" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.OperatingSystem   </font></td></tr><tr><td><font point-size='14'><i>imported_operating_systems</i></font></td></tr></table>>]
+  "Plausible.Imported.Page" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.Page   </font></td></tr><tr><td><font point-size='14'><i>imported_pages</i></font></td></tr></table>>]
+  "Plausible.Imported.SiteImport" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.SiteImport   </font></td></tr><tr><td><font point-size='14'><i>site_imports</i></font></td></tr></table>>]
+  "Plausible.Imported.Source" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.Source   </font></td></tr><tr><td><font point-size='14'><i>imported_sources</i></font></td></tr></table>>]
+  "Plausible.Imported.Visitor" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Imported.Visitor   </font></td></tr><tr><td><font point-size='14'><i>imported_visitors</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_Plausible.Ingestion" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#8deeee"
+    label = <<font point-size='24'><b>Plausible.Ingestion</b></font>>
+    "Plausible.Ingestion.Counters.Record" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Ingestion.Counters.Record   </font></td></tr><tr><td><font point-size='14'><i>ingest_counters</i></font></td></tr></table>>]
+  "Plausible.Ingestion.Request" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Ingestion.Request   </font></td></tr></table>>]
+  }
+  subgraph "cluster_Plausible.Plugins" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#eee5de"
+    label = <<font point-size='24'><b>Plausible.Plugins</b></font>>
+    "Plausible.Plugins.API.Token" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Plugins.API.Token   </font></td></tr><tr><td><font point-size='14'><i>plugins_api_tokens</i></font></td></tr></table>>]
+  }
+  subgraph "cluster_Plausible.Shield" {
+    style=filled
+    fontname="Roboto Mono"
+    color = "#8deeee"
+    label = <<font point-size='24'><b>Plausible.Shield</b></font>>
+    "Plausible.Shield.CountryRule" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Shield.CountryRule   </font></td></tr><tr><td><font point-size='14'><i>shield_rules_country</i></font></td></tr></table>>]
+  "Plausible.Shield.HostnameRule" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Shield.HostnameRule   </font></td></tr><tr><td><font point-size='14'><i>shield_rules_hostname</i></font></td></tr></table>>]
+  "Plausible.Shield.IPRule" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Shield.IPRule   </font></td></tr><tr><td><font point-size='14'><i>shield_rules_ip</i></font></td></tr></table>>]
+  "Plausible.Shield.PageRule" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Shield.PageRule   </font></td></tr><tr><td><font point-size='14'><i>shield_rules_page</i></font></td></tr></table>>]
   }
   subgraph "cluster_Plausible.Site" {
     style=filled
     fontname="Roboto Mono"
     color = "#f0f8ff"
     label = <<font point-size='24'><b>Plausible.Site</b></font>>
-    "Plausible.Site" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site   </font></td></tr><tr><td><font point-size='14'><i>sites</i></font></td></tr></table>>]
-  "Plausible.Site.CustomDomain" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.CustomDomain   </font></td></tr><tr><td><font point-size='14'><i>custom_domains</i></font></td></tr></table>>]
-  "Plausible.Site.GoogleAuth" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.GoogleAuth   </font></td></tr><tr><td><font point-size='14'><i>google_auth</i></font></td></tr></table>>]
+    "Plausible.Site.GoogleAuth" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.GoogleAuth   </font></td></tr><tr><td><font point-size='14'><i>google_auth</i></font></td></tr></table>>]
+  "Plausible.Site.ImportedData" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.ImportedData   </font></td></tr></table>>]
   "Plausible.Site.Membership" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.Membership   </font></td></tr><tr><td><font point-size='14'><i>site_memberships</i></font></td></tr></table>>]
   "Plausible.Site.MonthlyReport" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.MonthlyReport   </font></td></tr><tr><td><font point-size='14'><i>monthly_reports</i></font></td></tr></table>>]
   "Plausible.Site.SharedLink" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.SharedLink   </font></td></tr><tr><td><font point-size='14'><i>shared_links</i></font></td></tr></table>>]
   "Plausible.Site.SpikeNotification" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.SpikeNotification   </font></td></tr><tr><td><font point-size='14'><i>spike_notifications</i></font></td></tr></table>>]
+  "Plausible.Site.UserPreference" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.UserPreference   </font></td></tr><tr><td><font point-size='14'><i>site_user_preferences</i></font></td></tr></table>>]
   "Plausible.Site.WeeklyReport" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Site.WeeklyReport   </font></td></tr><tr><td><font point-size='14'><i>weekly_reports</i></font></td></tr></table>>]
   }
-  subgraph "cluster_Plausible.Twitter" {
-    style=filled
-    fontname="Roboto Mono"
-    color = "#b4eeb4"
-    label = <<font point-size='24'><b>Plausible.Twitter</b></font>>
-    "Plausible.Twitter.Tweet" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Plausible.Twitter.Tweet   </font></td></tr><tr><td><font point-size='14'><i>tweets</i></font></td></tr></table>>]
-  }
 
-  "Plausible.Site":e -> "Plausible.Site.CustomDomain":w [dir=none]
+  "Plausible.Funnel":e -> "Plausible.Funnel.Step":w
+  "Plausible.Goal":e -> "Plausible.Funnel.Step":w
+  "Plausible.Site":e -> "Plausible.Funnel":w
+  "Plausible.Site":e -> "Plausible.Goal":w
   "Plausible.Site":e -> "Plausible.Site.GoogleAuth":w [dir=none]
   "Plausible.Site":e -> "Plausible.Auth.Invitation":w
   "Plausible.Site":e -> "Plausible.Site.MonthlyReport":w [dir=none]
+  "Plausible.Site":e -> "Plausible.Plugins.API.Token":w
   "Plausible.Site":e -> "Plausible.Site.SharedLink":w
-  "Plausible.Site":e -> "Plausible.Site.Membership":w
+  "Plausible.Site":e -> "Plausible.Shield.CountryRule":w
+  "Plausible.Site":e -> "Plausible.Shield.HostnameRule":w
+  "Plausible.Site":e -> "Plausible.Shield.IPRule":w
+  "Plausible.Site":e -> "Plausible.Shield.PageRule":w
+  "Plausible.Site":e -> "Plausible.Imported.SiteImport":w
+  "Plausible.Site":e -> "Plausible.Site.Membership":w [dir=none]
+  "Plausible.Site":e -> "Plausible.Site.UserPreference":w
   "Plausible.Site":e -> "Plausible.Site.SpikeNotification":w [dir=none]
   "Plausible.Site":e -> "Plausible.Site.WeeklyReport":w [dir=none]
+  "Plausible.Site":e -> "Plausible.Site.ImportedData":w [dir=none]
+  "Plausible.Auth.User":e -> "Plausible.Auth.GracePeriod":w [dir=none]
   "Plausible.Auth.User":e -> "Plausible.Auth.ApiKey":w
+  "Plausible.Auth.User":e -> "Plausible.Auth.EmailActivationCode":w
+  "Plausible.Auth.User":e -> "Plausible.Billing.EnterprisePlan":w [dir=none]
   "Plausible.Auth.User":e -> "Plausible.Site.GoogleAuth":w [dir=none]
   "Plausible.Auth.User":e -> "Plausible.Auth.Invitation":w
+  "Plausible.Auth.User":e -> "Plausible.Imported.SiteImport":w
   "Plausible.Auth.User":e -> "Plausible.Site.Membership":w
+  "Plausible.Auth.User":e -> "Plausible.Site.UserPreference":w
   "Plausible.Auth.User":e -> "Plausible.Billing.Subscription":w [dir=none]
+  "Plausible.Auth.User":e -> "Plausible.Auth.TOTP.RecoveryCode":w
 }

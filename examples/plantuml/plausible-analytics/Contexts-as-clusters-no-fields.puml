@@ -1,5 +1,6 @@
 @startuml
 
+set namespaceSeparator none
 hide circle
 hide methods
 hide fields
@@ -10,52 +11,103 @@ skinparam shadowing false
 namespace Ecto.Migration #f0f8ff {
   entity Ecto.Migration.SchemaMigration
 }
-namespace Oban.Job #b4eeb4 {
+namespace FunWithFlags.Store #f0ffff {
+  entity FunWithFlags.Store.Persistent.Ecto.Record
+}
+namespace Oban #f0ffff {
   entity Oban.Job
+}
+namespace Plausible #eee5de {
+  entity Plausible.ClickhouseEventV2
+  entity Plausible.ClickhouseSessionV2
+  entity Plausible.Funnel
+  entity Plausible.Goal
+  entity Plausible.Site
 }
 namespace Plausible.Auth #ffefd5 {
   entity Plausible.Auth.ApiKey
+  entity Plausible.Auth.EmailActivationCode
+  entity Plausible.Auth.GracePeriod
   entity Plausible.Auth.Invitation
+  entity Plausible.Auth.TOTP.RecoveryCode
   entity Plausible.Auth.User
 }
 namespace Plausible.Billing #f0ffff {
+  entity Plausible.Billing.EnterprisePlan
+  entity Plausible.Billing.Plan
   entity Plausible.Billing.Subscription
 }
-namespace Plausible.ClickhouseEvent #f0ffff {
-  entity Plausible.ClickhouseEvent
+namespace Plausible.DataMigration #8deeee {
+  entity Plausible.DataMigration.NumericIDs.DomainsLookup
 }
-namespace Plausible.ClickhouseSession #f0f8ff {
-  entity Plausible.ClickhouseSession
+namespace Plausible.Funnel #fffafa {
+  entity Plausible.Funnel.Step
 }
-namespace Plausible.Goal #b4eeb4 {
-  entity Plausible.Goal
+namespace Plausible.Imported #eedfcc {
+  entity Plausible.Imported.Browser
+  entity Plausible.Imported.Device
+  entity Plausible.Imported.EntryPage
+  entity Plausible.Imported.ExitPage
+  entity Plausible.Imported.Location
+  entity Plausible.Imported.OperatingSystem
+  entity Plausible.Imported.Page
+  entity Plausible.Imported.SiteImport
+  entity Plausible.Imported.Source
+  entity Plausible.Imported.Visitor
+}
+namespace Plausible.Ingestion #8deeee {
+  entity Plausible.Ingestion.Counters.Record
+  entity Plausible.Ingestion.Request
+}
+namespace Plausible.Plugins #eee5de {
+  entity Plausible.Plugins.API.Token
+}
+namespace Plausible.Shield #8deeee {
+  entity Plausible.Shield.CountryRule
+  entity Plausible.Shield.HostnameRule
+  entity Plausible.Shield.IPRule
+  entity Plausible.Shield.PageRule
 }
 namespace Plausible.Site #f0f8ff {
-  entity Plausible.Site
-  entity Plausible.Site.CustomDomain
   entity Plausible.Site.GoogleAuth
+  entity Plausible.Site.ImportedData
   entity Plausible.Site.Membership
   entity Plausible.Site.MonthlyReport
   entity Plausible.Site.SharedLink
   entity Plausible.Site.SpikeNotification
+  entity Plausible.Site.UserPreference
   entity Plausible.Site.WeeklyReport
 }
-namespace Plausible.Twitter #b4eeb4 {
-  entity Plausible.Twitter.Tweet
-}
 
 
-Plausible.Site ||--o| Plausible.Site.CustomDomain
+Plausible.Funnel ||--|{ Plausible.Funnel.Step
+Plausible.Goal ||--|{ Plausible.Funnel.Step
+Plausible.Site ||--|{ Plausible.Funnel
+Plausible.Site ||--|{ Plausible.Goal
 Plausible.Site ||--o| Plausible.Site.GoogleAuth
 Plausible.Site ||--|{ Plausible.Auth.Invitation
 Plausible.Site ||--o| Plausible.Site.MonthlyReport
+Plausible.Site ||--|{ Plausible.Plugins.API.Token
 Plausible.Site ||--|{ Plausible.Site.SharedLink
-Plausible.Site ||--|{ Plausible.Site.Membership
+Plausible.Site ||--|{ Plausible.Shield.CountryRule
+Plausible.Site ||--|{ Plausible.Shield.HostnameRule
+Plausible.Site ||--|{ Plausible.Shield.IPRule
+Plausible.Site ||--|{ Plausible.Shield.PageRule
+Plausible.Site ||--|{ Plausible.Imported.SiteImport
+Plausible.Site ||--o| Plausible.Site.Membership
+Plausible.Site ||--|{ Plausible.Site.UserPreference
 Plausible.Site ||--o| Plausible.Site.SpikeNotification
 Plausible.Site ||--o| Plausible.Site.WeeklyReport
+Plausible.Site ||--o| Plausible.Site.ImportedData
+Plausible.Auth.User ||--o| Plausible.Auth.GracePeriod
 Plausible.Auth.User ||--|{ Plausible.Auth.ApiKey
+Plausible.Auth.User ||--|{ Plausible.Auth.EmailActivationCode
+Plausible.Auth.User ||--o| Plausible.Billing.EnterprisePlan
 Plausible.Auth.User ||--o| Plausible.Site.GoogleAuth
 Plausible.Auth.User ||--|{ Plausible.Auth.Invitation
+Plausible.Auth.User ||--|{ Plausible.Imported.SiteImport
 Plausible.Auth.User ||--|{ Plausible.Site.Membership
+Plausible.Auth.User ||--|{ Plausible.Site.UserPreference
 Plausible.Auth.User ||--o| Plausible.Billing.Subscription
+Plausible.Auth.User ||--|{ Plausible.Auth.TOTP.RecoveryCode
 @enduml

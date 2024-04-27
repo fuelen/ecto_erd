@@ -1,7 +1,15 @@
 schema_migrations
 ---
-version integer
+version integer PK
 inserted_at timestamp
+
+fun_with_flags_toggles
+---
+id integer PK
+flag_name varchar
+gate_type varchar
+target varchar
+enabled boolean
 
 oban_jobs
 ---
@@ -36,16 +44,30 @@ user_id integer FK >- users.id
 inserted_at timestamp
 updated_at timestamp
 
+email_activation_codes
+---
+id integer PK
+code varchar
+issued_at timestamp
+user_id integer FK >- users.id
+
 invitations
 ---
 id integer PK
 invitation_id varchar
 email varchar
-role "enum(admin,owner,viewer)"
+role "enum(owner,admin,viewer)"
 inviter_id integer FK >- users.id
 site_id integer FK >- sites.id
 inserted_at timestamp
 updated_at timestamp
+
+totp_recovery_codes
+---
+id integer PK
+code_digest varchar
+user_id integer FK >- users.id
+inserted_at timestamp
 
 users
 ---
@@ -55,8 +77,30 @@ password_hash varchar
 name varchar
 last_seen timestamp
 trial_expiry_date date
-theme varchar
+theme "enum(system,light,dark)"
 email_verified boolean
+previous_email varchar
+accept_traffic_until date
+allow_next_upgrade_override boolean
+totp_enabled boolean
+totp_secret bytea
+totp_token varchar
+totp_last_used_at timestamp
+grace_period jsonb
+inserted_at timestamp
+updated_at timestamp
+
+enterprise_plans
+---
+id integer PK
+paddle_plan_id varchar
+billing_interval "enum(yearly,monthly)"
+monthly_pageview_limit integer
+site_limit integer
+team_member_limit integer
+features array
+hourly_api_request_limit integer
+user_id integer FK - users.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -67,7 +111,7 @@ paddle_subscription_id varchar
 paddle_plan_id varchar
 update_url varchar
 cancel_url varchar
-status varchar
+status "enum(active,deleted,past_due,paused)"
 next_bill_amount varchar
 next_bill_date date
 last_bill_date date
@@ -76,62 +120,298 @@ user_id integer FK - users.id
 inserted_at timestamp
 updated_at timestamp
 
-events
+events_v2
 ---
-name varchar
-domain varchar
+name unknown
+site_id unknown
 hostname varchar
 pathname varchar
-user_id integer
-session_id integer
+user_id unknown
+session_id unknown
 timestamp timestamp
-referrer varchar
-referrer_source varchar
-utm_medium varchar
-utm_source varchar
-utm_campaign varchar
-country_code varchar
-screen_size varchar
-operating_system varchar
-operating_system_version varchar
-browser varchar
-browser_version varchar
 "meta.key" array
 "meta.value" array
-
-sessions
----
-hostname varchar
-domain varchar
-user_id integer
-session_id integer
-start timestamp
-duration integer
-is_bounce boolean
-entry_page varchar
-exit_page varchar
-pageviews integer
-events integer
-sign integer
+revenue_source_amount unknown
+revenue_source_currency unknown
+revenue_reporting_amount unknown
+revenue_reporting_currency unknown
+referrer varchar
+referrer_source varchar
 utm_medium varchar
 utm_source varchar
 utm_campaign varchar
+utm_content varchar
+utm_term varchar
+country_code unknown
+subdivision1_code unknown
+subdivision2_code unknown
+city_geoname_id unknown
+screen_size unknown
+operating_system unknown
+operating_system_version unknown
+browser unknown
+browser_version unknown
+
+sessions_v2
+---
+hostname varchar
+site_id unknown
+user_id unknown
+session_id unknown
+start timestamp
+duration unknown
+is_bounce unknown
+entry_page varchar
+exit_page varchar
+exit_page_hostname varchar
+pageviews unknown
+events unknown
+sign unknown
+"entry_meta.key" array
+"entry_meta.value" array
+utm_medium varchar
+utm_source varchar
+utm_campaign varchar
+utm_content varchar
+utm_term varchar
 referrer varchar
 referrer_source varchar
-country_code varchar
-screen_size varchar
-operating_system varchar
-operating_system_version varchar
-browser varchar
-browser_version varchar
+country_code unknown
+subdivision1_code unknown
+subdivision2_code unknown
+city_geoname_id unknown
+screen_size unknown
+operating_system unknown
+operating_system_version unknown
+browser unknown
+browser_version unknown
 timestamp timestamp
+transferred_from varchar
+
+domains_lookup
+---
+site_id unknown
+domain varchar
+
+funnels
+---
+id integer PK
+name varchar
+site_id integer FK >- sites.id
+inserted_at timestamp
+updated_at timestamp
+
+funnel_steps
+---
+id integer PK
+step_order integer
+funnel_id integer FK >- funnels.id
+goal_id integer FK >- goals.id
+inserted_at timestamp
+updated_at timestamp
 
 goals
 ---
 id integer PK
-domain varchar
 event_name varchar
 page_path varchar
+currency "enum(KMF,AUD,SAR,BWP,BBD,EGP,YER,CDF,IQD,MRU,JOD,XPT,XBB,NGN,BDT,CNY,ANG,GTQ,HTG,TWD,OMR,STN,AOA,MUR,XCD,TND,THB,KES,GIP,MZN,ERN,MAD,FKP,MVR,BND,KZT,EUR,SYP,MYR,RSD,KRW,COU,GMD,ILS,BAM,XAG,AZN,AFN,AWG,SOS,PAB,AED,UYI,BTN,USN,KPW,IDR,XPD,MOP,GEL,MXV,CHW,XAF,UGX,DJF,SGD,PGK,IRR,VES,PHP,SSP,BOB,XDR,JPY,BHD,UAH,ZAR,BSD,TMT,XOF,XTS,MNT,XSU,XPF,TTD,PLN,AMD,SBD,LSL,GBP,DOP,SEK,MDL,CUP,CZK,SZL,COP,XAU,NOK,CLF,RWF,NAD,KHR,TRY,LAK,SDG,XXX,PEN,LBP,BZD,CLP,KGS,TZS,GNF,KWD,NZD,SVC,LRD,CHF,PKR,SHP,XUA,XBD,LYD,BIF,JMD,ALL,BYN,CUC,UZS,MKD,ZWL,RON,NIO,MMK,SRD,ETB,ARS,GHS,XBA,XBC,UYW,HKD,ISK,DZD,MWK,RUB,SLL,SCR,CHE,CVE,VND,ZMW,HNL,HUF,INR,DKK,FJD,HRK,UYU,PYG,BMD,KYD,VUV,BGN,TOP,MXN,CAD,MGA,BOV,BRL,WST,NPR,CRC,GYD,TJS,LKR,QAR,USD)"
+site_id integer FK >- sites.id
+inserted_at timestamp
+updated_at timestamp
+
+imported_browsers
+---
+site_id unknown
+import_id unknown
+date date
+browser varchar
+browser_version varchar
+visitors unknown
+visits unknown
+visit_duration unknown
+pageviews unknown
+bounces unknown
+
+imported_devices
+---
+site_id unknown
+import_id unknown
+date date
+device varchar
+visitors unknown
+visits unknown
+visit_duration unknown
+pageviews unknown
+bounces unknown
+
+imported_entry_pages
+---
+site_id unknown
+import_id unknown
+date date
+entry_page varchar
+visitors unknown
+entrances unknown
+visit_duration unknown
+pageviews unknown
+bounces unknown
+
+imported_exit_pages
+---
+site_id unknown
+import_id unknown
+date date
+exit_page varchar
+exits unknown
+visitors unknown
+visit_duration unknown
+pageviews unknown
+bounces unknown
+
+imported_locations
+---
+site_id unknown
+import_id unknown
+date date
+country varchar
+region varchar
+city unknown
+visitors unknown
+visits unknown
+visit_duration unknown
+pageviews unknown
+bounces unknown
+
+imported_operating_systems
+---
+site_id unknown
+import_id unknown
+date date
+operating_system varchar
+operating_system_version varchar
+visitors unknown
+visits unknown
+visit_duration unknown
+pageviews unknown
+bounces unknown
+
+imported_pages
+---
+site_id unknown
+import_id unknown
+date date
+hostname varchar
+page varchar
+visits unknown
+visitors unknown
+active_visitors unknown
+pageviews unknown
+exits unknown
+time_on_page unknown
+
+site_imports
+---
+id integer PK
+start_date date
+end_date date
+label varchar
+source "enum(noop,csv,universal_analytics,google_analytics_4)"
+status "enum(pending,failed,completed,importing)"
+legacy boolean
+site_id integer FK >- sites.id
+imported_by_id integer FK >- users.id
+inserted_at timestamp
+updated_at timestamp
+
+imported_sources
+---
+site_id unknown
+import_id unknown
+date date
+source varchar
+referrer varchar
+utm_source varchar
+utm_medium varchar
+utm_campaign varchar
+utm_content varchar
+utm_term varchar
+visitors unknown
+visits unknown
+visit_duration unknown
+pageviews unknown
+bounces unknown
+
+imported_visitors
+---
+site_id unknown
+import_id unknown
+date date
+visitors unknown
+pageviews unknown
+bounces unknown
+visits unknown
+visit_duration unknown
+
+ingest_counters
+---
+event_timebucket timestamp
+site_id unknown
+domain unknown
+metric unknown
+value unknown
+
+plugins_api_tokens
+---
+id uuid PK
+inserted_at timestamp
+updated_at timestamp
+token_hash bytea
+description varchar
+hint varchar
+last_used_at timestamp
+site_id integer FK >- sites.id
+
+shield_rules_country
+---
+id uuid PK
+site_id integer FK >- sites.id
+country_code varchar
+action "enum(allow,deny)"
+added_by varchar
+inserted_at timestamp
+updated_at timestamp
+
+shield_rules_hostname
+---
+id uuid PK
+site_id integer FK >- sites.id
+hostname varchar
+hostname_pattern varchar
+action "enum(allow,deny)"
+added_by varchar
+inserted_at timestamp
+updated_at timestamp
+
+shield_rules_ip
+---
+id uuid PK
+site_id integer FK >- sites.id
+inet inet
+action "enum(allow,deny)"
+description varchar
+added_by varchar
+inserted_at timestamp
+updated_at timestamp
+
+shield_rules_page
+---
+id uuid PK
+site_id integer FK >- sites.id
+page_path varchar
+page_path_pattern varchar
+action "enum(allow,deny)"
+added_by varchar
 inserted_at timestamp
 updated_at timestamp
 
@@ -142,15 +422,17 @@ domain varchar
 timezone varchar
 public boolean
 locked boolean
-inserted_at timestamp
-updated_at timestamp
-
-custom_domains
----
-id integer PK
-domain varchar
-has_ssl_certificate boolean
-site_id integer FK - sites.id
+stats_start_date date
+native_stats_start_at timestamp
+allowed_event_props array
+conversions_enabled boolean
+props_enabled boolean
+funnels_enabled boolean
+ingest_rate_limit_scale_seconds integer
+ingest_rate_limit_threshold integer
+domain_changed_from varchar
+domain_changed_at timestamp
+imported_data jsonb
 inserted_at timestamp
 updated_at timestamp
 
@@ -170,8 +452,8 @@ updated_at timestamp
 site_memberships
 ---
 id integer PK
-role "enum(admin,owner,viewer)"
-site_id integer FK >- sites.id
+role "enum(owner,admin,viewer)"
+site_id integer FK - sites.id
 user_id integer FK >- users.id
 inserted_at timestamp
 updated_at timestamp
@@ -204,23 +486,19 @@ site_id integer FK - sites.id
 inserted_at timestamp
 updated_at timestamp
 
+site_user_preferences
+---
+id integer PK
+pinned_at timestamp
+user_id integer FK >- users.id
+site_id integer FK >- sites.id
+inserted_at timestamp
+updated_at timestamp
+
 weekly_reports
 ---
 id integer PK
 recipients array
 site_id integer FK - sites.id
-inserted_at timestamp
-updated_at timestamp
-
-tweets
----
-id integer PK
-link varchar
-tweet_id varchar
-author_handle varchar
-author_name varchar
-author_image varchar
-text varchar
-created timestamp
 inserted_at timestamp
 updated_at timestamp

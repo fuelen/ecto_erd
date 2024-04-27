@@ -1,5 +1,6 @@
 @startuml
 
+set namespaceSeparator none
 hide circle
 hide methods
 
@@ -7,18 +8,6 @@ skinparam linetype ortho
 skinparam defaultFontName Roboto Mono
 skinparam shadowing false
 
-
-entity Changelog.Benefit {
-  id : id
-  --
-  offer : string
-  code : string
-  link_url : string
-  notes : string
-  sponsor_id : id
-  inserted_at : naive_datetime
-  updated_at : naive_datetime
-}
 
 entity Changelog.Episode {
   id : id
@@ -34,25 +23,44 @@ entity Changelog.Episode {
   summary : string
   notes : string
   doc_url : string
+  socialize_url : string
   published : boolean
   published_at : utc_datetime
   recorded_at : utc_datetime
   recorded_live : boolean
   youtube_id : string
+  cover : string
   audio_file : string
   audio_bytes : integer
   audio_duration : integer
+  audio_chapters : map
   plusplus_file : string
   plusplus_bytes : integer
   plusplus_duration : integer
+  plusplus_chapters : map
   download_count : float
   import_count : float
   reach_count : integer
+  email_subject : string
+  email_teaser : string
+  email_content : string
+  email_sends : integer
+  email_opens : integer
   transcript : array
   podcast_id : id
   request_id : id
   inserted_at : naive_datetime
   updated_at : naive_datetime
+}
+
+entity Changelog.EpisodeChapter {
+  id : binary_id
+  --
+  title : string
+  starts_at : float
+  ends_at : float
+  link_url : string
+  image_url : string
 }
 
 entity Changelog.EpisodeGuest {
@@ -86,7 +94,7 @@ entity Changelog.EpisodeRequest {
   topics : string
   pitch : string
   pronunciation : string
-  decline_message : string
+  message : string
   podcast_id : id
   submitter_id : id
   inserted_at : naive_datetime
@@ -100,6 +108,8 @@ entity Changelog.EpisodeSponsor {
   title : string
   link_url : string
   description : string
+  starts_at : float
+  ends_at : float
   episode_id : id
   sponsor_id : id
   inserted_at : naive_datetime
@@ -131,16 +141,20 @@ entity Changelog.EpisodeTopic {
   updated_at : naive_datetime
 }
 
-entity Changelog.Metacast {
+entity Changelog.Feed {
   id : id
   --
   name : string
-  description : string
-  keywords : string
   slug : string
-  is_official : boolean
+  description : string
+  title_format : string
+  plusplus : boolean
+  autosub : boolean
+  starts_at : utc_datetime
   cover : string
-  filter_query : string
+  podcast_ids : array
+  person_ids : array
+  owner_id : id
   inserted_at : naive_datetime
   updated_at : naive_datetime
 }
@@ -211,7 +225,7 @@ entity Changelog.NewsItem {
   refreshed_at : utc_datetime
   impression_count : integer
   click_count : integer
-  decline_message : string
+  message : string
   author_id : id
   logger_id : id
   submitter_id : id
@@ -261,6 +275,7 @@ entity Changelog.NewsSource {
   description : string
   feed : string
   regex : string
+  publication : boolean
   icon : string
   inserted_at : naive_datetime
   updated_at : naive_datetime
@@ -286,6 +301,7 @@ entity Changelog.Person {
   handle : string
   github_handle : string
   linkedin_handle : string
+  mastodon_handle : string
   twitter_handle : string
   slack_id : string
   website : string
@@ -326,10 +342,12 @@ entity Changelog.Podcast {
   extended_description : string
   vanity_domain : string
   keywords : string
+  mastodon_handle : string
   twitter_handle : string
   apple_url : string
   spotify_url : string
   riverside_url : string
+  chartable_id : string
   schedule_note : string
   download_count : float
   reach_count : integer
@@ -408,14 +426,24 @@ entity Changelog.Sponsor {
   updated_at : naive_datetime
 }
 
+entity Changelog.SponsorRep {
+  id : id
+  --
+  sponsor_id : id
+  person_id : id
+  inserted_at : naive_datetime
+  updated_at : naive_datetime
+}
+
 entity Changelog.Subscription {
   id : id
   --
   unsubscribed_at : utc_datetime
   context : string
+  episode_id : id
+  item_id : id
   person_id : id
   podcast_id : id
-  item_id : id
   inserted_at : naive_datetime
   updated_at : naive_datetime
 }
@@ -435,6 +463,7 @@ entity Changelog.Topic {
 
 entity Ecto.Migration.SchemaMigration {
   version : integer
+  --
   inserted_at : naive_datetime
 }
 
@@ -461,11 +490,13 @@ entity Oban.Job {
 }
 
 Changelog.EpisodeRequest ||--o| Changelog.Episode
+Changelog.Episode ||--|{ Changelog.EpisodeChapter
 Changelog.Episode ||--|{ Changelog.EpisodeGuest
 Changelog.Episode ||--|{ Changelog.EpisodeHost
 Changelog.Episode ||--|{ Changelog.EpisodeSponsor
 Changelog.Episode ||--|{ Changelog.EpisodeStat
 Changelog.Episode ||--|{ Changelog.EpisodeTopic
+Changelog.Episode ||--|{ Changelog.Subscription
 Changelog.NewsAd ||--|{ Changelog.NewsIssueAd
 Changelog.NewsIssue ||--|{ Changelog.NewsIssueAd
 Changelog.NewsIssue ||--|{ Changelog.NewsIssueItem
@@ -480,10 +511,12 @@ Changelog.NewsSponsorship ||--|{ Changelog.NewsAd
 Changelog.Person ||--|{ Changelog.EpisodeGuest
 Changelog.Person ||--|{ Changelog.EpisodeHost
 Changelog.Person ||--|{ Changelog.EpisodeRequest
+Changelog.Person ||--|{ Changelog.Feed
 Changelog.Person ||--|{ Changelog.NewsItemComment
 Changelog.Person ||--|{ Changelog.NewsItem
 Changelog.Person ||--|{ Changelog.PodcastHost
 Changelog.Person ||--|{ Changelog.Post
+Changelog.Person ||--|{ Changelog.SponsorRep
 Changelog.Person ||--|{ Changelog.Subscription
 Changelog.Person ||--o| Changelog.Person.Settings
 Changelog.Podcast ||--|{ Changelog.EpisodeRequest
@@ -493,9 +526,9 @@ Changelog.Podcast ||--|{ Changelog.PodcastHost
 Changelog.Podcast ||--|{ Changelog.PodcastTopic
 Changelog.Podcast ||--|{ Changelog.Subscription
 Changelog.Post ||--|{ Changelog.PostTopic
-Changelog.Sponsor ||--|{ Changelog.Benefit
 Changelog.Sponsor ||--|{ Changelog.EpisodeSponsor
 Changelog.Sponsor ||--|{ Changelog.NewsSponsorship
+Changelog.Sponsor ||--|{ Changelog.SponsorRep
 Changelog.Topic ||--|{ Changelog.EpisodeTopic
 Changelog.Topic ||--|{ Changelog.NewsItemTopic
 Changelog.Topic ||--|{ Changelog.PodcastTopic

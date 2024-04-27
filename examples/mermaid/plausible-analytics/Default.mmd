@@ -1,7 +1,14 @@
 erDiagram
   schema_migrations {
-    integer version
+    integer version PK
     timestamp inserted_at
+  }
+  fun_with_flags_toggles {
+    integer id PK
+    varchar flag_name
+    varchar gate_type
+    varchar target
+    boolean enabled
   }
   oban_jobs {
     integer id PK
@@ -34,6 +41,12 @@ erDiagram
     timestamp inserted_at
     timestamp updated_at
   }
+  email_activation_codes {
+    integer id PK
+    varchar code
+    timestamp issued_at
+    integer user_id
+  }
   invitations {
     integer id PK
     varchar invitation_id
@@ -44,6 +57,12 @@ erDiagram
     timestamp inserted_at
     timestamp updated_at
   }
+  totp_recovery_codes {
+    integer id PK
+    varchar code_digest
+    integer user_id
+    timestamp inserted_at
+  }
   users {
     integer id PK
     varchar email
@@ -53,6 +72,27 @@ erDiagram
     date trial_expiry_date
     varchar theme
     boolean email_verified
+    varchar previous_email
+    date accept_traffic_until
+    boolean allow_next_upgrade_override
+    boolean totp_enabled
+    bytea totp_secret
+    varchar totp_token
+    timestamp totp_last_used_at
+    jsonb grace_period
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  enterprise_plans {
+    integer id PK
+    varchar paddle_plan_id
+    varchar billing_interval
+    integer monthly_pageview_limit
+    integer site_limit
+    integer team_member_limit
+    array features
+    integer hourly_api_request_limit
+    integer user_id
     timestamp inserted_at
     timestamp updated_at
   }
@@ -71,57 +111,272 @@ erDiagram
     timestamp inserted_at
     timestamp updated_at
   }
-  events {
-    varchar name
-    varchar domain
+  events_v2 {
+    unknown name
+    unknown site_id
     varchar hostname
     varchar pathname
-    integer user_id
-    integer session_id
+    unknown user_id
+    unknown session_id
     timestamp timestamp
+    unknown revenue_source_amount
+    unknown revenue_source_currency
+    unknown revenue_reporting_amount
+    unknown revenue_reporting_currency
     varchar referrer
     varchar referrer_source
     varchar utm_medium
     varchar utm_source
     varchar utm_campaign
-    varchar country_code
-    varchar screen_size
-    varchar operating_system
-    varchar operating_system_version
-    varchar browser
-    varchar browser_version
+    varchar utm_content
+    varchar utm_term
+    unknown country_code
+    unknown subdivision1_code
+    unknown subdivision2_code
+    unknown city_geoname_id
+    unknown screen_size
+    unknown operating_system
+    unknown operating_system_version
+    unknown browser
+    unknown browser_version
   }
-  sessions {
+  sessions_v2 {
     varchar hostname
-    varchar domain
-    integer user_id
-    integer session_id
+    unknown site_id
+    unknown user_id
+    unknown session_id
     timestamp start
-    integer duration
-    boolean is_bounce
+    unknown duration
+    unknown is_bounce
     varchar entry_page
     varchar exit_page
-    integer pageviews
-    integer events
-    integer sign
+    varchar exit_page_hostname
+    unknown pageviews
+    unknown events
+    unknown sign
     varchar utm_medium
     varchar utm_source
     varchar utm_campaign
+    varchar utm_content
+    varchar utm_term
     varchar referrer
     varchar referrer_source
-    varchar country_code
-    varchar screen_size
-    varchar operating_system
-    varchar operating_system_version
-    varchar browser
-    varchar browser_version
+    unknown country_code
+    unknown subdivision1_code
+    unknown subdivision2_code
+    unknown city_geoname_id
+    unknown screen_size
+    unknown operating_system
+    unknown operating_system_version
+    unknown browser
+    unknown browser_version
     timestamp timestamp
+    varchar transferred_from
+  }
+  domains_lookup {
+    unknown site_id
+    varchar domain
+  }
+  funnels {
+    integer id PK
+    varchar name
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  funnel_steps {
+    integer id PK
+    integer step_order
+    integer funnel_id
+    integer goal_id
+    timestamp inserted_at
+    timestamp updated_at
   }
   goals {
     integer id PK
-    varchar domain
     varchar event_name
     varchar page_path
+    varchar currency
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  imported_browsers {
+    unknown site_id
+    unknown import_id
+    date date
+    varchar browser
+    varchar browser_version
+    unknown visitors
+    unknown visits
+    unknown visit_duration
+    unknown pageviews
+    unknown bounces
+  }
+  imported_devices {
+    unknown site_id
+    unknown import_id
+    date date
+    varchar device
+    unknown visitors
+    unknown visits
+    unknown visit_duration
+    unknown pageviews
+    unknown bounces
+  }
+  imported_entry_pages {
+    unknown site_id
+    unknown import_id
+    date date
+    varchar entry_page
+    unknown visitors
+    unknown entrances
+    unknown visit_duration
+    unknown pageviews
+    unknown bounces
+  }
+  imported_exit_pages {
+    unknown site_id
+    unknown import_id
+    date date
+    varchar exit_page
+    unknown exits
+    unknown visitors
+    unknown visit_duration
+    unknown pageviews
+    unknown bounces
+  }
+  imported_locations {
+    unknown site_id
+    unknown import_id
+    date date
+    varchar country
+    varchar region
+    unknown city
+    unknown visitors
+    unknown visits
+    unknown visit_duration
+    unknown pageviews
+    unknown bounces
+  }
+  imported_operating_systems {
+    unknown site_id
+    unknown import_id
+    date date
+    varchar operating_system
+    varchar operating_system_version
+    unknown visitors
+    unknown visits
+    unknown visit_duration
+    unknown pageviews
+    unknown bounces
+  }
+  imported_pages {
+    unknown site_id
+    unknown import_id
+    date date
+    varchar hostname
+    varchar page
+    unknown visits
+    unknown visitors
+    unknown active_visitors
+    unknown pageviews
+    unknown exits
+    unknown time_on_page
+  }
+  site_imports {
+    integer id PK
+    date start_date
+    date end_date
+    varchar label
+    varchar source
+    varchar status
+    boolean legacy
+    integer site_id
+    integer imported_by_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  imported_sources {
+    unknown site_id
+    unknown import_id
+    date date
+    varchar source
+    varchar referrer
+    varchar utm_source
+    varchar utm_medium
+    varchar utm_campaign
+    varchar utm_content
+    varchar utm_term
+    unknown visitors
+    unknown visits
+    unknown visit_duration
+    unknown pageviews
+    unknown bounces
+  }
+  imported_visitors {
+    unknown site_id
+    unknown import_id
+    date date
+    unknown visitors
+    unknown pageviews
+    unknown bounces
+    unknown visits
+    unknown visit_duration
+  }
+  ingest_counters {
+    timestamp event_timebucket
+    unknown site_id
+    unknown domain
+    unknown metric
+    unknown value
+  }
+  plugins_api_tokens {
+    uuid id PK
+    timestamp inserted_at
+    timestamp updated_at
+    bytea token_hash
+    varchar description
+    varchar hint
+    timestamp last_used_at
+    integer site_id
+  }
+  shield_rules_country {
+    uuid id PK
+    integer site_id
+    varchar country_code
+    varchar action
+    varchar added_by
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  shield_rules_hostname {
+    uuid id PK
+    integer site_id
+    varchar hostname
+    varchar hostname_pattern
+    varchar action
+    varchar added_by
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  shield_rules_ip {
+    uuid id PK
+    integer site_id
+    inet inet
+    varchar action
+    varchar description
+    varchar added_by
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  shield_rules_page {
+    uuid id PK
+    integer site_id
+    varchar page_path
+    varchar page_path_pattern
+    varchar action
+    varchar added_by
     timestamp inserted_at
     timestamp updated_at
   }
@@ -131,14 +386,17 @@ erDiagram
     varchar timezone
     boolean public
     boolean locked
-    timestamp inserted_at
-    timestamp updated_at
-  }
-  custom_domains {
-    integer id PK
-    varchar domain
-    boolean has_ssl_certificate
-    integer site_id
+    date stats_start_date
+    timestamp native_stats_start_at
+    array allowed_event_props
+    boolean conversions_enabled
+    boolean props_enabled
+    boolean funnels_enabled
+    integer ingest_rate_limit_scale_seconds
+    integer ingest_rate_limit_threshold
+    varchar domain_changed_from
+    timestamp domain_changed_at
+    jsonb imported_data
     timestamp inserted_at
     timestamp updated_at
   }
@@ -187,6 +445,14 @@ erDiagram
     timestamp inserted_at
     timestamp updated_at
   }
+  site_user_preferences {
+    integer id PK
+    timestamp pinned_at
+    integer user_id
+    integer site_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
   weekly_reports {
     integer id PK
     array recipients
@@ -194,28 +460,31 @@ erDiagram
     timestamp inserted_at
     timestamp updated_at
   }
-  tweets {
-    integer id PK
-    varchar link
-    varchar tweet_id
-    varchar author_handle
-    varchar author_name
-    varchar author_image
-    varchar text
-    timestamp created
-    timestamp inserted_at
-    timestamp updated_at
-  }
-  sites ||--o| custom_domains : ""
+  funnels ||--|{ funnel_steps : ""
+  goals ||--|{ funnel_steps : ""
+  sites ||--|{ funnels : ""
+  sites ||--|{ goals : ""
   sites ||--o| google_auth : ""
   sites ||--|{ invitations : ""
   sites ||--o| monthly_reports : ""
+  sites ||--|{ plugins_api_tokens : ""
   sites ||--|{ shared_links : ""
-  sites ||--|{ site_memberships : ""
+  sites ||--|{ shield_rules_country : ""
+  sites ||--|{ shield_rules_hostname : ""
+  sites ||--|{ shield_rules_ip : ""
+  sites ||--|{ shield_rules_page : ""
+  sites ||--|{ site_imports : ""
+  sites ||--o| site_memberships : ""
+  sites ||--|{ site_user_preferences : ""
   sites ||--o| spike_notifications : ""
   sites ||--o| weekly_reports : ""
   users ||--|{ api_keys : ""
+  users ||--|{ email_activation_codes : ""
+  users ||--o| enterprise_plans : ""
   users ||--o| google_auth : ""
   users ||--|{ invitations : ""
+  users ||--|{ site_imports : ""
   users ||--|{ site_memberships : ""
+  users ||--|{ site_user_preferences : ""
   users ||--o| subscriptions : ""
+  users ||--|{ totp_recovery_codes : ""

@@ -1,14 +1,4 @@
 erDiagram
-  benefits {
-    integer id PK
-    varchar offer
-    varchar code
-    varchar link_url
-    varchar notes
-    integer sponsor_id
-    timestamp inserted_at
-    timestamp updated_at
-  }
   episodes {
     integer id PK
     varchar slug
@@ -22,20 +12,29 @@ erDiagram
     varchar summary
     varchar notes
     varchar doc_url
+    varchar socialize_url
     boolean published
     timestamp published_at
     timestamp recorded_at
     boolean recorded_live
     varchar youtube_id
+    varchar cover
     varchar audio_file
     integer audio_bytes
     integer audio_duration
+    jsonb audio_chapters
     varchar plusplus_file
     integer plusplus_bytes
     integer plusplus_duration
+    jsonb plusplus_chapters
     float download_count
     float import_count
     integer reach_count
+    varchar email_subject
+    varchar email_teaser
+    varchar email_content
+    integer email_sends
+    integer email_opens
     array transcript
     integer podcast_id
     integer request_id
@@ -68,7 +67,7 @@ erDiagram
     varchar topics
     varchar pitch
     varchar pronunciation
-    varchar decline_message
+    varchar message
     integer podcast_id
     integer submitter_id
     timestamp inserted_at
@@ -80,6 +79,8 @@ erDiagram
     varchar title
     varchar link_url
     varchar description
+    float starts_at
+    float ends_at
     integer episode_id
     integer sponsor_id
     timestamp inserted_at
@@ -106,15 +107,19 @@ erDiagram
     timestamp inserted_at
     timestamp updated_at
   }
-  metacasts {
+  feeds {
     integer id PK
     varchar name
-    varchar description
-    varchar keywords
     varchar slug
-    boolean is_official
+    varchar description
+    varchar title_format
+    boolean plusplus
+    boolean autosub
+    timestamp starts_at
     varchar cover
-    varchar filter_query
+    array podcast_ids
+    array person_ids
+    integer owner_id
     timestamp inserted_at
     timestamp updated_at
   }
@@ -175,7 +180,7 @@ erDiagram
     timestamp refreshed_at
     integer impression_count
     integer click_count
-    varchar decline_message
+    varchar message
     integer author_id
     integer logger_id
     integer submitter_id
@@ -217,6 +222,7 @@ erDiagram
     varchar description
     varchar feed
     varchar regex
+    boolean publication
     varchar icon
     timestamp inserted_at
     timestamp updated_at
@@ -238,6 +244,7 @@ erDiagram
     varchar handle
     varchar github_handle
     varchar linkedin_handle
+    varchar mastodon_handle
     varchar twitter_handle
     varchar slack_id
     varchar website
@@ -267,10 +274,12 @@ erDiagram
     varchar extended_description
     varchar vanity_domain
     varchar keywords
+    varchar mastodon_handle
     varchar twitter_handle
     varchar apple_url
     varchar spotify_url
     varchar riverside_url
+    varchar chartable_id
     varchar schedule_note
     float download_count
     integer reach_count
@@ -338,13 +347,21 @@ erDiagram
     timestamp inserted_at
     timestamp updated_at
   }
+  sponsor_reps {
+    integer id PK
+    integer sponsor_id
+    integer person_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
   subscriptions {
     integer id PK
     timestamp unsubscribed_at
     varchar context
+    integer episode_id
+    integer item_id
     integer person_id
     integer podcast_id
-    integer item_id
     timestamp inserted_at
     timestamp updated_at
   }
@@ -360,7 +377,7 @@ erDiagram
     timestamp updated_at
   }
   schema_migrations {
-    integer version
+    integer version PK
     timestamp inserted_at
   }
   oban_jobs {
@@ -389,6 +406,7 @@ erDiagram
   episodes ||--|{ episode_sponsors : ""
   episodes ||--|{ episode_stats : ""
   episodes ||--|{ episode_topics : ""
+  episodes ||--|{ subscriptions : ""
   news_ads ||--|{ news_issue_ads : ""
   news_issues ||--|{ news_issue_ads : ""
   news_issues ||--|{ news_issue_items : ""
@@ -403,6 +421,7 @@ erDiagram
   people ||--|{ episode_guests : ""
   people ||--|{ episode_hosts : ""
   people ||--|{ episode_requests : ""
+  people ||--|{ feeds : ""
   people ||--|{ news_item_comments : ""
   people ||--|{ news_items : ""
   people ||--|{ news_items : ""
@@ -410,6 +429,7 @@ erDiagram
   people ||--|{ podcast_hosts : ""
   people ||--|{ posts : ""
   people ||--|{ posts : ""
+  people ||--|{ sponsor_reps : ""
   people ||--|{ subscriptions : ""
   podcasts ||--|{ episode_requests : ""
   podcasts ||--|{ episode_stats : ""
@@ -418,9 +438,9 @@ erDiagram
   podcasts ||--|{ podcast_topics : ""
   podcasts ||--|{ subscriptions : ""
   posts ||--|{ post_topics : ""
-  sponsors ||--|{ benefits : ""
   sponsors ||--|{ episode_sponsors : ""
   sponsors ||--|{ news_sponsorships : ""
+  sponsors ||--|{ sponsor_reps : ""
   topics ||--|{ episode_topics : ""
   topics ||--|{ news_item_topics : ""
   topics ||--|{ podcast_topics : ""

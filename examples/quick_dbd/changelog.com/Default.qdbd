@@ -1,14 +1,3 @@
-benefits
----
-id integer PK
-offer varchar
-code varchar
-link_url varchar
-notes varchar
-sponsor_id integer FK >- sponsors.id
-inserted_at timestamp
-updated_at timestamp
-
 episodes
 ---
 id integer PK
@@ -23,20 +12,29 @@ subhighlight varchar
 summary varchar
 notes varchar
 doc_url varchar
+socialize_url varchar
 published boolean
 published_at timestamp
 recorded_at timestamp
 recorded_live boolean
 youtube_id varchar
+cover varchar
 audio_file varchar
 audio_bytes integer
 audio_duration integer
+audio_chapters jsonb
 plusplus_file varchar
 plusplus_bytes integer
 plusplus_duration integer
+plusplus_chapters jsonb
 download_count float
 import_count float
 reach_count integer
+email_subject varchar
+email_teaser varchar
+email_content varchar
+email_sends integer
+email_opens integer
 transcript array
 podcast_id integer FK >- podcasts.id
 request_id integer FK - episode_requests.id
@@ -72,7 +70,7 @@ guests varchar
 topics varchar
 pitch varchar
 pronunciation varchar
-decline_message varchar
+message varchar
 podcast_id integer FK >- podcasts.id
 submitter_id integer FK >- people.id
 inserted_at timestamp
@@ -85,6 +83,8 @@ position integer
 title varchar
 link_url varchar
 description varchar
+starts_at float
+ends_at float
 episode_id integer FK >- episodes.id
 sponsor_id integer FK >- sponsors.id
 inserted_at timestamp
@@ -113,16 +113,20 @@ episode_id integer FK >- episodes.id
 inserted_at timestamp
 updated_at timestamp
 
-metacasts
+feeds
 ---
 id integer PK
 name varchar
-description varchar
-keywords varchar
 slug varchar
-is_official boolean
+description varchar
+title_format varchar
+plusplus boolean
+autosub boolean
+starts_at timestamp
 cover varchar
-filter_query varchar
+podcast_ids array
+person_ids array
+owner_id integer FK >- people.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -188,7 +192,7 @@ published_at timestamp
 refreshed_at timestamp
 impression_count integer
 click_count integer
-decline_message varchar
+message varchar
 author_id integer FK >- people.id
 logger_id integer FK >- people.id
 submitter_id integer FK >- people.id
@@ -234,6 +238,7 @@ twitter_handle varchar
 description varchar
 feed varchar
 regex varchar
+publication boolean
 icon varchar
 inserted_at timestamp
 updated_at timestamp
@@ -257,6 +262,7 @@ email varchar
 handle varchar
 github_handle varchar
 linkedin_handle varchar
+mastodon_handle varchar
 twitter_handle varchar
 slack_id varchar
 website varchar
@@ -287,10 +293,12 @@ description varchar
 extended_description varchar
 vanity_domain varchar
 keywords varchar
+mastodon_handle varchar
 twitter_handle varchar
 apple_url varchar
 spotify_url varchar
 riverside_url varchar
+chartable_id varchar
 schedule_note varchar
 download_count float
 reach_count integer
@@ -363,14 +371,23 @@ light_logo varchar
 inserted_at timestamp
 updated_at timestamp
 
+sponsor_reps
+---
+id integer PK
+sponsor_id integer FK >- sponsors.id
+person_id integer FK >- people.id
+inserted_at timestamp
+updated_at timestamp
+
 subscriptions
 ---
 id integer PK
 unsubscribed_at timestamp
 context varchar
+episode_id integer FK >- episodes.id
+item_id integer FK >- news_items.id
 person_id integer FK >- people.id
 podcast_id integer FK >- podcasts.id
-item_id integer FK >- news_items.id
 inserted_at timestamp
 updated_at timestamp
 
@@ -388,7 +405,7 @@ updated_at timestamp
 
 schema_migrations
 ---
-version integer
+version integer PK
 inserted_at timestamp
 
 oban_jobs

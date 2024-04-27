@@ -1,5 +1,6 @@
 @startuml
 
+set namespaceSeparator none
 hide circle
 hide methods
 
@@ -10,6 +11,7 @@ skinparam shadowing false
 namespace Ecto.Migration #f0f8ff {
   entity Ecto.Migration.SchemaMigration {
     version : integer
+    --
     inserted_at : naive_datetime
   }
 
@@ -19,10 +21,12 @@ namespace Hexpm.Accounts #8deeee {
     id : id
     --
     user_agent : string
+    remote_ip : string
     action : string
     params : map
     user_id : id
     organization_id : id
+    key_id : id
     inserted_at : utc_datetime_usec
   }
 
@@ -49,7 +53,6 @@ namespace Hexpm.Accounts #8deeee {
     secret_second : string
     public : boolean
     revoke_at : utc_datetime_usec
-    revoked_at : utc_datetime_usec
     inserted_at : utc_datetime_usec
     updated_at : utc_datetime_usec
     last_use : map
@@ -78,6 +81,8 @@ namespace Hexpm.Accounts #8deeee {
     --
     name : string
     billing_active : boolean
+    billing_override : boolean
+    trial_end : utc_datetime_usec
     inserted_at : utc_datetime_usec
     updated_at : utc_datetime_usec
   }
@@ -164,6 +169,7 @@ namespace Hexpm.Repository #eedfcc {
   entity Hexpm.Repository.Download {
     id : id
     --
+    package_id : id
     release_id : id
     downloads : integer
     day : date
@@ -267,6 +273,7 @@ namespace Hexpm.Repository #eedfcc {
   }
 
   entity Hexpm.Repository.ReleaseDownload {
+    package_id : id
     release_id : id
     downloads : integer
   }
@@ -290,7 +297,6 @@ namespace Hexpm.Repository #eedfcc {
     id : id
     --
     name : string
-    public : boolean
     inserted_at : utc_datetime_usec
     updated_at : utc_datetime_usec
     organization_id : id
@@ -320,6 +326,7 @@ namespace Hexpm.ShortURLs #b4eeb4 {
 
 
 Hexpm.Accounts.TFA ||--|{ Hexpm.Accounts.RecoveryCode
+Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.AuditLog
 Hexpm.Accounts.Key ||--o| Hexpm.Accounts.Key.Use
 Hexpm.Accounts.Key ||--|{ Hexpm.Accounts.KeyPermission
 Hexpm.Accounts.Organization ||--|{ Hexpm.Accounts.AuditLog
@@ -329,10 +336,12 @@ Hexpm.Accounts.Organization ||--o| Hexpm.Repository.Repository
 Hexpm.Accounts.Organization ||--o| Hexpm.Accounts.User
 Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportComment
 Hexpm.Repository.PackageReport ||--|{ Hexpm.Repository.PackageReportRelease
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.Download
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDependant
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageDownload
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageOwner
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.PackageReport
+Hexpm.Repository.Package ||--|{ Hexpm.Repository.ReleaseDownload
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.Release
 Hexpm.Repository.Package ||--|{ Hexpm.Repository.Requirement
 Hexpm.Repository.Package ||--o| Hexpm.Repository.PackageMetadata
