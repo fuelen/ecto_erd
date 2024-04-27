@@ -11,6 +11,8 @@ defmodule Ecto.ERD.Field do
   @typedoc """
   A field comment.
 
+  Rendering of comments is supported only by Mermaid format at the moment.
+
   ## Example
 
       # File: .ecto_erd.exs
