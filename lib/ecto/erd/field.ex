@@ -1,5 +1,11 @@
 defmodule Ecto.ERD.Field do
-  @moduledoc false
+  @moduledoc """
+  Field struct
+
+  Represents data of an individual field in `Ecto.ERD.Node`.
+
+  Feel free to update fields of this struct in `.ecto_erd.exs` if needed.
+  """
   defstruct [:name, :type, :primary?, :comment]
 
   @typedoc """
@@ -28,9 +34,9 @@ defmodule Ecto.ERD.Field do
 
   @type t :: %__MODULE__{
           name: atom(),
-          type: atom() | tuple,
-          primary?: boolean,
-          comment: comment | nil
+          type: atom() | tuple(),
+          primary?: boolean(),
+          comment: comment() | nil
         }
 
   def new(%{name: name, type: type} = params) do

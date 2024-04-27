@@ -19,7 +19,7 @@ defmodule Ecto.ERD.Node do
   @type t() :: %__MODULE__{
           source: nil | String.t(),
           schema_module: nil | module(),
-          fields: [struct()],
+          fields: [Ecto.ERD.Field.t()],
           cluster: nil | String.t()
         }
 
