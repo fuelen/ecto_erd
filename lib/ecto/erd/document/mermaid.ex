@@ -91,6 +91,11 @@ defmodule Ecto.ERD.Document.Mermaid do
           " PK"
         else
           ""
+        end <>
+        if field.comment do
+          ~s( "#{field.comment}")
+        else
+          ""
         end
     else
       Logger.warning(
