@@ -21,7 +21,11 @@ defmodule Ecto.ERD.ExamplesGenerator do
       [
         map_node: fn
           %Node{schema_module: schema_module} = node ->
-            node |> Node.set_cluster(schema_module |> Module.split() |> Enum.take(2) |> Enum.join("."))
+            case Module.split(schema_module) do
+              [_] -> node
+              [namespace, _] -> node |> Node.set_cluster(namespace)
+              parts -> node |> Node.set_cluster(parts |> Enum.take(2) |> Enum.join("."))
+            end
         end
       ]
       """
@@ -36,7 +40,11 @@ defmodule Ecto.ERD.ExamplesGenerator do
         columns: [],
         map_node: fn
           %Node{schema_module: schema_module} = node ->
-            node |> Node.set_cluster(schema_module |> Module.split() |> Enum.take(2) |> Enum.join("."))
+            case Module.split(schema_module) do
+              [_] -> node
+              [namespace, _] -> node |> Node.set_cluster(namespace)
+              parts -> node |> Node.set_cluster(parts |> Enum.take(2) |> Enum.join("."))
+            end
         end
       ]
       """
