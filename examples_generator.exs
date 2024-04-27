@@ -162,21 +162,30 @@ defmodule Ecto.ERD.ExamplesGenerator do
     File.mkdir("tmp/repos")
     File.mkdir("tmp/config_files")
 
-    @data
-    |> Enum.each(fn {project_name, %{repo: repo, examples: examples}} = data_item ->
+    Logger.debug("Init projects", ansi_color: :yellow)
+
+    Enum.each(@data, fn {project_name, %{repo: repo}} ->
       Enum.each(@formats, fn {_, %{examples_dir: dir}} ->
         File.mkdir(Path.join(dir, project_name))
       end)
 
       File.mkdir(Path.join("tmp/config_files", project_name))
       init_project(project_name, repo)
-
-      examples
-      |> Enum.map(fn example -> Task.async(fn -> generate_example(example, project_name) end) end)
-      |> Task.yield_many(:infinity)
-
-      generate_doc(data_item, source_url_root)
     end)
+
+    Logger.debug("Generating examples", ansi_color: :yellow)
+
+    @data
+    |> Enum.flat_map(fn {project_name, %{examples: examples}} ->
+      Enum.map(examples, fn example ->
+        Task.async(fn -> generate_example(example, project_name) end)
+      end)
+    end)
+    |> Task.yield_many(:infinity)
+
+    Logger.debug("Generating markdown docs", ansi_color: :yellow)
+    Enum.each(@data, &generate_doc(&1, source_url_root))
+    Logger.debug("Done", ansi_color: :green)
   end
 
   defp generate_doc({project_name, %{repo: repo, examples: examples}}, source_url_root) do
