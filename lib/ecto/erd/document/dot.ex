@@ -155,13 +155,6 @@ defmodule Ecto.ERD.Document.Dot do
     "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
   end
 
-  # TODO: remove {:embed, _} support when apps in examples won't use legacy ecto version.
-  # format_field for older Ecto versions, this format was removed in this commit:
-  # https://github.com/elixir-ecto/ecto/commit/59962034a25835a40d15d6c7d8eae23e64fd4eba
-  defp format_type({:embed, %Ecto.Embedded{cardinality: cardinality, related: related}}) do
-    "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
-  end
-
   defp format_type({:array, type}) do
     "{:array, #{format_type(type)}}"
   end
