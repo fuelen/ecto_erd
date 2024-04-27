@@ -42,6 +42,7 @@ defmodule Ecto.ERD.Document.PlantUML do
     """
     @startuml
 
+    set namespaceSeparator none
     hide circle
     hide methods
     #{case columns do
