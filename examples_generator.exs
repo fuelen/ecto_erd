@@ -76,6 +76,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
                       cond do
                         schema_module in [
                           Changelog.Episode,
+                          Changelog.EpisodeChapter,
                           Changelog.EpisodeGuest,
                           Changelog.EpisodeHost,
                           Changelog.EpisodeRequest,
@@ -91,7 +92,13 @@ defmodule Ecto.ERD.ExamplesGenerator do
                         schema_module in [Changelog.Podcast, Changelog.PodcastHost, Changelog.PodcastTopic] ->
                           "PODCAST"
 
-                          schema_module in [
+                        schema_module in [Changelog.Sponsor, Changelog.SponsorRep] ->
+                          "SPONSOR"
+
+                        schema_module in [Changelog.Person, Changelog.Person.Settings] ->
+                          "PERSON"
+
+                        schema_module in [
                             Changelog.EpisodeNewsItem,
                             Changelog.NewsAd,
                             Changelog.NewsIssue,
