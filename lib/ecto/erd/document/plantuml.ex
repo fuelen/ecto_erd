@@ -131,6 +131,7 @@ defmodule Ecto.ERD.Document.PlantUML do
     case Ecto.Type.type(type) do
       {parent, _t} -> Atom.to_string(parent)
       atom when is_atom(atom) -> Atom.to_string(atom)
+      {:parameterized, _, _} -> "unknown"
     end
   end
 

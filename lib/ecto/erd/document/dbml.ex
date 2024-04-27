@@ -153,6 +153,7 @@ defmodule Ecto.ERD.Document.DBML do
       :naive_datetime -> "timestamp"
       :naive_datetime_usec -> "timestamp"
       atom when is_atom(atom) -> Atom.to_string(atom)
+      {:parameterized, _, _} -> "unknown"
     end
   end
 end
