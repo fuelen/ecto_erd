@@ -124,7 +124,7 @@ defmodule Ecto.ERD.Document.PlantUML do
     |> Enum.join(" ")
   end
 
-  defp format_type({:parameterized, Ecto.Enum, %{on_dump: on_dump}}) do
+  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}) do
     elements_limit = 10
     values = Map.values(on_dump)
     length = length(values)

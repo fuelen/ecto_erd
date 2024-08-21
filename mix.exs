@@ -75,7 +75,7 @@ defmodule Ecto.ERD.MixProject do
     [
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:html_entities, "~> 0.5"},
-      {:ecto, "~> 3.10"},
+      {:ecto, "~> 3.12"},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end

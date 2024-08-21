@@ -89,7 +89,8 @@ defmodule Ecto.ERD.Document.DBML do
       fields
       |> Enum.flat_map(fn
         %Field{name: name, type: {:parameterized, Ecto.Enum, %{on_dump: on_dump}}} ->
-          [{source, name, Map.values(on_dump)}]
+          values = on_dump |> Map.values() |> Enum.sort()
+          [{source, name, values}]
 
         _ ->
           []
