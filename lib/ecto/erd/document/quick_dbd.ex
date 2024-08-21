@@ -60,7 +60,7 @@ defmodule Ecto.ERD.Document.QuickDBD do
     )
   end
 
-  defp format_type({:parameterized, Ecto.Enum, %{on_dump: on_dump}}) do
+  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}) do
     "enum(#{Enum.join(Map.values(on_dump), ",")})"
   end
 

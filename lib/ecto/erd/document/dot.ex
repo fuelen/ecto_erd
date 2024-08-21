@@ -144,7 +144,7 @@ defmodule Ecto.ERD.Document.Dot do
   defp format_field(%Field{name: name}, :name), do: inspect(name)
   defp format_field(%Field{type: type}, :type), do: format_type(type)
 
-  defp format_type({:parameterized, Ecto.Enum, %{on_dump: on_dump}}) do
+  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}) do
     "#Enum<#{inspect(Enum.sort(Map.keys(on_dump)), limit: 10)}>"
   end
 
