@@ -149,8 +149,8 @@ defmodule Ecto.ERD.Document.Dot do
   end
 
   defp format_type(
-         {:parameterized, Ecto.Embedded,
-          %Ecto.Embedded{cardinality: cardinality, related: related}}
+         {:parameterized,
+          {Ecto.Embedded, %Ecto.Embedded{cardinality: cardinality, related: related}}}
        ) do
     "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
   end
