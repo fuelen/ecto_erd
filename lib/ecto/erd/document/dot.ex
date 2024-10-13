@@ -73,37 +73,35 @@ defmodule Ecto.ERD.Document.Dot do
          columns
        ) do
     field_rows =
-      case columns do
-        [] ->
-          []
+      if columns == [] or fields == [] do
+        []
+      else
+        column_width =
+          Map.new(
+            columns,
+            fn column ->
+              max_length =
+                fields
+                |> Enum.map(fn field -> field |> format_field(column) |> String.length() end)
+                |> Enum.max()
 
-        columns ->
-          column_width =
-            Map.new(
-              columns,
-              fn column ->
-                max_length =
-                  fields
-                  |> Enum.map(fn field -> field |> format_field(column) |> String.length() end)
-                  |> Enum.max()
+              {column, max_length + 5}
+            end
+          )
 
-                {column, max_length + 5}
-              end
-            )
+        Enum.map(fields, fn %Field{name: name} = field ->
+          {:tr, [],
+           {:td, [align: :left, port: Edge.port_name({:field, name})],
+            Enum.map(columns, fn
+              column ->
+                text = String.pad_trailing(format_field(field, column), column_width[column])
 
-          Enum.map(fields, fn %Field{name: name} = field ->
-            {:tr, [],
-             {:td, [align: :left, port: Edge.port_name({:field, name})],
-              Enum.map(columns, fn
-                column ->
-                  text = String.pad_trailing(format_field(field, column), column_width[column])
-
-                  case column do
-                    :type -> {:i, [], {:font, [color: :gray54], text}}
-                    :name -> text
-                  end
-              end)}}
-          end)
+                case column do
+                  :type -> {:i, [], {:font, [color: :gray54], text}}
+                  :name -> text
+                end
+            end)}}
+        end)
       end
 
     table =
