@@ -120,7 +120,7 @@ defmodule Ecto.ERD.Document.Mermaid do
       :naive_datetime -> "timestamp"
       :naive_datetime_usec -> "timestamp"
       atom when is_atom(atom) -> Atom.to_string(atom)
-      {:parameterized, _, _} -> "unknown"
+      {:parameterized, _} -> "unknown"
     end
   end
 
