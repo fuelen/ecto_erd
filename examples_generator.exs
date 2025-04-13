@@ -336,6 +336,8 @@ defmodule Ecto.ERD.ExamplesGenerator do
   defp init_project(project_name, repo, commit) do
     Logger.debug("#{project_name}: clone repo")
     System.cmd("git", ["clone", repo, project_name], cd: "tmp/repos")
+    System.cmd("git", ["fetch", "origin"], cd: Path.join("tmp/repos", project_name))
+    System.cmd("git", ["checkout", "--", "."], cd: Path.join("tmp/repos", project_name))
     System.cmd("git", ["checkout", commit], cd: Path.join("tmp/repos", project_name))
     add_ecto_erd_to_dependencies(Path.join(["tmp/repos", project_name, "mix.exs"]))
     Logger.debug("#{project_name}: get dependencies")
@@ -344,7 +346,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
 
     Logger.debug("#{project_name}: compile")
 
-    System.cmd("mix", ["compile"], cd: Path.join("tmp/repos", project_name))
+    {_, 0} = System.cmd("mix", ["compile"], cd: Path.join("tmp/repos", project_name))
   end
 
   defp slugify(name) do
