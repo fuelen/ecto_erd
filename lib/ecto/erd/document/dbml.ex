@@ -88,7 +88,7 @@ defmodule Ecto.ERD.Document.DBML do
     |> Enum.flat_map(fn %Node{source: source, fields: fields} ->
       fields
       |> Enum.flat_map(fn
-        %Field{name: name, type: {:parameterized, Ecto.Enum, %{on_dump: on_dump}}} ->
+        %Field{name: name, type: {:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}} ->
           values = on_dump |> Map.values() |> Enum.sort()
           [{source, name, values}]
 
@@ -128,7 +128,7 @@ defmodule Ecto.ERD.Document.DBML do
       end
 
     case type do
-      {:parameterized, Ecto.Enum, _} ->
+      {:parameterized, {Ecto.Enum, _}} ->
         "#{Render.in_quotes(name)} #{Render.in_quotes(enum_name_by_field_name.(name))}#{settings}"
 
       _ ->
@@ -152,7 +152,7 @@ defmodule Ecto.ERD.Document.DBML do
       :naive_datetime -> "timestamp"
       :naive_datetime_usec -> "timestamp"
       atom when is_atom(atom) -> Atom.to_string(atom)
-      {:parameterized, _, _} -> "unknown"
+      {:parameterized, _} -> "unknown"
     end
   end
 end
