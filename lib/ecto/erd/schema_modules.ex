@@ -6,8 +6,13 @@ defmodule Ecto.ERD.SchemaModules do
 
     [otp_app | applications]
     |> Enum.flat_map(fn application ->
-      {:ok, modules} = :application.get_key(application, :modules)
-      modules
+      case :application.get_key(application, :modules) do
+        {:ok, modules} ->
+          modules
+
+        _error ->
+          []
+      end
     end)
     |> Enum.filter(fn module ->
       Code.ensure_loaded!(module)
