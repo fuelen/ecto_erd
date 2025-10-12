@@ -1,13 +1,12 @@
 defmodule Ecto.ERD.Node do
   @moduledoc """
-  Node struct
+  Node struct.
 
   * If `source` is `nil`, then `schema_module` cannot be `nil` and node describes embedded schema.
-  * If `source` is not `nil` and `schema_module` is not `nil`, then node describes regular schema.
-  * If `schema_module` is `nil`, then `source` cannot be `nil` and node describes a source (table) which was
-  automatically
-  inferred from many-to-many relations.
-  * If `cluster` is `nil`, then the node will be rendered outside any cluster..
+  * If `source` is not `nil` and `schema_module` is not `nil`, then the node describes a regular schema.
+  * If `schema_module` is `nil`, then `source` cannot be `nil`, and the node describes a source (table) that was
+  automatically inferred from many-to-many relations.
+  * If `cluster` is `nil`, then the node is rendered outside any cluster.
   """
   defstruct [
     :source,
@@ -24,9 +23,9 @@ defmodule Ecto.ERD.Node do
         }
 
   @doc """
-  Set a `cluster` for a given `node`.
+  Set a `cluster` for the given `node`.
 
-  Cluster is a group of nodes which are displayed together.
+  A cluster is a group of nodes that are displayed together.
   """
   @spec set_cluster(t(), nil | String.t()) :: t()
   def set_cluster(%__MODULE__{} = node, cluster) when is_nil(cluster) or is_binary(cluster) do
@@ -62,7 +61,7 @@ defmodule Ecto.ERD.Node do
         }
       )
       when not is_nil(source) do
-    # if fields have different types with the same name, then only 1 type will be chosen
+    # If fields have different types with the same name, only one type will be chosen
     fields = Enum.uniq_by(fields1 ++ fields2, & &1.name)
 
     cluster =
@@ -79,7 +78,7 @@ defmodule Ecto.ERD.Node do
         {cluster1, cluster2} ->
           IO.warn(
             "Trying to merge two nodes with source #{inspect(source)} but with different clusters " <>
-              "(#{inspect(cluster1)} and #{inspect(cluster2)}), removing cluster in favour of global space"
+              "(#{inspect(cluster1)} and #{inspect(cluster2)}); removing the cluster in favor of the global space"
           )
 
           nil

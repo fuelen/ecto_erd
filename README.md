@@ -2,8 +2,8 @@
 
 [![Hex.pm](https://img.shields.io/hexpm/v/ecto_erd.svg)](https://hex.pm/packages/ecto_erd)
 
-A mix task for generating an ERD (Entity Relationship Diagram) in various
-formats for all Ecto schemas available in your project.
+A mix task for generating an ERD (Entity-Relationship Diagram) in various
+formats for all Ecto schemas in your project.
 
 Supported formats:
 
@@ -75,21 +75,21 @@ Just run:
 mix ecto.gen.erd
 ```
 
-The command above produces a file in DOT format which can be converted to an
-image using `graphviz` utility:
+The command above produces a DOT file, which you can convert to an
+image using the Graphviz utility:
 
 ```sh
 dot -Tpng ecto_erd.dot -o erd.png
 ```
 
-Configuration is possible via `.ecto_erd.exs` file.
+Configuration is possible via the `.ecto_erd.exs` file.
 The docs can be found at [https://hexdocs.pm/ecto_erd](https://hexdocs.pm/ecto_erd).
-Configuration examples and output for a couple of open-source projects can be
-found in EXAMPLES group of PAGES section.
+Configuration examples and output for a few open-source projects can be
+found in the PAGES section under EXAMPLES.
 
 ## Troubleshooting
 
-Trying to run `ecto_erd` on an umbrella project? Did you get this error?
+Trying to run `ecto_erd` in an umbrella project? You might see this error:
 
 ```
 $ mix ecto.gen.erd

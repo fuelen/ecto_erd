@@ -1,17 +1,17 @@
 defmodule Ecto.ERD.Field do
   @moduledoc """
-  Field struct
+  Field struct.
 
-  Represents data of an individual field in `Ecto.ERD.Node`.
+  Represents the data for an individual field in `Ecto.ERD.Node`.
 
-  Feel free to update fields of this struct in `.ecto_erd.exs` if needed.
+  You can update fields on this struct in `.ecto_erd.exs` if needed.
   """
   defstruct [:name, :type, :primary?, :comment]
 
   @typedoc """
   A field comment.
 
-  Rendering of comments is supported only by Mermaid format at the moment.
+  Rendering comments is currently supported only by the Mermaid format.
 
   ## Example
 
@@ -20,8 +20,8 @@ defmodule Ecto.ERD.Field do
         map_node: fn
           %Ecto.ERD.Node{schema_module: schema_module} = node ->
             update_in(node, [Access.key(:fields), Access.all()], fn field ->
-              # `DocumentationLib` is a fictional module returning documentation about a field
-              case DocumentationLib.doc({schema_module, field})  do
+              # `DocumentationLib` is a fictional module that returns documentation about a field
+              case DocumentationLib.doc({schema_module, field}) do
                 nil ->
                   field
 
