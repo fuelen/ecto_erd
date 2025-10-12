@@ -16,7 +16,7 @@ defmodule Ecto.ERD.SchemaModules do
     end)
     |> Enum.filter(fn module ->
       Code.ensure_loaded!(module)
-      function_exported?(module, :__schema__, 1)
+      function_exported?(module, :__schema__, 1) and module != Ecto.Schema
     end)
   end
 end
