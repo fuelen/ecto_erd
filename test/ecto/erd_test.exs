@@ -11,7 +11,9 @@ defmodule Ecto.ERDTest do
           fields: [
             Field.new(%{
               name: :flow,
-              type: {:parameterized, Ecto.Enum, Ecto.Enum.init(values: [:simple, :complex])}
+              type:
+                {:parameterized,
+                 {Ecto.Enum, %{on_dump: %{simple: "simple", complex: "complex"}}}}
             })
           ]
         },
@@ -20,7 +22,9 @@ defmodule Ecto.ERDTest do
           fields: [
             Field.new(%{
               name: :flow,
-              type: {:parameterized, Ecto.Enum, Ecto.Enum.init(values: [:simple, :complex])}
+              type:
+                {:parameterized,
+                 {Ecto.Enum, %{on_dump: %{simple: "simple", complex: "complex"}}}}
             })
           ]
         },
@@ -30,8 +34,9 @@ defmodule Ecto.ERDTest do
             Field.new(%{
               name: :status,
               type:
-                {:parameterized, Ecto.Enum,
-                 Ecto.Enum.init(values: [:active, :suspended, :invited])}
+                {:parameterized,
+                 {Ecto.Enum,
+                  %{on_dump: %{active: "active", suspended: "suspended", invited: "invited"}}}}
             })
           ]
         },
@@ -40,7 +45,9 @@ defmodule Ecto.ERDTest do
           fields: [
             Field.new(%{
               name: :status,
-              type: {:parameterized, Ecto.Enum, Ecto.Enum.init(values: [:active, :suspended])}
+              type:
+                {:parameterized,
+                 {Ecto.Enum, %{on_dump: %{active: "active", suspended: "suspended"}}}}
             })
           ]
         },
@@ -49,7 +56,8 @@ defmodule Ecto.ERDTest do
           fields: [
             Field.new(%{
               name: :status,
-              type: {:parameterized, Ecto.Enum, Ecto.Enum.init(values: [:live, :closed])}
+              type:
+                {:parameterized, {Ecto.Enum, %{on_dump: %{live: "live", closed: "closed"}}}}
             })
           ]
         }
