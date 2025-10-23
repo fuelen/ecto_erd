@@ -98,7 +98,7 @@ defmodule Ecto.ERD.Document.Dot do
 
                 case column do
                   :type -> {:i, [], {:font, [color: :gray54], text}}
-                  :name -> text
+                  :name -> if field.primary?, do: {:b, [], text}, else: text
                 end
             end)}}
         end)
@@ -140,6 +140,7 @@ defmodule Ecto.ERD.Document.Dot do
   end
 
   defp format_field(%Field{name: name}, :name), do: inspect(name)
+
   defp format_field(%Field{type: type}, :type), do: format_type(type)
 
   defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}) do

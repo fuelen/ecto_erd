@@ -1,7 +1,7 @@
 defmodule Ecto.ERDTest do
   use ExUnit.Case
-  alias Ecto.ERD.{Node, Field}
-  alias Ecto.ERD.Document.DBML
+  alias Ecto.ERD.{Node, Field, Graph}
+  alias Ecto.ERD.Document.{DBML, Dot}
 
   test inspect(&DBML.enums_mapping/1) do
     result =
@@ -11,7 +11,7 @@ defmodule Ecto.ERDTest do
           fields: [
             Field.new(%{
               name: :flow,
-              type: {:parameterized, Ecto.Enum, Ecto.Enum.init(values: [:simple, :complex])}
+              type: {:parameterized, {Ecto.Enum, Ecto.Enum.init(values: [:simple, :complex])}}
             })
           ]
         },
@@ -20,7 +20,7 @@ defmodule Ecto.ERDTest do
           fields: [
             Field.new(%{
               name: :flow,
-              type: {:parameterized, Ecto.Enum, Ecto.Enum.init(values: [:simple, :complex])}
+              type: {:parameterized, {Ecto.Enum, Ecto.Enum.init(values: [:simple, :complex])}}
             })
           ]
         },
@@ -30,8 +30,8 @@ defmodule Ecto.ERDTest do
             Field.new(%{
               name: :status,
               type:
-                {:parameterized, Ecto.Enum,
-                 Ecto.Enum.init(values: [:active, :suspended, :invited])}
+                {:parameterized,
+                 {Ecto.Enum, Ecto.Enum.init(values: [:active, :suspended, :invited])}}
             })
           ]
         },
@@ -40,7 +40,7 @@ defmodule Ecto.ERDTest do
           fields: [
             Field.new(%{
               name: :status,
-              type: {:parameterized, Ecto.Enum, Ecto.Enum.init(values: [:active, :suspended])}
+              type: {:parameterized, {Ecto.Enum, Ecto.Enum.init(values: [:active, :suspended])}}
             })
           ]
         },
@@ -49,7 +49,7 @@ defmodule Ecto.ERDTest do
           fields: [
             Field.new(%{
               name: :status,
-              type: {:parameterized, Ecto.Enum, Ecto.Enum.init(values: [:live, :closed])}
+              type: {:parameterized, {Ecto.Enum, Ecto.Enum.init(values: [:live, :closed])}}
             })
           ]
         }
@@ -63,5 +63,30 @@ defmodule Ecto.ERDTest do
              ["projects", :status] => {"projects_status", ["closed", "live"]},
              ["users", :status] => {"users_status", ["active", "invited", "suspended"]}
            }
+  end
+
+  test "DOT format renders primary key indicator" do
+    graph = %Graph{
+      nodes: [
+        %Node{
+          source: "users",
+          schema_module: MyApp.User,
+          fields: [
+            Field.new(%{name: :id, type: :integer, primary?: true}),
+            Field.new(%{name: :email, type: :string, primary?: false}),
+            Field.new(%{name: :name, type: :string, primary?: false})
+          ]
+        }
+      ],
+      edges: []
+    }
+
+    result = Dot.render(graph, [])
+
+    # Verify that the primary key field is bold
+    assert result =~ ~r/<b>:id\s*<\/b>/
+    # Verify that non-primary fields are not bold
+    refute result =~ ~r/<b>:email\s*<\/b>/
+    refute result =~ ~r/<b>:name\s*<\/b>/
   end
 end
