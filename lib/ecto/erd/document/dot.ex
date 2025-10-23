@@ -98,7 +98,7 @@ defmodule Ecto.ERD.Document.Dot do
 
                 case column do
                   :type -> {:i, [], {:font, [color: :gray54], text}}
-                  :name -> text
+                  :name -> if field.primary?, do: {:b, [], text}, else: text
                 end
             end)}}
         end)
@@ -139,10 +139,7 @@ defmodule Ecto.ERD.Document.Dot do
     Render.in_quotes(Node.id(source, schema_module)) <> " [label= <#{table}>]"
   end
 
-  defp format_field(%Field{name: name, primary?: primary?}, :name) do
-    field_name = inspect(name)
-    if primary?, do: field_name <> " [PK]", else: field_name
-  end
+  defp format_field(%Field{name: name}, :name), do: inspect(name)
 
   defp format_field(%Field{type: type}, :type), do: format_type(type)
 

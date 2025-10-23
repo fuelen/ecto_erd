@@ -83,10 +83,10 @@ defmodule Ecto.ERDTest do
 
     result = Dot.render(graph, [])
 
-    # Verify that the primary key field has [PK] suffix
-    assert result =~ ~r/:id \[PK\]/
-    # Verify that non-primary fields do not have [PK] suffix
-    refute result =~ ~r/:email \[PK\]/
-    refute result =~ ~r/:name \[PK\]/
+    # Verify that the primary key field is bold
+    assert result =~ ~r/<b>:id\s*<\/b>/
+    # Verify that non-primary fields are not bold
+    refute result =~ ~r/<b>:email\s*<\/b>/
+    refute result =~ ~r/<b>:name\s*<\/b>/
   end
 end
