@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.Document.DBML do
   @moduledoc false
-  alias Ecto.ERD.{Node, Field, Edge, Graph, Render}
+  alias Ecto.ERD.{Node, Field, Edge, Graph, Render, EnumValues}
 
   @behaviour Ecto.ERD.Document
 
@@ -8,7 +8,7 @@ defmodule Ecto.ERD.Document.DBML do
   def schemaless?, do: true
 
   @impl true
-  def render(%Graph{nodes: nodes, edges: edges}, _options) do
+  def render(%Graph{nodes: nodes, edges: edges}, opts) do
     groups =
       nodes
       |> Enum.group_by(& &1.cluster, & &1.source)
@@ -21,7 +21,7 @@ defmodule Ecto.ERD.Document.DBML do
         """
       end)
 
-    enums_mapping = enums_mapping(nodes)
+    enums_mapping = enums_mapping(nodes, opts)
 
     enums =
       enums_mapping
@@ -83,13 +83,16 @@ defmodule Ecto.ERD.Document.DBML do
 
   # tries to cut name from #source_#field format to just #field
   @doc false
-  def enums_mapping(nodes) do
+  def enums_mapping(nodes, opts \\ []) do
+    opts = Keyword.put_new(opts, :enum_values_order, :asc)
+
     nodes
     |> Enum.flat_map(fn %Node{source: source, fields: fields} ->
       fields
       |> Enum.flat_map(fn
         %Field{name: name, type: {:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}} ->
-          values = on_dump |> Map.values() |> Enum.sort()
+          {values, truncated?} = EnumValues.prepare(Map.values(on_dump), opts)
+          values = if truncated?, do: values ++ ["..."], else: values
           [{source, name, values}]
 
         _ ->

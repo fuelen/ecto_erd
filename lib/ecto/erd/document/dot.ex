@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.Document.Dot do
   @moduledoc false
-  alias Ecto.ERD.{HTML, Edge, Node, Field, Graph, Render}
+  alias Ecto.ERD.{HTML, Edge, Node, Field, Graph, Render, EnumValues}
   @behaviour Ecto.ERD.Document
 
   @impl true
@@ -23,7 +23,7 @@ defmodule Ecto.ERD.Document.Dot do
             fontname=#{Render.in_quotes(fontname)}
             color = #{Render.in_quotes(Ecto.ERD.Color.get(cluster_name))}
             label = <#{{:font, ["point-size": 24], {:b, [], cluster_name}} |> HTML.to_iodata()}>
-            #{Enum.map_join(nodes, "\n  ", &render_node(&1, columns))}
+            #{Enum.map_join(nodes, "\n  ", &render_node(&1, columns, opts))}
           }
         """
       end)
@@ -34,7 +34,7 @@ defmodule Ecto.ERD.Document.Dot do
     #{if strict?, do: "strict "}digraph {
       ranksep=1.0; rankdir=LR;
       node [shape = none, fontname=#{Render.in_quotes(fontname)}];
-      #{Enum.map_join(global_nodes, "\n  ", &render_node(&1, columns))}
+      #{Enum.map_join(global_nodes, "\n  ", &render_node(&1, columns, opts))}
     #{subgraphs}
       #{Enum.map_join(edges, "\n  ", &render_edge(&1, columns == []))}
     }
@@ -70,7 +70,8 @@ defmodule Ecto.ERD.Document.Dot do
            source: source,
            schema_module: schema_module
          },
-         columns
+         columns,
+         opts
        ) do
     field_rows =
       if columns == [] or fields == [] do
@@ -82,7 +83,7 @@ defmodule Ecto.ERD.Document.Dot do
             fn column ->
               max_length =
                 fields
-                |> Enum.map(fn field -> field |> format_field(column) |> String.length() end)
+                |> Enum.map(fn field -> field |> format_field(column, opts) |> String.length() end)
                 |> Enum.max()
 
               {column, max_length + 5}
@@ -94,7 +95,7 @@ defmodule Ecto.ERD.Document.Dot do
            {:td, [align: :left, port: Edge.port_name({:field, name})],
             Enum.map(columns, fn
               column ->
-                text = String.pad_trailing(format_field(field, column), column_width[column])
+                text = String.pad_trailing(format_field(field, column, opts), column_width[column])
 
                 case column do
                   :type -> {:i, [], {:font, [color: :gray54], text}}
@@ -139,24 +140,33 @@ defmodule Ecto.ERD.Document.Dot do
     Render.in_quotes(Node.id(source, schema_module)) <> " [label= <#{table}>]"
   end
 
-  defp format_field(%Field{name: name}, :name), do: inspect(name)
+  defp format_field(%Field{name: name}, :name, _opts), do: inspect(name)
 
-  defp format_field(%Field{type: type}, :type), do: format_type(type)
+  defp format_field(%Field{type: type}, :type, opts), do: format_type(type, opts)
 
-  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}) do
-    "#Enum<#{inspect(Enum.sort(Map.keys(on_dump)), limit: 10)}>"
+  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}, opts) do
+    opts =
+      opts
+      |> Keyword.put_new(:enum_values_order, :asc)
+      |> Keyword.put_new(:enum_values_limit, 10)
+
+    {values, truncated?} = EnumValues.prepare(Map.keys(on_dump), opts)
+    rendered = values |> Enum.map(&inspect/1) |> Enum.join(", ")
+    suffix = if truncated?, do: ", ...", else: ""
+    "#Enum<[#{rendered}#{suffix}]>"
   end
 
   defp format_type(
          {:parameterized,
-          {Ecto.Embedded, %Ecto.Embedded{cardinality: cardinality, related: related}}}
+          {Ecto.Embedded, %Ecto.Embedded{cardinality: cardinality, related: related}}},
+         _opts
        ) do
     "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
   end
 
-  defp format_type({:array, type}) do
-    "{:array, #{format_type(type)}}"
+  defp format_type({:array, type}, opts) do
+    "{:array, #{format_type(type, opts)}}"
   end
 
-  defp format_type(type), do: inspect(type)
+  defp format_type(type, _opts), do: inspect(type)
 end

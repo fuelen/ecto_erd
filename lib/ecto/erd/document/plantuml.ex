@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.Document.PlantUML do
   @moduledoc false
-  alias Ecto.ERD.{Node, Edge, Graph, Render, Color}
+  alias Ecto.ERD.{Node, Edge, Graph, Render, Color, EnumValues}
 
   @behaviour Ecto.ERD.Document
   @safe_name_pattern ~r/^[a-z\d_\.:\?]+$/i
@@ -22,12 +22,12 @@ defmodule Ecto.ERD.Document.PlantUML do
       Enum.map(clusters, fn {cluster_name, nodes} ->
         """
         namespace #{cluster_name} #{Color.get(cluster_name)} {
-        #{Enum.map_join(nodes, "\n", &render_node(&1, columns, "  "))}
+        #{Enum.map_join(nodes, "\n", &render_node(&1, columns, "  ", opts))}
         }
         """
       end)
 
-    entities = Enum.map_join(global_nodes, "\n", &render_node(&1, columns, ""))
+    entities = Enum.map_join(global_nodes, "\n", &render_node(&1, columns, "", opts))
 
     refs =
       edges
@@ -67,7 +67,8 @@ defmodule Ecto.ERD.Document.PlantUML do
            schema_module: schema_module
          },
          columns,
-         padding
+         padding,
+         opts
        ) do
     case columns do
       [] ->
@@ -91,7 +92,7 @@ defmodule Ecto.ERD.Document.PlantUML do
                 " : ",
                 fn
                   :name -> Render.in_quotes(field.name, @safe_name_pattern)
-                  :type -> format_type(field.type)
+                  :type -> format_type(field.type, opts)
                 end
               )
           end)
@@ -124,24 +125,14 @@ defmodule Ecto.ERD.Document.PlantUML do
     |> Enum.join(" ")
   end
 
-  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}) do
-    elements_limit = 10
-    values = Map.values(on_dump)
-    length = length(values)
-
-    values =
-      if length <= elements_limit do
-        values
-      else
-        values
-        |> Enum.slice(0, elements_limit)
-        |> List.replace_at(-1, "...")
-      end
-
+  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}, opts) do
+    opts = Keyword.put_new(opts, :enum_values_limit, 10)
+    {values, truncated?} = EnumValues.prepare(Map.values(on_dump), opts)
+    values = if truncated?, do: values ++ ["..."], else: values
     "enum(#{Enum.join(values, ",")})"
   end
 
-  defp format_type(type) do
+  defp format_type(type, _opts) do
     case Ecto.Type.type(type) do
       {parent, _t} -> Atom.to_string(parent)
       atom when is_atom(atom) -> Atom.to_string(atom)
