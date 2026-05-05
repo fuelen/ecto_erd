@@ -104,6 +104,13 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
     Return `nil` to remove a node from the diagram.
   * `:otp_app` - the application to scan (along with its dependencies) to collect Ecto schemas.
     Defaults to `Mix.Project.config()[:app]`. Configure this only when running the task from an umbrella root.
+  * `:enum_values_limit` - maximum number of values to display for `Ecto.Enum` fields. Set to a non-negative
+    integer or `:infinity` to display all values. When omitted, each format keeps its historical default:
+    `dot` and `puml` truncate at `10`, `dbml` and `qdbd` list all values (`:infinity`). When the actual list
+    is larger than the limit, the rendered output is suffixed with `...` to indicate truncation.
+  * `:enum_values_order` - sort order applied to `Ecto.Enum` values. Either `:asc` or `:desc`. When omitted,
+    each format keeps its historical default: `dot` and `dbml` sort ascending, `puml` and `qdbd` preserve the
+    original order from the schema definition.
 
   A configuration file with default values for `dot` and `puml` can look like this:
 
@@ -151,7 +158,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
       |> Ecto.ERD.Document.render(
         Path.extname(output_path),
         map_node_callback,
-        Keyword.take(file_opts, [:fontname, :columns])
+        Keyword.take(file_opts, [:fontname, :columns, :enum_values_limit, :enum_values_order])
       )
 
     File.write!(output_path, output)
