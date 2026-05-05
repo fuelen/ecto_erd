@@ -13,7 +13,9 @@ defmodule Ecto.ERD.EnumValues do
       end
 
     case limit do
-      :infinity -> {ordered, false}
+      :infinity ->
+        {ordered, false}
+
       n when is_integer(n) and n >= 0 ->
         if length(ordered) <= n do
           {ordered, false}

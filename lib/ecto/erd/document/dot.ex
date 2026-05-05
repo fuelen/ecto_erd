@@ -83,7 +83,9 @@ defmodule Ecto.ERD.Document.Dot do
             fn column ->
               max_length =
                 fields
-                |> Enum.map(fn field -> field |> format_field(column, opts) |> String.length() end)
+                |> Enum.map(fn field ->
+                  field |> format_field(column, opts) |> String.length()
+                end)
                 |> Enum.max()
 
               {column, max_length + 5}
@@ -95,7 +97,8 @@ defmodule Ecto.ERD.Document.Dot do
            {:td, [align: :left, port: Edge.port_name({:field, name})],
             Enum.map(columns, fn
               column ->
-                text = String.pad_trailing(format_field(field, column, opts), column_width[column])
+                text =
+                  String.pad_trailing(format_field(field, column, opts), column_width[column])
 
                 case column do
                   :type -> {:i, [], {:font, [color: :gray54], text}}
