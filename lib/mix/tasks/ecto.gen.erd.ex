@@ -112,14 +112,16 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
     each format keeps its historical default: `dot` and `dbml` sort ascending, `puml` and `qdbd` preserve the
     original order from the schema definition.
 
-  A configuration file with default values for `dot` and `puml` can look like this:
+  A configuration file with default values for `dot` can look like this:
 
       # .ecto_erd.exs
       [
         fontname: "Roboto Mono",
         columns: [:name, :type],
         map_node: &Function.identity/1,
-        otp_app: Mix.Project.config()[:app]
+        otp_app: Mix.Project.config()[:app],
+        enum_values_limit: 10,
+        enum_values_order: :asc
       ]
 
   """
