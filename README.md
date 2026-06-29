@@ -12,8 +12,14 @@ Supported formats:
 * [DBML](https://www.dbml.org/)
 * [QuickDBD](https://www.quickdatabasediagrams.com)
 * [Mermaid](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram)
+* [D2](https://d2lang.com)
 
 ![Simple blog demo](assets/simple_blog_dot_demo.png)
+
+The new **D2** format renders the rich tier — clusters, `Ecto.Enum` values, embedded schemas, and primary/foreign keys:
+
+![Simple blog demo (D2)](assets/simple_blog_d2_demo.svg)
+
 <details>
   <summary>Definition of schemas</summary>
 

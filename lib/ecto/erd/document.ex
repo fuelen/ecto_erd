@@ -7,6 +7,7 @@ defmodule Ecto.ERD.Document do
       when is_function(map_node_callback, 1) do
     document_module =
       case format do
+        ".d2" -> Ecto.ERD.Document.D2
         ".dbml" -> Ecto.ERD.Document.DBML
         ".dot" -> Ecto.ERD.Document.Dot
         ".mmd" -> Ecto.ERD.Document.Mermaid

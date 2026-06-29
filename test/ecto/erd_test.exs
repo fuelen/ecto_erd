@@ -1,7 +1,7 @@
 defmodule Ecto.ERDTest do
   use ExUnit.Case
-  alias Ecto.ERD.{Node, Field, Graph}
-  alias Ecto.ERD.Document.{DBML, Dot, PlantUML, QuickDBD}
+  alias Ecto.ERD.{Node, Field, Graph, Edge}
+  alias Ecto.ERD.Document.{D2, DBML, Dot, PlantUML, QuickDBD}
 
   defp enum_field(values) do
     Field.new(%{
@@ -116,6 +116,15 @@ defmodule Ecto.ERDTest do
                "#Enum&lt;[:c, :b, :a]&gt;"
     end
 
+    test "D2 defaults to :asc" do
+      assert D2.render(enum_graph([:b, :a, :c]), []) =~ ~s("#Enum<[:a, :b, :c]>")
+    end
+
+    test "D2 respects :desc" do
+      assert D2.render(enum_graph([:b, :a, :c]), enum_values_order: :desc) =~
+               ~s("#Enum<[:c, :b, :a]>")
+    end
+
     test "PlantUML preserves on_dump order by default" do
       values = [:b, :a, :c]
       %{on_dump: on_dump} = Ecto.Enum.init(values: values)
@@ -170,6 +179,30 @@ defmodule Ecto.ERDTest do
       assert result =~ "#Enum&lt;[:a, :b, :c]&gt;"
     end
 
+    test "D2 truncates at 10 by default with `...` suffix" do
+      result = D2.render(enum_graph(@values_11), [])
+      assert result =~ "..."
+      refute result =~ ":v9,"
+    end
+
+    test "D2 lists everything with :infinity" do
+      result = D2.render(enum_graph(@values_11), enum_values_limit: :infinity)
+      refute result =~ "..."
+      assert result =~ ":v11"
+      assert result =~ ":v9"
+    end
+
+    test "D2 honors a custom integer limit" do
+      result = D2.render(enum_graph([:a, :b, :c, :d]), enum_values_limit: 2)
+      assert result =~ ~s("#Enum<[:a, :b, ...]>")
+    end
+
+    test "D2 does not append `...` when limit equals length" do
+      result = D2.render(enum_graph([:a, :b, :c]), enum_values_limit: 3)
+      refute result =~ "..."
+      assert result =~ ~s("#Enum<[:a, :b, :c]>")
+    end
+
     test "PlantUML truncates at 10 by default" do
       assert PlantUML.render(enum_graph(@values_11), []) =~
                "enum(v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,...)"
@@ -208,6 +241,322 @@ defmodule Ecto.ERDTest do
     test "DBML honors a custom integer limit and appends `...`" do
       result = DBML.render(enum_graph([:a, :b, :c, :d]), enum_values_limit: 2)
       assert result =~ "..."
+    end
+  end
+
+  describe "D2 format" do
+    test "renders a schema as a quoted sql_table with left-to-right direction" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [
+              Field.new(%{name: :id, type: :integer, primary?: true}),
+              Field.new(%{name: :email, type: :string, primary?: false})
+            ]
+          }
+        ],
+        edges: []
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ "direction: right"
+      assert result =~ ~s("MyApp.User": {)
+      assert result =~ "shape: sql_table"
+      assert result =~ ~s(":id": ":integer")
+      assert result =~ ~s(":email": ":string")
+    end
+
+    test "configures the ELK layout engine so crow's-foot arrowheads sit flush" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          }
+        ],
+        edges: []
+      }
+
+      assert D2.render(graph, []) =~ "layout-engine: elk"
+    end
+
+    test "marks a primary key field with a primary_key constraint" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [
+              Field.new(%{name: :id, type: :integer, primary?: true}),
+              Field.new(%{name: :email, type: :string, primary?: false})
+            ]
+          }
+        ],
+        edges: []
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ ~s(":id": ":integer" {constraint: primary_key})
+      refute result =~ ~s(":email": ":string" {constraint)
+    end
+
+    test "renders array types Elixir-style, recursing into the element type" do
+      enum_type = {:parameterized, {Ecto.Enum, Ecto.Enum.init(values: [:a, :b])}}
+
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "posts",
+            schema_module: MyApp.Post,
+            fields: [Field.new(%{name: :tags, type: {:array, enum_type}})]
+          }
+        ],
+        edges: []
+      }
+
+      assert D2.render(graph, []) =~ ~s(":tags": "{:array, #Enum<[:a, :b]>}")
+    end
+
+    test "renders a has_many edge as crow's-foot between field ports" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "posts",
+            schema_module: MyApp.Post,
+            fields: [
+              Field.new(%{name: :id, type: :integer, primary?: true}),
+              Field.new(%{name: :user_id, type: :integer})
+            ]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"posts", MyApp.Post, {:field, :user_id}},
+            assoc_types: [has: :many]
+          }
+        ]
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ ~s("MyApp.User".":id" -> "MyApp.Post".":user_id")
+      assert result =~ "target-arrowhead.shape: cf-many-required"
+      # d2 v0.7.1 renders only the target arrowhead, so we emit no source-arrowhead
+      refute result =~ "source-arrowhead"
+    end
+
+    test "renders a has_one edge with a cf-one target arrowhead" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "avatars",
+            schema_module: MyApp.Avatar,
+            fields: [Field.new(%{name: :user_id, type: :integer})]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"avatars", MyApp.Avatar, {:field, :user_id}},
+            assoc_types: [has: :one]
+          }
+        ]
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ "target-arrowhead.shape: cf-one"
+      refute result =~ "source-arrowhead"
+      refute result =~ "cf-many"
+    end
+
+    test "marks an edge-target field with a foreign_key constraint" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "posts",
+            schema_module: MyApp.Post,
+            fields: [
+              Field.new(%{name: :id, type: :integer, primary?: true}),
+              Field.new(%{name: :user_id, type: :integer})
+            ]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"posts", MyApp.Post, {:field, :user_id}},
+            assoc_types: [has: :many]
+          }
+        ]
+      }
+
+      assert D2.render(graph, []) =~ ~s(":user_id": ":integer" {constraint: foreign_key})
+    end
+
+    test "marks a field that is both primary and foreign with both constraints" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "user_settings",
+            schema_module: MyApp.UserSettings,
+            fields: [Field.new(%{name: :user_id, type: :integer, primary?: true})]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"user_settings", MyApp.UserSettings, {:field, :user_id}},
+            assoc_types: [has: :one]
+          }
+        ]
+      }
+
+      assert D2.render(graph, []) =~
+               ~s(":user_id": ":integer" {constraint: [primary_key; foreign_key]})
+    end
+
+    test "places clustered nodes in a colored container and qualifies edge endpoints" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            cluster: "Accounts",
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "posts",
+            schema_module: MyApp.Post,
+            fields: [Field.new(%{name: :user_id, type: :integer})]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"posts", MyApp.Post, {:field, :user_id}},
+            assoc_types: [has: :many]
+          }
+        ]
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ ~s("Accounts": {)
+      assert result =~ ~s(style.fill: "#{Ecto.ERD.Color.get("Accounts")}")
+      assert result =~ ~s("Accounts"."MyApp.User": {)
+      assert result =~ ~s("Accounts"."MyApp.User".":id" -> "MyApp.Post".":user_id")
+    end
+
+    test "columns: [] renders bare nodes and node-level edges" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "posts",
+            schema_module: MyApp.Post,
+            fields: [Field.new(%{name: :user_id, type: :integer})]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"posts", MyApp.Post, {:field, :user_id}},
+            assoc_types: [has: :many]
+          }
+        ]
+      }
+
+      result = D2.render(graph, columns: [])
+
+      refute result =~ "shape: sql_table"
+      refute result =~ ":id"
+      assert result =~ ~s("MyApp.User" -> "MyApp.Post": {)
+      assert result =~ "target-arrowhead.shape: cf-many-required"
+    end
+
+    test "raises a clear error for unsupported column subsets" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          }
+        ],
+        edges: []
+      }
+
+      assert_raise RuntimeError, ~r/D2.*columns/s, fn ->
+        D2.render(graph, columns: [:name])
+      end
+    end
+
+    test "renders an embedded schema as a header-port edge with an Elixir-style type" do
+      embed_type =
+        {:parameterized,
+         {Ecto.Embedded, %Ecto.Embedded{cardinality: :one, related: MyApp.Profile}}}
+
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [
+              Field.new(%{name: :id, type: :integer, primary?: true}),
+              Field.new(%{name: :profile, type: embed_type})
+            ]
+          },
+          %Node{
+            source: nil,
+            schema_module: MyApp.Profile,
+            fields: [Field.new(%{name: :name, type: :string})]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :profile}},
+            to: {nil, MyApp.Profile, {:header, :schema_module}},
+            assoc_types: [has: :one]
+          }
+        ]
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ ~s(":profile": "#Ecto.Embedded<[one: MyApp.Profile]>")
+      assert result =~ ~s("MyApp.User".":profile" -> "MyApp.Profile": {)
+      refute result =~ ~s(-> "MyApp.Profile".")
     end
   end
 end

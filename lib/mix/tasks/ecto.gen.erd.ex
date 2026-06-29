@@ -8,6 +8,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   * [DBML](#module-dbml)
   * [QuickDBD](#module-quickdbd)
   * [Mermaid](#module-mermaid)
+  * [D2](#module-d2)
 
   Configuration examples and sample output for a few open-source projects can be found in the PAGES section under EXAMPLES.
 
@@ -78,9 +79,34 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   ```
   The default `-w` and `-H` values are small (`800` and `600`, respectively), so it's better to provide larger values from the start.
 
+  ## D2
+
+  [D2](https://d2lang.com) is a diagramming language. Like [DOT](#module-dot) and [PlantUML](#module-plantuml),
+  it can represent all available entity types:
+  * schemas
+  * embedded schemas
+  * schemaless tables (automatically derived from many-to-many relations)
+
+  Tables use the `sql_table` shape with crow's-foot relationships, and primary and foreign keys are
+  marked with native constraints. Clusters are supported as containers and can be set via the
+  `:map_node` option using `Ecto.ERD.Node.set_cluster/2`.
+
+  Install [d2](https://d2lang.com) to convert a `*.d2` file to an image. SVG output is native and
+  dependency-free:
+
+  ```
+  $ mix ecto.gen.erd --output-path=ecto_erd.d2
+  $ mix ecto.gen.erd --output-path=ecto_erd.d2 && d2 ecto_erd.d2 erd.svg
+  ```
+
+  The generated file requests d2's bundled ELK layout engine, which routes connections orthogonally
+  so crow's-foot relationships sit flush against the tables. Pass `d2 --layout dagre` to override.
+
+  *Note: `:fontname` is not supported for `d2`, and `:columns` accepts only `[]` (to hide fields) or the default `[:name, :type]`.*
+
   ## Command line options
 
-  * `--output-path` - path to the output file. Defaults to `ecto_erd.dot`. Supported file extensions: `dot`, `puml`, `dbml`, `qdbd`.
+  * `--output-path` - path to the output file. Defaults to `ecto_erd.dot`. Supported file extensions: `dot`, `puml`, `dbml`, `qdbd`, `d2`.
   * `--config-path` - path to the config file. Defaults to `.ecto_erd.exs`.
 
   ## Configuration file
@@ -93,14 +119,14 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   * `:fontname` - font name. Defaults to `Roboto Mono`. Must be a monospaced font if the output format is `dot` and more than one column is displayed.
     Supported only for `dot` and `puml` files.
   * `:columns` - list of columns displayed for each node (schema/source). Set to `[]` to hide fields completely.
-    Available columns: `:name`, `:type`. Supported for `dot`, `puml`, and `mmd` (`mmd` allows only `[]` or the default value).
+    Available columns: `:name`, `:type`. Supported for `dot`, `puml`, `mmd`, and `d2` (`mmd` and `d2` allow only `[]` or the default value).
   Default values:
     * `[:name, :type]` for `dot` and `puml`
     * `[:type, :name]` for `mmd`
   * `:map_node` - a function that removes a node from the diagram or assigns it to a cluster. Defaults to `Function.identity/1`,
     which means all nodes are displayed outside any cluster by default.
     Use `Ecto.ERD.Node.set_cluster/2` in this function to set a cluster. Supported only by [DOT](#module-dot), [PlantUML](#module-plantuml),
-    and [DBML](#module-dbml).
+    [DBML](#module-dbml), and [D2](#module-d2).
     Return `nil` to remove a node from the diagram.
   * `:otp_app` - the application to scan (along with its dependencies) to collect Ecto schemas.
     Defaults to `Mix.Project.config()[:app]`. Configure this only when running the task from an umbrella root.
