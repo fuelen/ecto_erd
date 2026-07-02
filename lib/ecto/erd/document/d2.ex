@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.Document.D2 do
   @moduledoc false
-  alias Ecto.ERD.{Node, Field, Edge, Graph, EnumValues}
+  alias Ecto.ERD.{Node, Field, Edge, Graph, Render}
   @behaviour Ecto.ERD.Document
 
   # Use the ELK layout engine: it routes connections orthogonally, so crow's-foot
@@ -88,7 +88,7 @@ defmodule Ecto.ERD.Document.D2 do
     rows =
       Enum.map(fields, fn %Field{name: name, type: type, primary?: primary?} ->
         constraint = constraint(primary?, MapSet.member?(fk_fields, {node_id, name}))
-        "  #{quoted(inspect(name))}: #{quoted(format_type(type, opts))}" <> constraint
+        "  #{quoted(inspect(name))}: #{quoted(Render.elixir_type(type, opts))}" <> constraint
       end)
 
     ([qualified_key(node_id, cluster) <> ": {", "  shape: sql_table"] ++ rows ++ ["}"])
@@ -136,30 +136,4 @@ defmodule Ecto.ERD.Document.D2 do
   defp qualified_key(node_id, cluster), do: quoted(cluster) <> "." <> quoted(node_id)
 
   defp quoted(value), do: "\"" <> String.replace(to_string(value), "\"", "\\\"") <> "\""
-
-  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}, opts) do
-    opts =
-      opts
-      |> Keyword.put_new(:enum_values_order, :asc)
-      |> Keyword.put_new(:enum_values_limit, 10)
-
-    {values, truncated?} = EnumValues.prepare(Map.keys(on_dump), opts)
-    rendered = values |> Enum.map(&inspect/1) |> Enum.join(", ")
-    suffix = if truncated?, do: ", ...", else: ""
-    "#Enum<[#{rendered}#{suffix}]>"
-  end
-
-  defp format_type(
-         {:parameterized,
-          {Ecto.Embedded, %Ecto.Embedded{cardinality: cardinality, related: related}}},
-         _opts
-       ) do
-    "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
-  end
-
-  defp format_type({:array, type}, opts) do
-    "{:array, #{format_type(type, opts)}}"
-  end
-
-  defp format_type(type, _opts), do: inspect(type)
 end
