@@ -106,7 +106,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
 
   ## Command line options
 
-  * `--output-path` - path to the output file. Defaults to `ecto_erd.dot`. Supported file extensions: `dot`, `puml`, `dbml`, `qdbd`, `d2`.
+  * `--output-path` - path to the output file. Defaults to `ecto_erd.dot`. Supported file extensions: `dot`, `puml`, `dbml`, `qdbd`, `mmd`, `d2`.
   * `--config-path` - path to the config file. Defaults to `.ecto_erd.exs`.
 
   ## Configuration file
@@ -121,7 +121,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   * `:columns` - list of columns displayed for each node (schema/source). Set to `[]` to hide fields completely.
     Available columns: `:name`, `:type`. Supported for `dot`, `puml`, `mmd`, and `d2` (`mmd` and `d2` allow only `[]` or the default value).
   Default values:
-    * `[:name, :type]` for `dot` and `puml`
+    * `[:name, :type]` for `dot`, `puml`, and `d2`
     * `[:type, :name]` for `mmd`
   * `:map_node` - a function that removes a node from the diagram or assigns it to a cluster. Defaults to `Function.identity/1`,
     which means all nodes are displayed outside any cluster by default.
@@ -132,11 +132,11 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
     Defaults to `Mix.Project.config()[:app]`. Configure this only when running the task from an umbrella root.
   * `:enum_values_limit` - maximum number of values to display for `Ecto.Enum` fields. Set to a non-negative
     integer or `:infinity` to display all values. When omitted, each format keeps its historical default:
-    `dot` and `puml` truncate at `10`, `dbml` and `qdbd` list all values (`:infinity`). When the actual list
+    `dot`, `puml`, and `d2` truncate at `10`, `dbml` and `qdbd` list all values (`:infinity`). When the actual list
     is larger than the limit, the rendered output is suffixed with `...` to indicate truncation.
   * `:enum_values_order` - sort order applied to `Ecto.Enum` values. Either `:asc` or `:desc`. When omitted,
-    each format keeps its historical default: `dot` and `dbml` sort ascending, `puml` and `qdbd` preserve the
-    original order from the schema definition.
+    each format keeps its historical default: `dot`, `dbml`, and `d2` sort ascending, `puml` and `qdbd` preserve
+    the original order from the schema definition.
 
   A configuration file with default values for `dot` can look like this:
 
