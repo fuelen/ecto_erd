@@ -350,10 +350,9 @@ defmodule Ecto.ERDTest do
 
       result = D2.render(graph, [])
 
-      assert result =~ ~s("MyApp.User".":id" -> "MyApp.Post".":user_id")
+      assert result =~ ~s("MyApp.User".":id" <-> "MyApp.Post".":user_id")
+      assert result =~ "source-arrowhead.shape: cf-one-required"
       assert result =~ "target-arrowhead.shape: cf-many-required"
-      # d2 v0.7.1 renders only the target arrowhead, so we emit no source-arrowhead
-      refute result =~ "source-arrowhead"
     end
 
     test "renders a has_one edge with a cf-one target arrowhead" do
@@ -381,8 +380,8 @@ defmodule Ecto.ERDTest do
 
       result = D2.render(graph, [])
 
-      assert result =~ "target-arrowhead.shape: cf-one"
-      refute result =~ "source-arrowhead"
+      assert result =~ "source-arrowhead.shape: cf-one-required"
+      assert result =~ "target-arrowhead.shape: cf-one\n"
       refute result =~ "cf-many"
     end
 
@@ -471,7 +470,7 @@ defmodule Ecto.ERDTest do
       assert result =~ ~s("Accounts": {)
       assert result =~ ~s(style.fill: "#{Ecto.ERD.Color.get("Accounts")}")
       assert result =~ ~s("Accounts"."MyApp.User": {)
-      assert result =~ ~s("Accounts"."MyApp.User".":id" -> "MyApp.Post".":user_id")
+      assert result =~ ~s("Accounts"."MyApp.User".":id" <-> "MyApp.Post".":user_id")
     end
 
     test "columns: [] renders bare nodes and node-level edges" do
@@ -501,7 +500,7 @@ defmodule Ecto.ERDTest do
 
       refute result =~ "shape: sql_table"
       refute result =~ ":id"
-      assert result =~ ~s("MyApp.User" -> "MyApp.Post": {)
+      assert result =~ ~s("MyApp.User" <-> "MyApp.Post": {)
       assert result =~ "target-arrowhead.shape: cf-many-required"
     end
 
@@ -555,8 +554,8 @@ defmodule Ecto.ERDTest do
       result = D2.render(graph, [])
 
       assert result =~ ~s(":profile": "#Ecto.Embedded<[one: MyApp.Profile]>")
-      assert result =~ ~s("MyApp.User".":profile" -> "MyApp.Profile": {)
-      refute result =~ ~s(-> "MyApp.Profile".")
+      assert result =~ ~s("MyApp.User".":profile" <-> "MyApp.Profile": {)
+      refute result =~ ~s(<-> "MyApp.Profile".")
     end
   end
 end

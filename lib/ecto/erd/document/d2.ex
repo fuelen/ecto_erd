@@ -105,15 +105,18 @@ defmodule Ecto.ERD.Document.D2 do
   end
 
   defp render_edge(%Edge{from: from, to: to, assoc_types: assoc_types}, node_clusters, skip_port?) do
-    # d2 renders only the target arrowhead, so we mark the foreign-key end (`to`):
-    # cf-one for has_one, else cf-many-required. `from` is the primary-key ("one") side.
+    # d2 ignores source-arrowhead on `->` but renders both ends on `<->`, so we
+    # use `<->` and mark both: the primary-key end (`from`) as exactly-one
+    # (cf-one-required), the foreign-key end (`to`) as cf-one for has_one, else
+    # cf-many-required.
     target_shape = if {:has, :one} in assoc_types, do: "cf-one", else: "cf-many-required"
 
     from_endpoint = render_endpoint(from, node_clusters, skip_port?)
     to_endpoint = render_endpoint(to, node_clusters, skip_port?)
 
     [
-      "#{from_endpoint} -> #{to_endpoint}: {",
+      "#{from_endpoint} <-> #{to_endpoint}: {",
+      "  source-arrowhead.shape: cf-one-required",
       "  target-arrowhead.shape: #{target_shape}",
       "}"
     ]
