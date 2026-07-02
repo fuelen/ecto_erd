@@ -20,6 +20,7 @@ defmodule Ecto.ERD.Document.D2 do
   @impl true
   def render(%Graph{nodes: nodes, edges: edges}, opts) do
     skip_port? = skip_port?(opts[:columns] || [:name, :type])
+    edges = if skip_port?, do: dedup_node_pairs(edges), else: edges
     fk_fields = foreign_key_fields(edges)
     node_clusters = node_clusters(nodes)
 
@@ -51,6 +52,18 @@ defmodule Ecto.ERD.Document.D2 do
     D2 doesn't support rich customization of columns.
     Set :columns to `[]` in order to hide fields or keep the default value `[:name, :type]`.
     """
+  end
+
+  # Without field ports, edges between the same node pair collapse to identical
+  # `A <-> B` connections, which d2 draws as duplicate lines. Keep the first
+  # edge per ordered pair (mirrors PlantUML's uniq_by).
+  defp dedup_node_pairs(edges) do
+    Enum.uniq_by(edges, fn %Edge{
+                             from: {from_source, from_schema, _},
+                             to: {to_source, to_schema, _}
+                           } ->
+      {Node.id(from_source, from_schema), Node.id(to_source, to_schema)}
+    end)
   end
 
   # A field is a foreign key when it is the `to` endpoint of an edge (mirrors

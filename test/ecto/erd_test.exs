@@ -504,6 +504,46 @@ defmodule Ecto.ERDTest do
       assert result =~ "target-arrowhead.shape: cf-many-required"
     end
 
+    test "columns: [] dedups multiple edges between the same node pair" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "posts",
+            schema_module: MyApp.Post,
+            fields: [
+              Field.new(%{name: :author_id, type: :integer}),
+              Field.new(%{name: :editor_id, type: :integer})
+            ]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"posts", MyApp.Post, {:field, :author_id}},
+            assoc_types: [has: :many]
+          },
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"posts", MyApp.Post, {:field, :editor_id}},
+            assoc_types: [has: :many]
+          }
+        ]
+      }
+
+      bare = D2.render(graph, columns: [])
+      # split yields occurrences + 1 parts, so 2 parts == exactly one edge
+      assert bare |> String.split(~s("MyApp.User" <-> "MyApp.Post")) |> length() == 2
+
+      rich = D2.render(graph, [])
+      assert rich =~ ~s("MyApp.User".":id" <-> "MyApp.Post".":author_id")
+      assert rich =~ ~s("MyApp.User".":id" <-> "MyApp.Post".":editor_id")
+    end
+
     test "raises a clear error for unsupported column subsets" do
       graph = %Graph{
         nodes: [
