@@ -587,6 +587,39 @@ defmodule Ecto.ERDTest do
       end
     end
 
+    test "escapes backslashes before quotes in D2 strings" do
+      graph = %Graph{
+        nodes: [
+          %Node{source: ~S(back\slash), schema_module: nil, fields: []},
+          %Node{source: ~S(precede\"), schema_module: nil, fields: []}
+        ],
+        edges: []
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ ~S("back\\slash")
+      assert result =~ ~S("precede\\\"")
+    end
+
+    test "escapes ${ to prevent d2 variable substitution" do
+      graph = %Graph{
+        nodes: [%Node{source: "dollar${var}", schema_module: nil, fields: []}],
+        edges: []
+      }
+
+      assert D2.render(graph, []) =~ ~S("dollar\${var}")
+    end
+
+    test "escapes raw newlines so the document still parses" do
+      graph = %Graph{
+        nodes: [%Node{source: "new\nline", schema_module: nil, fields: []}],
+        edges: []
+      }
+
+      assert D2.render(graph, []) =~ ~S("new\nline")
+    end
+
     test "renders an embedded schema as a header-port edge with an Elixir-style type" do
       embed_type =
         {:parameterized,

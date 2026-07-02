@@ -157,5 +157,19 @@ defmodule Ecto.ERD.Document.D2 do
   defp qualified_key(node_id, cluster),
     do: quoted("cluster_" <> cluster) <> "." <> quoted(node_id)
 
-  defp quoted(value), do: "\"" <> String.replace(to_string(value), "\"", "\\\"") <> "\""
+  # Escape order is load-bearing: backslashes first, or the backslashes added
+  # for `"` and `${` would themselves get doubled. `${` triggers d2 variable
+  # substitution inside double-quoted strings (undefined vars fail to compile)
+  # and a raw newline terminates the string at the parser level.
+  defp quoted(value) do
+    escaped =
+      value
+      |> to_string()
+      |> String.replace("\\", "\\\\")
+      |> String.replace("\"", "\\\"")
+      |> String.replace("${", "\\${")
+      |> String.replace("\n", "\\n")
+
+    "\"" <> escaped <> "\""
+  end
 end
