@@ -167,12 +167,12 @@ defmodule Ecto.ERD.ExamplesGenerator do
   }
 
   @formats %{
-    dot: %{examples_dir: "examples/dot", name: "DOT", image?: true, image_ext: "png"},
-    dbml: %{examples_dir: "examples/dbml", name: "DBML", image?: false},
-    qdbd: %{examples_dir: "examples/quick_dbd", name: "QuickDBD", image?: false},
-    puml: %{examples_dir: "examples/plantuml", name: "PlantUML", image?: true, image_ext: "png"},
-    mmd: %{examples_dir: "examples/mermaid", name: "Mermaid", image?: false},
-    d2: %{examples_dir: "examples/d2", name: "D2", image?: true, image_ext: "svg"}
+    dot: %{examples_dir: "examples/dot", name: "DOT", image_ext: "png"},
+    dbml: %{examples_dir: "examples/dbml", name: "DBML"},
+    qdbd: %{examples_dir: "examples/quick_dbd", name: "QuickDBD"},
+    puml: %{examples_dir: "examples/plantuml", name: "PlantUML", image_ext: "png"},
+    mmd: %{examples_dir: "examples/mermaid", name: "Mermaid"},
+    d2: %{examples_dir: "examples/d2", name: "D2", image_ext: "svg"}
   }
 
   def run(source_url_root) do
@@ -236,8 +236,8 @@ defmodule Ecto.ERD.ExamplesGenerator do
                 ])
 
               image_url =
-                if @formats[format].image? do
-                  Path.rootname(document_url) <> "." <> @formats[format].image_ext
+                if image_ext = @formats[format][:image_ext] do
+                  Path.rootname(document_url) <> "." <> image_ext
                 end
 
               [
@@ -314,10 +314,11 @@ defmodule Ecto.ERD.ExamplesGenerator do
       end
 
       {:ok, new_output_content} = File.read(output_path)
+      image_ext = @formats[format][:image_ext]
 
-      if @formats[format].image? and
+      if image_ext &&
            (old_output_content != new_output_content or
-              not File.exists?(Path.rootname(output_path) <> "." <> @formats[format].image_ext)) do
+              not File.exists?(Path.rootname(output_path) <> "." <> image_ext)) do
         Logger.debug("Generating image from #{output_path}")
         generate_image(format, output_path)
       end
