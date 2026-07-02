@@ -82,7 +82,7 @@ defmodule Ecto.ERD.Document.D2 do
   end
 
   defp render_container(cluster) do
-    "#{quoted(cluster)}: {\n  style.fill: #{quoted(Ecto.ERD.Color.get(cluster))}\n}"
+    "#{quoted("cluster_" <> cluster)}: {\n  label: #{quoted(cluster)}\n  style.fill: #{quoted(Ecto.ERD.Color.get(cluster))}\n}"
   end
 
   defp render_node(%Node{source: source, schema_module: schema_module}, cluster, _fk, _opts, true) do
@@ -148,8 +148,14 @@ defmodule Ecto.ERD.Document.D2 do
     qualified_key(node_id, Map.get(node_clusters, node_id))
   end
 
+  # Container keys carry a `cluster_` prefix (displayed name comes from `label`,
+  # mirroring DOT's subgraph naming). Without it, a cluster named like a global
+  # node's key makes d2 fail to compile with "sql_table columns cannot have
+  # children".
   defp qualified_key(node_id, nil), do: quoted(node_id)
-  defp qualified_key(node_id, cluster), do: quoted(cluster) <> "." <> quoted(node_id)
+
+  defp qualified_key(node_id, cluster),
+    do: quoted("cluster_" <> cluster) <> "." <> quoted(node_id)
 
   defp quoted(value), do: "\"" <> String.replace(to_string(value), "\"", "\\\"") <> "\""
 end

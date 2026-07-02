@@ -467,10 +467,36 @@ defmodule Ecto.ERDTest do
 
       result = D2.render(graph, [])
 
-      assert result =~ ~s("Accounts": {)
+      assert result =~ ~s("cluster_Accounts": {)
+      assert result =~ ~s(label: "Accounts")
       assert result =~ ~s(style.fill: "#{Ecto.ERD.Color.get("Accounts")}")
-      assert result =~ ~s("Accounts"."MyApp.User": {)
-      assert result =~ ~s("Accounts"."MyApp.User".":id" <-> "MyApp.Post".":user_id")
+      assert result =~ ~s("cluster_Accounts"."MyApp.User": {)
+      assert result =~ ~s("cluster_Accounts"."MyApp.User".":id" <-> "MyApp.Post".":user_id")
+    end
+
+    test "a global node named like a cluster does not collide with the container key" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            cluster: "Accounts",
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "accounts",
+            schema_module: Accounts,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          }
+        ],
+        edges: []
+      }
+
+      result = D2.render(graph, [])
+
+      # container key is prefixed, so the global "Accounts" sql_table keeps its key
+      assert result =~ ~s("cluster_Accounts": {)
+      assert result =~ ~s("Accounts": {\n  shape: sql_table)
     end
 
     test "columns: [] renders bare nodes and node-level edges" do
