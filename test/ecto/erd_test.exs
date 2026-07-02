@@ -582,7 +582,7 @@ defmodule Ecto.ERDTest do
         edges: []
       }
 
-      assert_raise RuntimeError, ~r/D2.*columns/s, fn ->
+      assert_raise RuntimeError, ~r/only the default \[:name, :type\] columns or \[\]/, fn ->
         D2.render(graph, columns: [:name])
       end
     end

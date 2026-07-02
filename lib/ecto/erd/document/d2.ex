@@ -42,15 +42,18 @@ defmodule Ecto.ERD.Document.D2 do
     Enum.join(parts, "\n\n") <> "\n"
   end
 
-  # `sql_table` rows are a fixed name/type pair, so only the full default or an
-  # empty list (bare nodes) are supported; arbitrary subsets are impossible.
+  # `sql_table` rows are fixed name/type pairs: type-only or reordered subsets
+  # are impossible. Name-only bare rows do compile in d2, but stay unsupported
+  # for parity with Mermaid (see ADR 0001).
   defp skip_port?([]), do: true
   defp skip_port?([:name, :type]), do: false
 
   defp skip_port?(_columns) do
     raise """
-    D2 doesn't support rich customization of columns.
-    Set :columns to `[]` in order to hide fields or keep the default value `[:name, :type]`.
+    D2 supports only the default [:name, :type] columns or [] to hide fields.
+    sql_table rows are fixed name/type pairs, so [:type] or reordered subsets
+    are impossible; [:name] alone would compile but is unsupported for parity
+    with Mermaid.
     """
   end
 
