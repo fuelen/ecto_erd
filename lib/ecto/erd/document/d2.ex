@@ -42,9 +42,7 @@ defmodule Ecto.ERD.Document.D2 do
     Enum.join(parts, "\n\n") <> "\n"
   end
 
-  # `sql_table` rows are fixed name/type pairs: type-only or reordered subsets
-  # are impossible. Name-only bare rows do compile in d2, but stay unsupported
-  # for parity with Mermaid (see ADR 0001).
+  # `sql_table` rows are fixed name/type pairs
   defp skip_port?([]), do: true
   defp skip_port?([:name, :type]), do: false
 
