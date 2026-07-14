@@ -305,6 +305,52 @@ defmodule Ecto.ERDTest do
       refute result =~ ~s(":email": ":string" {constraint)
     end
 
+    test "pads the type with a trailing space when it equals the field name" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :id, type: :id, primary?: true})]
+          }
+        ],
+        edges: []
+      }
+
+      # without the pad, d2 suppresses the value and blanks the type cell
+      assert D2.render(graph, []) =~ ~s(":id": ":id " {constraint: primary_key})
+    end
+
+    test "does not pad a type that differs from the field name" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :email, type: :string})]
+          }
+        ],
+        edges: []
+      }
+
+      assert D2.render(graph, []) =~ ~s(":email": ":string"\n)
+    end
+
+    test "pads on a case-only match because d2 keys fold case" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :ID, type: :id})]
+          }
+        ],
+        edges: []
+      }
+
+      assert D2.render(graph, []) =~ ~s(":ID": ":id ")
+    end
+
     test "renders array types Elixir-style, recursing into the element type" do
       enum_type = {:parameterized, {Ecto.Enum, Ecto.Enum.init(values: [:a, :b])}}
 

@@ -102,7 +102,21 @@ defmodule Ecto.ERD.Document.D2 do
     rows =
       Enum.map(fields, fn %Field{name: name, type: type, primary?: primary?} ->
         constraint = constraint(primary?, MapSet.member?(fk_fields, {node_id, name}))
-        "  #{quoted(inspect(name))}: #{quoted(Render.elixir_type(type, opts))}" <> constraint
+        name_text = inspect(name)
+
+        # d2 suppresses a sql_table row's value when it equals the row key
+        # (verified v0.7.1), blanking the type cell — e.g. an `:id` field of
+        # type `:id`. Pad with a trailing space, which is invisible in the
+        # rendered SVG. Compare case-insensitively: d2 keys fold case, a
+        # false-positive pad is harmless while a false negative blanks the cell.
+        type_text = Render.elixir_type(type, opts)
+
+        type_text =
+          if String.downcase(type_text) == String.downcase(name_text),
+            do: type_text <> " ",
+            else: type_text
+
+        "  #{quoted(name_text)}: #{quoted(type_text)}" <> constraint
       end)
 
     ([qualified_key(node_id, cluster) <> ": {", "  shape: sql_table"] ++ rows ++ ["}"])
