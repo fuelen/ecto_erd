@@ -545,6 +545,137 @@ defmodule Ecto.ERDTest do
       assert result =~ ~s("Accounts": {\n  shape: sql_table)
     end
 
+    test "escalates the prefix when a global node is named like the container key" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            cluster: "Accounts",
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "cluster_Accounts",
+            schema_module: nil,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          }
+        ],
+        edges: []
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ ~s("cluster_cluster_Accounts": {)
+      assert result =~ ~s(label: "Accounts")
+      assert result =~ ~s("cluster_Accounts": {\n  shape: sql_table)
+    end
+
+    test "escalates on a case-only container-key collision" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            cluster: "Accounts",
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "CLUSTER_ACCOUNTS",
+            schema_module: nil,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          }
+        ],
+        edges: []
+      }
+
+      result = D2.render(graph, [])
+
+      # d2 keys are case-insensitive, so a case-only match still merges
+      assert result =~ ~s("cluster_cluster_Accounts": {)
+      assert result =~ ~s("CLUSTER_ACCOUNTS": {\n  shape: sql_table)
+    end
+
+    test "edge endpoints use the escalated container key" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            cluster: "Accounts",
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "cluster_Accounts",
+            schema_module: nil,
+            fields: [Field.new(%{name: :user_id, type: :integer})]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"users", MyApp.User, {:field, :id}},
+            to: {"cluster_Accounts", nil, {:field, :user_id}},
+            assoc_types: [has: :many]
+          }
+        ]
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~
+               ~s("cluster_cluster_Accounts"."MyApp.User".":id" <-> "cluster_Accounts".":user_id")
+    end
+
+    test "keeps escalating while the longer prefix still collides" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            cluster: "Accounts",
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "cluster_Accounts",
+            schema_module: nil,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "cluster_cluster_Accounts",
+            schema_module: nil,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          }
+        ],
+        edges: []
+      }
+
+      assert D2.render(graph, []) =~ ~s("cluster_cluster_cluster_Accounts": {)
+    end
+
+    test "columns: [] keeps a colliding global node distinct from the container" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            cluster: "Accounts",
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "cluster_Accounts",
+            schema_module: nil,
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          }
+        ],
+        edges: []
+      }
+
+      result = D2.render(graph, columns: [])
+
+      # bare node statement and container must not silently merge
+      assert result =~ ~s(\n\n"cluster_Accounts"\n\n)
+      assert result =~ ~s("cluster_cluster_Accounts": {)
+    end
+
     test "columns: [] renders bare nodes and node-level edges" do
       graph = %Graph{
         nodes: [

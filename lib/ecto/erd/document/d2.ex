@@ -22,19 +22,25 @@ defmodule Ecto.ERD.Document.D2 do
     skip_port? = skip_port?(opts[:columns] || [:name, :type])
     edges = if skip_port?, do: dedup_node_pairs(edges), else: edges
     fk_fields = foreign_key_fields(edges)
-    node_clusters = node_clusters(nodes)
 
     clusters = Enum.group_by(nodes, & &1.cluster)
     {global_nodes, clustered} = Map.pop(clusters, nil)
     global_nodes = List.wrap(global_nodes)
+
+    global_node_ids = Enum.map(global_nodes, &Node.id(&1.source, &1.schema_module))
+    prefix = cluster_prefix(global_node_ids, Map.keys(clustered))
+    node_clusters = node_clusters(nodes, prefix)
 
     parts =
       [@layout_config, "direction: right"] ++
         Enum.map(global_nodes, &render_node(&1, nil, fk_fields, opts, skip_port?)) ++
         Enum.flat_map(clustered, fn {cluster, cluster_nodes} ->
           [
-            render_container(cluster)
-            | Enum.map(cluster_nodes, &render_node(&1, cluster, fk_fields, opts, skip_port?))
+            render_container(cluster, prefix)
+            | Enum.map(
+                cluster_nodes,
+                &render_node(&1, prefix <> cluster, fk_fields, opts, skip_port?)
+              )
           ]
         end) ++
         Enum.map(edges, &render_edge(&1, node_clusters, skip_port?))
@@ -76,23 +82,50 @@ defmodule Ecto.ERD.Document.D2 do
     end
   end
 
-  defp node_clusters(nodes) do
+  # Container keys need a prefix: a cluster named like a global node's key
+  # makes d2 fail to compile with "sql_table columns cannot have children" (or
+  # silently merge bare nodes). A static "cluster_" prefix only moves the
+  # collision onto nodes literally named e.g. "cluster_Accounts", so escalate
+  # the prefix until no container key matches a global node id. Comparison is
+  # downcased because d2 keys fold case. Clustered node ids live under the
+  # container namespace, so only global ids can collide at the top level.
+  # Terminates: the prefix eventually outgrows every node id.
+  defp cluster_prefix(global_node_ids, cluster_names) do
+    node_ids = MapSet.new(global_node_ids, &String.downcase/1)
+
+    "cluster_"
+    |> Stream.iterate(&("cluster_" <> &1))
+    |> Enum.find(fn prefix ->
+      cluster_names
+      |> MapSet.new(&String.downcase(prefix <> &1))
+      |> MapSet.disjoint?(node_ids)
+    end)
+  end
+
+  # Values are pre-prefixed container keys, ready for qualified_key/2.
+  defp node_clusters(nodes, prefix) do
     for %Node{cluster: cluster} = node <- nodes, not is_nil(cluster), into: %{} do
-      {Node.id(node.source, node.schema_module), cluster}
+      {Node.id(node.source, node.schema_module), prefix <> cluster}
     end
   end
 
-  defp render_container(cluster) do
-    "#{quoted("cluster_" <> cluster)}: {\n  label: #{quoted(cluster)}\n  style.fill: #{quoted(Ecto.ERD.Color.get(cluster))}\n}"
+  defp render_container(cluster, prefix) do
+    "#{quoted(prefix <> cluster)}: {\n  label: #{quoted(cluster)}\n  style.fill: #{quoted(Ecto.ERD.Color.get(cluster))}\n}"
   end
 
-  defp render_node(%Node{source: source, schema_module: schema_module}, cluster, _fk, _opts, true) do
-    qualified_key(Node.id(source, schema_module), cluster)
+  defp render_node(
+         %Node{source: source, schema_module: schema_module},
+         container_key,
+         _fk,
+         _opts,
+         true
+       ) do
+    qualified_key(Node.id(source, schema_module), container_key)
   end
 
   defp render_node(
          %Node{source: source, schema_module: schema_module, fields: fields},
-         cluster,
+         container_key,
          fk_fields,
          opts,
          false
@@ -119,7 +152,7 @@ defmodule Ecto.ERD.Document.D2 do
         "  #{quoted(name_text)}: #{quoted(type_text)}" <> constraint
       end)
 
-    ([qualified_key(node_id, cluster) <> ": {", "  shape: sql_table"] ++ rows ++ ["}"])
+    ([qualified_key(node_id, container_key) <> ": {", "  shape: sql_table"] ++ rows ++ ["}"])
     |> Enum.join("\n")
   end
 
@@ -163,14 +196,13 @@ defmodule Ecto.ERD.Document.D2 do
     qualified_key(node_id, Map.get(node_clusters, node_id))
   end
 
-  # Container keys carry a `cluster_` prefix (displayed name comes from `label`,
-  # mirroring DOT's subgraph naming). Without it, a cluster named like a global
-  # node's key makes d2 fail to compile with "sql_table columns cannot have
-  # children".
+  # The container key already carries its escalated prefix (see
+  # cluster_prefix/2); the displayed name comes from the container's `label`,
+  # mirroring DOT's subgraph naming.
   defp qualified_key(node_id, nil), do: quoted(node_id)
 
-  defp qualified_key(node_id, cluster),
-    do: quoted("cluster_" <> cluster) <> "." <> quoted(node_id)
+  defp qualified_key(node_id, container_key),
+    do: quoted(container_key) <> "." <> quoted(node_id)
 
   # Escape order is load-bearing: backslashes first, or the backslashes added
   # for `"` and `${` would themselves get doubled. `${` triggers d2 variable
