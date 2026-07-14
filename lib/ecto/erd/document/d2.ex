@@ -27,23 +27,28 @@ defmodule Ecto.ERD.Document.D2 do
     {global_nodes, clustered} = Map.pop(clusters, nil)
     global_nodes = List.wrap(global_nodes)
 
-    global_node_ids = Enum.map(global_nodes, &Node.id(&1.source, &1.schema_module))
-    prefix = cluster_prefix(global_node_ids, Map.keys(clustered))
-    node_clusters = node_clusters(nodes, prefix)
+    global_node_keys = node_keys(global_nodes)
+    container_keys = container_keys(Map.values(global_node_keys), Map.keys(clustered))
+    node_paths = node_paths(global_nodes, clustered, global_node_keys, container_keys)
 
     parts =
       [@layout_config, "direction: right"] ++
-        Enum.map(global_nodes, &render_node(&1, nil, fk_fields, opts, skip_port?)) ++
+        Enum.map(global_nodes, fn node ->
+          {nil, node_key} = Map.fetch!(node_paths, node_ref(node))
+          render_node(node, node_key, nil, fk_fields, opts, skip_port?)
+        end) ++
         Enum.flat_map(clustered, fn {cluster, cluster_nodes} ->
+          container_key = Map.fetch!(container_keys, cluster)
+
           [
-            render_container(cluster, prefix)
-            | Enum.map(
-                cluster_nodes,
-                &render_node(&1, prefix <> cluster, fk_fields, opts, skip_port?)
-              )
+            render_container(cluster, container_key)
+            | Enum.map(cluster_nodes, fn node ->
+                {^container_key, node_key} = Map.fetch!(node_paths, node_ref(node))
+                render_node(node, node_key, container_key, fk_fields, opts, skip_port?)
+              end)
           ]
         end) ++
-        Enum.map(edges, &render_edge(&1, node_clusters, skip_port?))
+        Enum.map(edges, &render_edge(&1, node_paths, skip_port?))
 
     Enum.join(parts, "\n\n") <> "\n"
   end
@@ -69,7 +74,7 @@ defmodule Ecto.ERD.Document.D2 do
                              from: {from_source, from_schema, _},
                              to: {to_source, to_schema, _}
                            } ->
-      {Node.id(from_source, from_schema), Node.id(to_source, to_schema)}
+      {{from_source, from_schema}, {to_source, to_schema}}
     end)
   end
 
@@ -78,53 +83,103 @@ defmodule Ecto.ERD.Document.D2 do
   defp foreign_key_fields(edges) do
     for %Edge{to: {to_source, to_schema, {:field, to_field}}} <- edges,
         into: MapSet.new() do
-      {Node.id(to_source, to_schema), to_field}
+      {{to_source, to_schema}, to_field}
     end
   end
 
-  # Container keys need a prefix: a cluster named like a global node's key
-  # makes d2 fail to compile with "sql_table columns cannot have children" (or
-  # silently merge bare nodes). A static "cluster_" prefix only moves the
-  # collision onto nodes literally named e.g. "cluster_Accounts", so escalate
-  # the prefix until no container key matches a global node id. Comparison is
-  # downcased because d2 keys fold case. Clustered node ids live under the
-  # container namespace, so only global ids can collide at the top level.
-  # Terminates: the prefix eventually outgrows every node id.
-  defp cluster_prefix(global_node_ids, cluster_names) do
-    node_ids = MapSet.new(global_node_ids, &String.downcase/1)
+  # D2 folds keys case-insensitively, even when quoted. Allocate a distinct
+  # internal key for nodes which would otherwise merge, while rendering their
+  # original id through `label`. Keys are scoped like D2: global nodes share the
+  # top-level namespace, while nodes in each container have their own namespace.
+  defp node_keys(nodes) do
+    {keys, _used} =
+      Enum.map_reduce(nodes, MapSet.new(), fn node, used ->
+        key = unique_key(Node.id(node.source, node.schema_module), used, "node_")
+        {{{node.source, node.schema_module}, key}, MapSet.put(used, String.downcase(key))}
+      end)
+
+    Map.new(keys)
+  end
+
+  # Container keys need a prefix: a cluster named like a global node's internal
+  # key makes d2 fail to compile with "sql_table columns cannot have children"
+  # (or silently merge bare nodes). Escalate the shared prefix until those keys
+  # clear the global namespace, then uniquify case-only cluster collisions.
+  defp container_keys(global_node_keys, cluster_names) do
+    prefix = cluster_prefix(global_node_keys, cluster_names)
+    used = MapSet.new(global_node_keys, &String.downcase/1)
+
+    {keys, _used} =
+      cluster_names
+      |> Enum.sort()
+      |> Enum.map_reduce(used, fn cluster, used ->
+        key = unique_key(prefix <> cluster, used, "cluster_")
+        {{cluster, key}, MapSet.put(used, String.downcase(key))}
+      end)
+
+    Map.new(keys)
+  end
+
+  # A static "cluster_" prefix only moves a global-node collision onto nodes
+  # literally named e.g. "cluster_Accounts". Terminates because the prefix
+  # eventually outgrows every global node key.
+  defp cluster_prefix(global_node_keys, cluster_names) do
+    node_keys = MapSet.new(global_node_keys, &String.downcase/1)
 
     "cluster_"
     |> Stream.iterate(&("cluster_" <> &1))
     |> Enum.find(fn prefix ->
       cluster_names
       |> MapSet.new(&String.downcase(prefix <> &1))
-      |> MapSet.disjoint?(node_ids)
+      |> MapSet.disjoint?(node_keys)
     end)
   end
 
-  # Values are pre-prefixed container keys, ready for qualified_key/2.
-  defp node_clusters(nodes, prefix) do
-    for %Node{cluster: cluster} = node <- nodes, not is_nil(cluster), into: %{} do
-      {Node.id(node.source, node.schema_module), prefix <> cluster}
-    end
+  defp unique_key(candidate, used, prefix) do
+    candidate
+    |> Stream.iterate(&(prefix <> &1))
+    |> Enum.find(&(not MapSet.member?(used, String.downcase(&1))))
   end
 
-  defp render_container(cluster, prefix) do
-    "#{quoted(prefix <> cluster)}: {\n  label: #{quoted(cluster)}\n  style.fill: #{quoted(Ecto.ERD.Color.get(cluster))}\n}"
+  defp node_paths(global_nodes, clustered, global_node_keys, container_keys) do
+    global_paths =
+      Enum.map(global_nodes, fn node ->
+        {node_ref(node), {nil, Map.fetch!(global_node_keys, node_ref(node))}}
+      end)
+
+    clustered_paths =
+      Enum.flat_map(clustered, fn {cluster, nodes} ->
+        container_key = Map.fetch!(container_keys, cluster)
+        keys = node_keys(nodes)
+
+        Enum.map(nodes, fn node ->
+          {node_ref(node), {container_key, Map.fetch!(keys, node_ref(node))}}
+        end)
+      end)
+
+    Map.new(global_paths ++ clustered_paths)
+  end
+
+  defp render_container(cluster, container_key) do
+    "#{quoted(container_key)}: {\n  label: #{quoted(cluster)}\n  style.fill: #{quoted(Ecto.ERD.Color.get(cluster))}\n}"
   end
 
   defp render_node(
          %Node{source: source, schema_module: schema_module},
+         node_key,
          container_key,
          _fk,
          _opts,
          true
        ) do
-    qualified_key(Node.id(source, schema_module), container_key)
+    node_id = Node.id(source, schema_module)
+    path = qualified_key(node_key, container_key)
+    if node_key == node_id, do: path, else: path <> ": " <> quoted(node_id)
   end
 
   defp render_node(
          %Node{source: source, schema_module: schema_module, fields: fields},
+         node_key,
          container_key,
          fk_fields,
          opts,
@@ -134,7 +189,9 @@ defmodule Ecto.ERD.Document.D2 do
 
     rows =
       Enum.map(fields, fn %Field{name: name, type: type, primary?: primary?} ->
-        constraint = constraint(primary?, MapSet.member?(fk_fields, {node_id, name}))
+        constraint =
+          constraint(primary?, MapSet.member?(fk_fields, {{source, schema_module}, name}))
+
         name_text = inspect(name)
 
         # d2 suppresses a sql_table row's value when it equals the row key
@@ -152,7 +209,10 @@ defmodule Ecto.ERD.Document.D2 do
         "  #{quoted(name_text)}: #{quoted(type_text)}" <> constraint
       end)
 
-    ([qualified_key(node_id, container_key) <> ": {", "  shape: sql_table"] ++ rows ++ ["}"])
+    label = if node_key == node_id, do: [], else: ["  label: #{quoted(node_id)}"]
+
+    ([qualified_key(node_key, container_key) <> ": {", "  shape: sql_table"] ++
+       label ++ rows ++ ["}"])
     |> Enum.join("\n")
   end
 
@@ -165,15 +225,15 @@ defmodule Ecto.ERD.Document.D2 do
     end
   end
 
-  defp render_edge(%Edge{from: from, to: to, assoc_types: assoc_types}, node_clusters, skip_port?) do
+  defp render_edge(%Edge{from: from, to: to, assoc_types: assoc_types}, node_paths, skip_port?) do
     # d2 ignores source-arrowhead on `->` but renders both ends on `<->`, so we
     # use `<->` and mark both: the primary-key end (`from`) as exactly-one
     # (cf-one-required), the foreign-key end (`to`) as cf-one for has_one, else
     # cf-many-required.
     target_shape = if {:has, :one} in assoc_types, do: "cf-one", else: "cf-many-required"
 
-    from_endpoint = render_endpoint(from, node_clusters, skip_port?)
-    to_endpoint = render_endpoint(to, node_clusters, skip_port?)
+    from_endpoint = render_endpoint(from, node_paths, skip_port?)
+    to_endpoint = render_endpoint(to, node_paths, skip_port?)
 
     [
       "#{from_endpoint} <-> #{to_endpoint}: {",
@@ -184,16 +244,16 @@ defmodule Ecto.ERD.Document.D2 do
     |> Enum.join("\n")
   end
 
-  defp render_endpoint({source, schema_module, {:field, field}}, node_clusters, skip_port?) do
-    node_id = Node.id(source, schema_module)
-    base = qualified_key(node_id, Map.get(node_clusters, node_id))
+  defp render_endpoint({source, schema_module, {:field, field}}, node_paths, skip_port?) do
+    {container_key, node_key} = Map.fetch!(node_paths, node_ref(source, schema_module))
+    base = qualified_key(node_key, container_key)
     if skip_port?, do: base, else: base <> "." <> quoted(inspect(field))
   end
 
   # Embeds point at the embedded schema's table header, so there is no field port.
-  defp render_endpoint({source, schema_module, {:header, _}}, node_clusters, _skip_port?) do
-    node_id = Node.id(source, schema_module)
-    qualified_key(node_id, Map.get(node_clusters, node_id))
+  defp render_endpoint({source, schema_module, {:header, _}}, node_paths, _skip_port?) do
+    {container_key, node_key} = Map.fetch!(node_paths, node_ref(source, schema_module))
+    qualified_key(node_key, container_key)
   end
 
   # The container key already carries its escalated prefix (see
@@ -203,6 +263,11 @@ defmodule Ecto.ERD.Document.D2 do
 
   defp qualified_key(node_id, container_key),
     do: quoted(container_key) <> "." <> quoted(node_id)
+
+  defp node_ref(%Node{source: source, schema_module: schema_module}),
+    do: node_ref(source, schema_module)
+
+  defp node_ref(source, schema_module), do: {source, schema_module}
 
   # Escape order is load-bearing: backslashes first, or the backslashes added
   # for `"` and `${` would themselves get doubled. `${` triggers d2 variable

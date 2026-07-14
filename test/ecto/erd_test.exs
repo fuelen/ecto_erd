@@ -545,6 +545,76 @@ defmodule Ecto.ERDTest do
       assert result =~ ~s("Accounts": {\n  shape: sql_table)
     end
 
+    test "case-only global node ids keep distinct keys, labels, and edge endpoints" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "User",
+            schema_module: nil,
+            fields: [Field.new(%{name: :upper_id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "user",
+            schema_module: nil,
+            fields: [Field.new(%{name: :lower_id, type: :integer})]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"User", nil, {:field, :upper_id}},
+            to: {"user", nil, {:field, :lower_id}},
+            assoc_types: [has: :many]
+          }
+        ]
+      }
+
+      rich = D2.render(graph, [])
+
+      assert rich =~ ~s("User": {\n  shape: sql_table)
+      assert rich =~ ~s("node_user": {\n  shape: sql_table\n  label: "user")
+      assert rich =~ ~s("User".":upper_id" <-> "node_user".":lower_id")
+
+      bare = D2.render(graph, columns: [])
+
+      assert bare =~ ~s(\n\n"User"\n\n)
+      assert bare =~ ~s(\n\n"node_user": "user"\n\n)
+      assert bare =~ ~s("User" <-> "node_user": {)
+    end
+
+    test "case-only cluster names keep distinct containers and edge endpoints" do
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "A",
+            schema_module: nil,
+            cluster: "Accounts",
+            fields: [Field.new(%{name: :id, type: :integer, primary?: true})]
+          },
+          %Node{
+            source: "B",
+            schema_module: nil,
+            cluster: "accounts",
+            fields: [Field.new(%{name: :a_id, type: :integer})]
+          }
+        ],
+        edges: [
+          %Edge{
+            from: {"A", nil, {:field, :id}},
+            to: {"B", nil, {:field, :a_id}},
+            assoc_types: [has: :many]
+          }
+        ]
+      }
+
+      result = D2.render(graph, [])
+
+      assert result =~ ~s("cluster_Accounts": {\n  label: "Accounts")
+      assert result =~ ~s("cluster_cluster_accounts": {\n  label: "accounts")
+
+      assert result =~
+               ~s("cluster_Accounts"."A".":id" <-> "cluster_cluster_accounts"."B".":a_id")
+    end
+
     test "escalates the prefix when a global node is named like the container key" do
       graph = %Graph{
         nodes: [
