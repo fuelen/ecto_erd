@@ -16,10 +16,6 @@ Supported formats:
 
 ![Simple blog demo](assets/simple_blog_dot_demo.png)
 
-The **D2** format renders the rich tier — clusters, `Ecto.Enum` values, embedded schemas, and primary/foreign keys:
-
-![Simple blog demo (D2)](assets/simple_blog_d2_demo.svg)
-
 <details>
   <summary>Definition of schemas</summary>
 
