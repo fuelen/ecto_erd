@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.Document.Dot do
   @moduledoc false
-  alias Ecto.ERD.{HTML, Edge, Node, Field, Graph, Render, EnumValues}
+  alias Ecto.ERD.{HTML, Edge, Node, Field, Graph, Render}
   @behaviour Ecto.ERD.Document
 
   @impl true
@@ -145,31 +145,5 @@ defmodule Ecto.ERD.Document.Dot do
 
   defp format_field(%Field{name: name}, :name, _opts), do: inspect(name)
 
-  defp format_field(%Field{type: type}, :type, opts), do: format_type(type, opts)
-
-  defp format_type({:parameterized, {Ecto.Enum, %{on_dump: on_dump}}}, opts) do
-    opts =
-      opts
-      |> Keyword.put_new(:enum_values_order, :asc)
-      |> Keyword.put_new(:enum_values_limit, 10)
-
-    {values, truncated?} = EnumValues.prepare(Map.keys(on_dump), opts)
-    rendered = values |> Enum.map(&inspect/1) |> Enum.join(", ")
-    suffix = if truncated?, do: ", ...", else: ""
-    "#Enum<[#{rendered}#{suffix}]>"
-  end
-
-  defp format_type(
-         {:parameterized,
-          {Ecto.Embedded, %Ecto.Embedded{cardinality: cardinality, related: related}}},
-         _opts
-       ) do
-    "#Ecto.Embedded<#{inspect([{cardinality, related}])}>"
-  end
-
-  defp format_type({:array, type}, opts) do
-    "{:array, #{format_type(type, opts)}}"
-  end
-
-  defp format_type(type, _opts), do: inspect(type)
+  defp format_field(%Field{type: type}, :type, opts), do: Render.elixir_type(type, opts)
 end

@@ -2,10 +2,10 @@ defmodule Ecto.ERD.ExamplesGenerator do
   require Logger
 
   @shared_examples [
-    [name: "Default", formats: [:dbml, :dot, :qdbd, :puml, :mmd]],
+    [name: "Default", formats: [:dbml, :dot, :qdbd, :puml, :mmd, :d2]],
     [
       name: "No fields",
-      formats: [:dot, :mmd],
+      formats: [:dot, :mmd, :d2],
       config: """
       [
         columns: []
@@ -14,7 +14,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
     ],
     [
       name: "Contexts as clusters",
-      formats: [:dbml, :dot, :puml],
+      formats: [:dbml, :dot, :puml, :d2],
       config: """
       alias Ecto.ERD.Node
 
@@ -32,7 +32,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
     ],
     [
       name: "Contexts as clusters (no fields)",
-      formats: [:dot, :puml],
+      formats: [:dot, :puml, :d2],
       config: """
       alias Ecto.ERD.Node
 
@@ -150,7 +150,7 @@ defmodule Ecto.ERD.ExamplesGenerator do
             ],
             [
               name: "Only embedded schemas",
-              formats: [:dot, :puml],
+              formats: [:dot, :puml, :d2],
               config: """
               alias Ecto.ERD.Node
 
@@ -167,11 +167,12 @@ defmodule Ecto.ERD.ExamplesGenerator do
   }
 
   @formats %{
-    dot: %{examples_dir: "examples/dot", name: "DOT", image?: true},
-    dbml: %{examples_dir: "examples/dbml", name: "DBML", image?: false},
-    qdbd: %{examples_dir: "examples/quick_dbd", name: "QuickDBD", image?: false},
-    puml: %{examples_dir: "examples/plantuml", name: "PlantUML", image?: true},
-    mmd: %{examples_dir: "examples/mermaid", name: "Mermaid", image?: false}
+    dot: %{examples_dir: "examples/dot", name: "DOT", image_ext: "png"},
+    dbml: %{examples_dir: "examples/dbml", name: "DBML"},
+    qdbd: %{examples_dir: "examples/quick_dbd", name: "QuickDBD"},
+    puml: %{examples_dir: "examples/plantuml", name: "PlantUML", image_ext: "png"},
+    mmd: %{examples_dir: "examples/mermaid", name: "Mermaid"},
+    d2: %{examples_dir: "examples/d2", name: "D2", image_ext: "svg"}
   }
 
   def run(source_url_root) do
@@ -235,8 +236,8 @@ defmodule Ecto.ERD.ExamplesGenerator do
                 ])
 
               image_url =
-                if @formats[format].image? do
-                  Path.rootname(document_url) <> ".png"
+                if image_ext = @formats[format][:image_ext] do
+                  Path.rootname(document_url) <> "." <> image_ext
                 end
 
               [
@@ -313,10 +314,11 @@ defmodule Ecto.ERD.ExamplesGenerator do
       end
 
       {:ok, new_output_content} = File.read(output_path)
+      image_ext = @formats[format][:image_ext]
 
-      if @formats[format].image? and
+      if image_ext &&
            (old_output_content != new_output_content or
-              not File.exists?(Path.rootname(output_path) <> ".png")) do
+              not File.exists?(Path.rootname(output_path) <> "." <> image_ext)) do
         Logger.debug("Generating image from #{output_path}")
         generate_image(format, output_path)
       end
@@ -331,6 +333,10 @@ defmodule Ecto.ERD.ExamplesGenerator do
 
   defp generate_image(:puml, file) do
     System.cmd("plantuml", [file], env: %{"PLANTUML_LIMIT_SIZE" => "8192"})
+  end
+
+  defp generate_image(:d2, file) do
+    System.cmd("d2", [file, Path.rootname(file) <> ".svg"])
   end
 
   defp init_project(project_name, repo, commit) do

@@ -12,8 +12,10 @@ Supported formats:
 * [DBML](https://www.dbml.org/)
 * [QuickDBD](https://www.quickdatabasediagrams.com)
 * [Mermaid](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram)
+* [D2](https://d2lang.com)
 
 ![Simple blog demo](assets/simple_blog_dot_demo.png)
+
 <details>
   <summary>Definition of schemas</summary>
 
