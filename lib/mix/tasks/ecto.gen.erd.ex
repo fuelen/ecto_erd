@@ -10,7 +10,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
   * [Mermaid](#module-mermaid)
   * [D2](#module-d2)
 
-  Configuration examples and sample output for a few open-source projects can be found in the PAGES section under EXAMPLES.
+  Configuration examples and sample output can be found on the [Examples](examples.html) page.
 
   ## DOT
 

@@ -1,0 +1,84 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
+
+direction: right
+
+"Ecto.ERD.Example.Accounts.ApiKey"
+
+"Ecto.ERD.Example.Accounts.Profile"
+
+"Ecto.ERD.Example.Accounts.User"
+
+"Ecto.ERD.Example.Billing.Plan"
+
+"Ecto.ERD.Example.Billing.Subscription"
+
+"Ecto.ERD.Example.Content.Category"
+
+"Ecto.ERD.Example.Content.Comment"
+
+"Ecto.ERD.Example.Content.Post"
+
+"Ecto.ERD.Example.Content.Revision"
+
+"Ecto.ERD.Example.Content.Tag"
+
+"posts_tags"
+
+"Ecto.ERD.Example.Content.Category" <-> "Ecto.ERD.Example.Content.Post": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Billing.Plan" <-> "Ecto.ERD.Example.Billing.Subscription": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Content.Post" <-> "Ecto.ERD.Example.Content.Comment": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Content.Post" <-> "posts_tags": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Content.Post" <-> "Ecto.ERD.Example.Content.Revision": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Content.Tag" <-> "posts_tags": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Accounts.User" <-> "Ecto.ERD.Example.Accounts.ApiKey": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-one
+}
+
+"Ecto.ERD.Example.Accounts.User" <-> "Ecto.ERD.Example.Content.Comment": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Accounts.User" <-> "Ecto.ERD.Example.Content.Post": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Accounts.User" <-> "Ecto.ERD.Example.Billing.Subscription": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Accounts.User" <-> "Ecto.ERD.Example.Accounts.Profile": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-one
+}

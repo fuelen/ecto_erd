@@ -1,0 +1,27 @@
+strict digraph {
+  ranksep=1.0; rankdir=LR;
+  node [shape = none, fontname="Roboto Mono"];
+  "Ecto.ERD.Example.Accounts.ApiKey" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Accounts.ApiKey   </font></td></tr><tr><td><font point-size='14'><i>api_keys</i></font></td></tr></table>>]
+  "Ecto.ERD.Example.Accounts.Profile" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Accounts.Profile   </font></td></tr></table>>]
+  "Ecto.ERD.Example.Accounts.User" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Accounts.User   </font></td></tr><tr><td><font point-size='14'><i>users</i></font></td></tr></table>>]
+  "Ecto.ERD.Example.Billing.Plan" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Billing.Plan   </font></td></tr><tr><td><font point-size='14'><i>plans</i></font></td></tr></table>>]
+  "Ecto.ERD.Example.Billing.Subscription" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Billing.Subscription   </font></td></tr><tr><td><font point-size='14'><i>subscriptions</i></font></td></tr></table>>]
+  "Ecto.ERD.Example.Content.Category" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Content.Category   </font></td></tr><tr><td><font point-size='14'><i>categories</i></font></td></tr></table>>]
+  "Ecto.ERD.Example.Content.Comment" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Content.Comment   </font></td></tr><tr><td><font point-size='14'><i>comments</i></font></td></tr></table>>]
+  "Ecto.ERD.Example.Content.Post" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Content.Post   </font></td></tr><tr><td><font point-size='14'><i>posts</i></font></td></tr></table>>]
+  "Ecto.ERD.Example.Content.Revision" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Content.Revision   </font></td></tr></table>>]
+  "Ecto.ERD.Example.Content.Tag" [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td port='header@schema_module'><font point-size='18'>   Ecto.ERD.Example.Content.Tag   </font></td></tr><tr><td><font point-size='14'><i>tags</i></font></td></tr></table>>]
+  posts_tags [label= <<table align='left' border='1' style='rounded' cellspacing='0' cellpadding='4' cellborder='0'><tr><td><font point-size='14'><i>posts_tags</i></font></td></tr></table>>]
+
+  "Ecto.ERD.Example.Content.Category":e -> "Ecto.ERD.Example.Content.Post":w
+  "Ecto.ERD.Example.Billing.Plan":e -> "Ecto.ERD.Example.Billing.Subscription":w
+  "Ecto.ERD.Example.Content.Post":e -> "Ecto.ERD.Example.Content.Comment":w
+  "Ecto.ERD.Example.Content.Post":e -> posts_tags:w
+  "Ecto.ERD.Example.Content.Post":e -> "Ecto.ERD.Example.Content.Revision":w
+  "Ecto.ERD.Example.Content.Tag":e -> posts_tags:w
+  "Ecto.ERD.Example.Accounts.User":e -> "Ecto.ERD.Example.Accounts.ApiKey":w [dir=none]
+  "Ecto.ERD.Example.Accounts.User":e -> "Ecto.ERD.Example.Content.Comment":w
+  "Ecto.ERD.Example.Accounts.User":e -> "Ecto.ERD.Example.Content.Post":w
+  "Ecto.ERD.Example.Accounts.User":e -> "Ecto.ERD.Example.Billing.Subscription":w
+  "Ecto.ERD.Example.Accounts.User":e -> "Ecto.ERD.Example.Accounts.Profile":w [dir=none]
+}

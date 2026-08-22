@@ -1,0 +1,19 @@
+erDiagram
+  api_keys
+  users
+  plans
+  subscriptions
+  categories
+  comments
+  posts
+  tags
+  posts_tags
+  categories ||--|{ posts : ""
+  plans ||--|{ subscriptions : ""
+  posts ||--|{ comments : ""
+  posts ||--|{ posts_tags : ""
+  tags ||--|{ posts_tags : ""
+  users ||--o| api_keys : ""
+  users ||--|{ comments : ""
+  users ||--|{ posts : ""
+  users ||--|{ subscriptions : ""

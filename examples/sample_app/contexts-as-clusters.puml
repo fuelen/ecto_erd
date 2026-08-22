@@ -1,0 +1,128 @@
+@startuml
+
+set namespaceSeparator none
+hide circle
+hide methods
+
+skinparam linetype ortho
+skinparam defaultFontName Roboto Mono
+skinparam shadowing false
+
+namespace Accounts #ffefd5 {
+  entity Ecto.ERD.Example.Accounts.ApiKey {
+    id : id
+    --
+    token_hash : binary
+    last_used_at : utc_datetime_usec
+    user_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Ecto.ERD.Example.Accounts.Profile {
+    id : binary_id
+    --
+    display_name : string
+    timezone : string
+    notifications_enabled : boolean
+  }
+
+  entity Ecto.ERD.Example.Accounts.User {
+    id : id
+    --
+    email : string
+    role : enum(owner,suspended,member,author,editor,admin,reviewer,support,analyst,billing,...)
+    preferences : map
+    profile : map
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+}
+namespace Billing #eee5de {
+  entity Ecto.ERD.Example.Billing.Plan {
+    id : id
+    --
+    name : string
+    price_cents : integer
+    features : array
+  }
+
+  entity Ecto.ERD.Example.Billing.Subscription {
+    id : id
+    --
+    status : enum(active,trialing,past_due,canceled)
+    renews_at : utc_datetime
+    user_id : id
+    plan_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+}
+namespace Content #f0f8ff {
+  entity Ecto.ERD.Example.Content.Category {
+    id : id
+    --
+    name : string
+    slug : string
+  }
+
+  entity Ecto.ERD.Example.Content.Comment {
+    id : id
+    --
+    body : string
+    visible : boolean
+    post_id : id
+    author_id : id
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Ecto.ERD.Example.Content.Post {
+    id : id
+    --
+    title : string
+    body : string
+    state : enum(draft,review,published,archived)
+    published_at : utc_datetime_usec
+    metadata : map
+    author_id : id
+    category_id : id
+    revisions : map
+    inserted_at : naive_datetime
+    updated_at : naive_datetime
+  }
+
+  entity Ecto.ERD.Example.Content.Revision {
+    id : binary_id
+    --
+    body : string
+    edited_at : utc_datetime
+  }
+
+  entity Ecto.ERD.Example.Content.Tag {
+    id : id
+    --
+    name : string
+  }
+
+}
+
+entity posts_tags {
+  post_id : id
+  tag_id : id
+}
+
+Ecto.ERD.Example.Content.Category ||--|{ Ecto.ERD.Example.Content.Post
+Ecto.ERD.Example.Billing.Plan ||--|{ Ecto.ERD.Example.Billing.Subscription
+Ecto.ERD.Example.Content.Post ||--|{ Ecto.ERD.Example.Content.Comment
+Ecto.ERD.Example.Content.Post ||--|{ posts_tags
+Ecto.ERD.Example.Content.Post ||--|{ Ecto.ERD.Example.Content.Revision
+Ecto.ERD.Example.Content.Tag ||--|{ posts_tags
+Ecto.ERD.Example.Accounts.User ||--o| Ecto.ERD.Example.Accounts.ApiKey
+Ecto.ERD.Example.Accounts.User ||--|{ Ecto.ERD.Example.Content.Comment
+Ecto.ERD.Example.Accounts.User ||--|{ Ecto.ERD.Example.Content.Post
+Ecto.ERD.Example.Accounts.User ||--|{ Ecto.ERD.Example.Billing.Subscription
+Ecto.ERD.Example.Accounts.User ||--o| Ecto.ERD.Example.Accounts.Profile
+@enduml

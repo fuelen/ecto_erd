@@ -1,0 +1,162 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
+
+direction: right
+
+"Ecto.ERD.Example.Accounts.ApiKey": {
+  shape: sql_table
+  ":id": ":id " {constraint: primary_key}
+  ":token_hash": ":binary"
+  ":last_used_at": ":utc_datetime_usec"
+  ":user_id": ":id" {constraint: foreign_key}
+  ":inserted_at": ":naive_datetime"
+  ":updated_at": ":naive_datetime"
+}
+
+"Ecto.ERD.Example.Accounts.Profile": {
+  shape: sql_table
+  ":id": ":binary_id" {constraint: primary_key}
+  ":display_name": ":string"
+  ":timezone": ":string"
+  ":notifications_enabled": ":boolean"
+}
+
+"Ecto.ERD.Example.Accounts.User": {
+  shape: sql_table
+  ":id": ":id " {constraint: primary_key}
+  ":email": ":string"
+  ":role": "#Enum<[:admin, :analyst, :author, :billing, :editor, :guest, :member, :owner, :reviewer, :support, ...]>"
+  ":preferences": ":map"
+  ":profile": "#Ecto.Embedded<[one: Ecto.ERD.Example.Accounts.Profile]>"
+  ":inserted_at": ":naive_datetime"
+  ":updated_at": ":naive_datetime"
+}
+
+"Ecto.ERD.Example.Billing.Plan": {
+  shape: sql_table
+  ":id": ":id " {constraint: primary_key}
+  ":name": ":string"
+  ":price_cents": ":integer"
+  ":features": "{:array, :string}"
+}
+
+"Ecto.ERD.Example.Billing.Subscription": {
+  shape: sql_table
+  ":id": ":id " {constraint: primary_key}
+  ":status": "#Enum<[:active, :canceled, :past_due, :trialing]>"
+  ":renews_at": ":utc_datetime"
+  ":user_id": ":id" {constraint: foreign_key}
+  ":plan_id": ":id" {constraint: foreign_key}
+  ":inserted_at": ":naive_datetime"
+  ":updated_at": ":naive_datetime"
+}
+
+"Ecto.ERD.Example.Content.Category": {
+  shape: sql_table
+  ":id": ":id " {constraint: primary_key}
+  ":name": ":string"
+  ":slug": ":string"
+}
+
+"Ecto.ERD.Example.Content.Comment": {
+  shape: sql_table
+  ":id": ":id " {constraint: primary_key}
+  ":body": ":string"
+  ":visible": ":boolean"
+  ":post_id": ":id" {constraint: foreign_key}
+  ":author_id": ":id" {constraint: foreign_key}
+  ":inserted_at": ":naive_datetime"
+  ":updated_at": ":naive_datetime"
+}
+
+"Ecto.ERD.Example.Content.Post": {
+  shape: sql_table
+  ":id": ":id " {constraint: primary_key}
+  ":title": ":string"
+  ":body": ":string"
+  ":state": "#Enum<[:archived, :draft, :published, :review]>"
+  ":published_at": ":utc_datetime_usec"
+  ":metadata": ":map"
+  ":author_id": ":id" {constraint: foreign_key}
+  ":category_id": ":id" {constraint: foreign_key}
+  ":revisions": "#Ecto.Embedded<[many: Ecto.ERD.Example.Content.Revision]>"
+  ":inserted_at": ":naive_datetime"
+  ":updated_at": ":naive_datetime"
+}
+
+"Ecto.ERD.Example.Content.Revision": {
+  shape: sql_table
+  ":id": ":binary_id" {constraint: primary_key}
+  ":body": ":string"
+  ":edited_at": ":utc_datetime"
+}
+
+"Ecto.ERD.Example.Content.Tag": {
+  shape: sql_table
+  ":id": ":id " {constraint: primary_key}
+  ":name": ":string"
+}
+
+"posts_tags": {
+  shape: sql_table
+  ":post_id": ":id" {constraint: foreign_key}
+  ":tag_id": ":id" {constraint: foreign_key}
+}
+
+"Ecto.ERD.Example.Content.Category".":id" <-> "Ecto.ERD.Example.Content.Post".":category_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Billing.Plan".":id" <-> "Ecto.ERD.Example.Billing.Subscription".":plan_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Content.Post".":id" <-> "Ecto.ERD.Example.Content.Comment".":post_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Content.Post".":id" <-> "posts_tags".":post_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Content.Post".":revisions" <-> "Ecto.ERD.Example.Content.Revision": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Content.Tag".":id" <-> "posts_tags".":tag_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Accounts.User".":id" <-> "Ecto.ERD.Example.Accounts.ApiKey".":user_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-one
+}
+
+"Ecto.ERD.Example.Accounts.User".":id" <-> "Ecto.ERD.Example.Content.Comment".":author_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Accounts.User".":id" <-> "Ecto.ERD.Example.Content.Post".":author_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Accounts.User".":id" <-> "Ecto.ERD.Example.Billing.Subscription".":user_id": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many-required
+}
+
+"Ecto.ERD.Example.Accounts.User".":profile" <-> "Ecto.ERD.Example.Accounts.Profile": {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-one
+}

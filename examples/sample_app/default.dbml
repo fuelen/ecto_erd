@@ -1,0 +1,114 @@
+
+Enum state {
+  archived
+  draft
+  published
+  review
+}
+
+Enum status {
+  active
+  canceled
+  past_due
+  trialing
+}
+
+Enum role {
+  admin
+  analyst
+  author
+  billing
+  editor
+  guest
+  member
+  owner
+  reviewer
+  support
+  suspended
+}
+
+Table api_keys {
+  id integer [pk]
+  token_hash bytea
+  last_used_at timestamp
+  user_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table users {
+  id integer [pk]
+  email varchar
+  role role
+  preferences jsonb
+  profile jsonb
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table plans {
+  id integer [pk]
+  name varchar
+  price_cents integer
+  features array
+}
+
+Table subscriptions {
+  id integer [pk]
+  status status
+  renews_at timestamp
+  user_id integer
+  plan_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table categories {
+  id integer [pk]
+  name varchar
+  slug varchar
+}
+
+Table comments {
+  id integer [pk]
+  body varchar
+  visible boolean
+  post_id integer
+  author_id integer
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table posts {
+  id integer [pk]
+  title varchar
+  body varchar
+  state state
+  published_at timestamp
+  metadata jsonb
+  author_id integer
+  category_id integer
+  revisions jsonb
+  inserted_at timestamp
+  updated_at timestamp
+}
+
+Table tags {
+  id integer [pk]
+  name varchar
+}
+
+Table posts_tags {
+  post_id integer
+  tag_id integer
+}
+
+Ref: categories.id < posts.category_id
+Ref: plans.id < subscriptions.plan_id
+Ref: posts.id < comments.post_id
+Ref: posts.id < posts_tags.post_id
+Ref: tags.id < posts_tags.tag_id
+Ref: users.id - api_keys.user_id
+Ref: users.id < comments.author_id
+Ref: users.id < posts.author_id
+Ref: users.id < subscriptions.user_id

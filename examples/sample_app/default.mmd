@@ -1,0 +1,77 @@
+erDiagram
+  api_keys {
+    integer id PK
+    bytea token_hash
+    timestamp last_used_at
+    integer user_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  users {
+    integer id PK
+    varchar email
+    varchar role
+    jsonb preferences
+    jsonb profile
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  plans {
+    integer id PK
+    varchar name
+    integer price_cents
+    array features
+  }
+  subscriptions {
+    integer id PK
+    varchar status
+    timestamp renews_at
+    integer user_id
+    integer plan_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  categories {
+    integer id PK
+    varchar name
+    varchar slug
+  }
+  comments {
+    integer id PK
+    varchar body
+    boolean visible
+    integer post_id
+    integer author_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  posts {
+    integer id PK
+    varchar title
+    varchar body
+    varchar state
+    timestamp published_at
+    jsonb metadata
+    integer author_id
+    integer category_id
+    jsonb revisions
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  tags {
+    integer id PK
+    varchar name
+  }
+  posts_tags {
+    integer post_id
+    integer tag_id
+  }
+  categories ||--|{ posts : ""
+  plans ||--|{ subscriptions : ""
+  posts ||--|{ comments : ""
+  posts ||--|{ posts_tags : ""
+  tags ||--|{ posts_tags : ""
+  users ||--o| api_keys : ""
+  users ||--|{ comments : ""
+  users ||--|{ posts : ""
+  users ||--|{ subscriptions : ""

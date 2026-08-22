@@ -14,47 +14,26 @@ Supported formats:
 * [Mermaid](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram)
 * [D2](https://d2lang.com)
 
-![Simple blog demo](assets/simple_blog_dot_demo.png)
+## Example
+
+### DOT
+
+![Default DOT entity-relationship diagram](guides/assets/examples/default.dot.svg)
 
 <details>
-  <summary>Definition of schemas</summary>
+  <summary>D2 output</summary>
 
-  ```elixir
-  defmodule Blog.Post do
-    use Ecto.Schema
-
-    schema "posts" do
-      field(:title, :string)
-      field(:text, :string)
-      timestamps()
-      belongs_to(:user, Blog.User)
-      has_many(:comments, Blog.Comment)
-    end
-  end
-
-  defmodule Blog.Comment do
-    use Ecto.Schema
-
-    schema "comments" do
-      field(:text, :string)
-      timestamps()
-      belongs_to(:post, Blog.Post)
-      belongs_to(:user, Blog.User)
-    end
-  end
-
-  defmodule Blog.User do
-    use Ecto.Schema
-
-    schema "users" do
-      field(:email, :string)
-      has_many(:posts, Blog.Post)
-      has_many(:comments, Blog.Comment)
-    end
-  end
-  ```
-
+  ![Default D2 entity-relationship diagram](guides/assets/examples/default.d2.svg)
 </details>
+
+<details>
+  <summary>PlantUML output</summary>
+
+  ![Default PlantUML entity-relationship diagram](guides/assets/examples/default.puml.svg)
+</details>
+
+All diagrams are generated from the repository's
+[sample schemas](https://github.com/fuelen/ecto_erd/blob/main/dev/example_schemas.ex).
 
 ## Installation
 
@@ -86,8 +65,8 @@ dot -Tpng ecto_erd.dot -o erd.png
 
 Configuration is possible via the `.ecto_erd.exs` file.
 The docs can be found at [https://hexdocs.pm/ecto_erd](https://hexdocs.pm/ecto_erd).
-Configuration examples and output for a few open-source projects can be
-found in the PAGES section under EXAMPLES.
+Configuration examples and sample output can be found on the
+[Examples](https://hexdocs.pm/ecto_erd/examples.html) page.
 
 ## Troubleshooting
 

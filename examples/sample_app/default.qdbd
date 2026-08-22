@@ -1,0 +1,75 @@
+api_keys
+---
+id integer PK
+token_hash bytea
+last_used_at timestamp
+user_id integer FK - users.id
+inserted_at timestamp
+updated_at timestamp
+
+users
+---
+id integer PK
+email varchar
+role "enum(owner,suspended,member,author,editor,admin,reviewer,support,analyst,billing,guest)"
+preferences jsonb
+profile jsonb
+inserted_at timestamp
+updated_at timestamp
+
+plans
+---
+id integer PK
+name varchar
+price_cents integer
+features array
+
+subscriptions
+---
+id integer PK
+status "enum(active,trialing,past_due,canceled)"
+renews_at timestamp
+user_id integer FK >- users.id
+plan_id integer FK >- plans.id
+inserted_at timestamp
+updated_at timestamp
+
+categories
+---
+id integer PK
+name varchar
+slug varchar
+
+comments
+---
+id integer PK
+body varchar
+visible boolean
+post_id integer FK >- posts.id
+author_id integer FK >- users.id
+inserted_at timestamp
+updated_at timestamp
+
+posts
+---
+id integer PK
+title varchar
+body varchar
+state "enum(draft,review,published,archived)"
+published_at timestamp
+metadata jsonb
+author_id integer FK >- users.id
+category_id integer FK >- categories.id
+revisions jsonb
+inserted_at timestamp
+updated_at timestamp
+
+tags
+---
+id integer PK
+name varchar
+
+posts_tags
+---
+post_id integer FK >- posts.id
+tag_id integer FK >- tags.id
