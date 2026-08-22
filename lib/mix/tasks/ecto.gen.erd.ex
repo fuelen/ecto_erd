@@ -172,9 +172,26 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
 
     otp_app =
       cond do
-        Keyword.has_key?(file_opts, :otp_app) -> file_opts[:otp_app]
-        not is_nil(Mix.Project.config()[:app]) -> Mix.Project.config()[:app]
-        true -> raise "Unable to detect `:otp_app`, please specify it explicitly"
+        Keyword.has_key?(file_opts, :otp_app) ->
+          file_opts[:otp_app]
+
+        not is_nil(Mix.Project.config()[:app]) ->
+          Mix.Project.config()[:app]
+
+        true ->
+          Mix.raise("""
+          Unable to detect `:otp_app`.
+
+          This usually happens when `mix ecto.gen.erd` is run from an umbrella root,
+          which does not define an OTP application. Run the task from a child app instead:
+
+              cd apps/my_app
+              mix ecto.gen.erd
+
+          Alternatively, set `:otp_app` in `.ecto_erd.exs`:
+
+              [otp_app: :my_app]
+          """)
       end
 
     output_path = cli_opts[:output_path] || file_opts[:output_path] || "ecto_erd.dot"
