@@ -43,7 +43,7 @@ in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ecto_erd, "~> 0.6", only: :dev}
+    {:ecto_erd, "~> 0.8", only: :dev}
   ]
 end
 ```
