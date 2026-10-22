@@ -11,6 +11,8 @@ users
 ---
 id integer PK
 email varchar
+balance integer
+currency varchar
 role "enum(owner,suspended,member,author,editor,admin,reviewer,support,analyst,billing,guest)"
 preferences jsonb
 profile jsonb

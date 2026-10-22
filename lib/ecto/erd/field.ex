@@ -36,7 +36,7 @@ defmodule Ecto.ERD.Field do
 
   @type t :: %__MODULE__{
           name: atom(),
-          type: atom() | tuple(),
+          type: atom() | tuple() | binary(),
           primary?: boolean(),
           comment: comment() | nil
         }
