@@ -66,23 +66,5 @@ defmodule Ecto.ERD.Document.QuickDBD do
     "enum(#{Enum.join(values, ",")})"
   end
 
-  defp format_type(type, _opts) do
-    case Ecto.Type.type(type) do
-      {:array, _t} -> "array"
-      :id -> "integer"
-      :identity -> "bigint"
-      :binary_id -> "uuid"
-      :string -> "varchar"
-      :binary -> "bytea"
-      :map -> "jsonb"
-      {:map, _} -> "jsonb"
-      :time_usec -> "time"
-      :utc_datetime -> "timestamp"
-      :utc_datetime_usec -> "timestamp"
-      :naive_datetime -> "timestamp"
-      :naive_datetime_usec -> "timestamp"
-      atom when is_atom(atom) -> Atom.to_string(atom)
-      {:parameterized, _} -> "unknown"
-    end
-  end
+  defp format_type(type, _opts), do: Render.sql_type(type)
 end

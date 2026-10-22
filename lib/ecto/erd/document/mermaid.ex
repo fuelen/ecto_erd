@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.Document.Mermaid do
   @moduledoc false
-  alias Ecto.ERD.{Node, Field, Edge, Graph}
+  alias Ecto.ERD.{Node, Field, Edge, Graph, Render}
   @behaviour Ecto.ERD.Document
   require Logger
 
@@ -82,7 +82,7 @@ defmodule Ecto.ERD.Document.Mermaid do
 
   defp render_field(%Field{} = field) do
     if name_valid?(to_string(field.name)) do
-      format_type(field.type) <>
+      Render.sql_type(field.type) <>
         " " <>
         to_string(field.name) <>
         if field.primary? do
@@ -101,26 +101,6 @@ defmodule Ecto.ERD.Document.Mermaid do
       )
 
       nil
-    end
-  end
-
-  defp format_type(type) do
-    case Ecto.Type.type(type) do
-      {:array, _t} -> "array"
-      :id -> "integer"
-      :identity -> "bigint"
-      :binary_id -> "uuid"
-      :string -> "varchar"
-      :binary -> "bytea"
-      :map -> "jsonb"
-      {:map, _} -> "jsonb"
-      :time_usec -> "time"
-      :utc_datetime -> "timestamp"
-      :utc_datetime_usec -> "timestamp"
-      :naive_datetime -> "timestamp"
-      :naive_datetime_usec -> "timestamp"
-      atom when is_atom(atom) -> Atom.to_string(atom)
-      {:parameterized, _} -> "unknown"
     end
   end
 

@@ -1,7 +1,12 @@
 defmodule Ecto.ERDTest do
   use ExUnit.Case
-  alias Ecto.ERD.{Node, Field, Graph, Edge}
-  alias Ecto.ERD.Document.{D2, DBML, Dot, PlantUML, QuickDBD}
+  alias Ecto.ERD.{Node, Field, Graph, Edge, Render}
+  alias Ecto.ERD.Document.{D2, DBML, Dot, Mermaid, PlantUML, QuickDBD}
+
+  setup_all do
+    Enum.each(Ecto.ERD.Example.schemas(), &Code.ensure_loaded!/1)
+    :ok
+  end
 
   defp enum_field(values) do
     Field.new(%{
@@ -934,6 +939,119 @@ defmodule Ecto.ERDTest do
       assert result =~ ~s(":profile": "#Ecto.Embedded<[one: MyApp.Profile]>")
       assert result =~ ~s("MyApp.User".":profile" <-> "MyApp.Profile": {)
       refute result =~ ~s(<-> "MyApp.Profile".")
+    end
+  end
+
+  describe "map_node type overrides and parameterized fallback" do
+    defp one_field_graph(type) do
+      %Graph{
+        nodes: [
+          %Node{
+            source: "users",
+            schema_module: MyApp.User,
+            fields: [Field.new(%{name: :code, type: type})]
+          }
+        ],
+        edges: []
+      }
+    end
+
+    defp iso_code_type do
+      {:parameterized,
+       {Ecto.ERD.Example.Type.IsoCode, Ecto.ERD.Example.Type.IsoCode.init(pattern: "^[A-Z]{3}$")}}
+    end
+
+    defp money_type(opts) do
+      {:parameterized, {Ecto.ERD.Example.Type.Money, Ecto.ERD.Example.Type.Money.init(opts)}}
+    end
+
+    test "Render.sql_type/1 returns a binary override verbatim" do
+      assert Render.sql_type("citext") == "citext"
+    end
+
+    test "Render.sql_type/1 still maps reflected base types" do
+      assert Render.sql_type(:string) == "varchar"
+      assert Render.sql_type(:map) == "jsonb"
+    end
+
+    test "Render.elixir_type/2 returns a binary override verbatim" do
+      assert Render.elixir_type("citext", []) == "citext"
+    end
+
+    test "Render.elixir_type/2 falls back to Ecto.Type.format/1 for parameterized types" do
+      result = Render.elixir_type(iso_code_type(), [])
+      assert result == Ecto.Type.format(iso_code_type())
+      assert result =~ "#Ecto.ERD.Example.Type.IsoCode<"
+    end
+
+    test "Render.elixir_type/2 honors a type's own format/1 callback" do
+      result = Render.elixir_type(money_type(currency: "EUR"), [])
+      assert result == "Money(EUR)"
+      refute result =~ ~r/^#\w.*</
+    end
+
+    test "a type with format/1 renders its domain label in D2/Dot, not #Module<params>" do
+      graph = one_field_graph(money_type(currency: "JPY"))
+
+      d2 = D2.render(graph, []) |> IO.iodata_to_binary()
+      assert d2 =~ ~s|":code": "Money(JPY)"|
+      refute d2 =~ "#Ecto.ERD.Example.Type.Money<"
+      refute d2 =~ "currency:"
+
+      dot = Dot.render(graph, []) |> IO.iodata_to_binary()
+      assert dot =~ "Money(JPY)"
+      refute dot =~ "#Ecto.ERD.Example.Type.Money&lt;"
+    end
+
+    test "binary override renders in every table format without crashing" do
+      graph = one_field_graph("citext")
+
+      assert DBML.render(graph, []) |> IO.iodata_to_binary() =~ "citext"
+      assert QuickDBD.render(graph, []) |> IO.iodata_to_binary() =~ "citext"
+      assert Mermaid.render(graph, []) |> IO.iodata_to_binary() =~ "citext"
+      assert PlantUML.render(graph, []) |> IO.iodata_to_binary() =~ "citext"
+    end
+
+    test "binary override renders in the Elixir-flavored formats" do
+      graph = one_field_graph("citext")
+
+      assert D2.render(graph, []) |> IO.iodata_to_binary() =~ ~s(":code": "citext")
+      assert Dot.render(graph, []) |> IO.iodata_to_binary() =~ "citext"
+    end
+
+    test "parameterized type without format/1 renders via fallback in D2/Dot" do
+      graph = one_field_graph(iso_code_type())
+
+      d2 = D2.render(graph, []) |> IO.iodata_to_binary()
+      assert d2 =~ "#Ecto.ERD.Example.Type.IsoCode<"
+      refute d2 =~ "{:parameterized,"
+
+      dot = Dot.render(graph, []) |> IO.iodata_to_binary()
+      assert dot =~ "#Ecto.ERD.Example.Type.IsoCode&lt;"
+      refute dot =~ "{:parameterized,"
+    end
+
+    test "map_node returning a binary type flows through Document.render/4 in every format" do
+      rewrite = fn
+        %Node{schema_module: Ecto.ERD.Example.Accounts.User} = node ->
+          update_in(node.fields, fn fields ->
+            Enum.map(fields, fn
+              %Field{name: :email} = f -> %{f | type: "citext"}
+              f -> f
+            end)
+          end)
+
+        node ->
+          node
+      end
+
+      for ext <- ~w(.dot .d2 .dbml .mmd .puml .qdbd) do
+        output =
+          Ecto.ERD.Document.render(Ecto.ERD.Example.schemas(), ext, rewrite, [])
+          |> IO.iodata_to_binary()
+
+        assert output =~ "citext", "expected citext in #{ext} output"
+      end
     end
   end
 end

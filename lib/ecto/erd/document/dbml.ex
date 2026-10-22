@@ -135,27 +135,7 @@ defmodule Ecto.ERD.Document.DBML do
         "#{Render.in_quotes(name)} #{Render.in_quotes(enum_name_by_field_name.(name))}#{settings}"
 
       _ ->
-        "#{Render.in_quotes(name)} #{format_type(type)}#{settings}"
-    end
-  end
-
-  defp format_type(type) do
-    case Ecto.Type.type(type) do
-      {:array, _t} -> "array"
-      :id -> "integer"
-      :identity -> "bigint"
-      :binary_id -> "uuid"
-      :string -> "varchar"
-      :binary -> "bytea"
-      :map -> "jsonb"
-      {:map, _} -> "jsonb"
-      :time_usec -> "time"
-      :utc_datetime -> "timestamp"
-      :utc_datetime_usec -> "timestamp"
-      :naive_datetime -> "timestamp"
-      :naive_datetime_usec -> "timestamp"
-      atom when is_atom(atom) -> Atom.to_string(atom)
-      {:parameterized, _} -> "unknown"
+        "#{Render.in_quotes(name)} #{Render.sql_type(type)}#{settings}"
     end
   end
 end

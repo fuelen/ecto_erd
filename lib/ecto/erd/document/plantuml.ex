@@ -132,6 +132,8 @@ defmodule Ecto.ERD.Document.PlantUML do
     "enum(#{Enum.join(values, ",")})"
   end
 
+  defp format_type(type, _opts) when is_binary(type), do: type
+
   defp format_type(type, _opts) do
     case Ecto.Type.type(type) do
       {parent, _t} -> Atom.to_string(parent)
