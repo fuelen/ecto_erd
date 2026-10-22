@@ -858,6 +858,38 @@ defmodule Ecto.ERDTest do
       assert D2.render(graph, []) =~ ~S("dollar\${var}")
     end
 
+    test "escapes a bare $ to prevent d2 variable substitution" do
+      graph = %Graph{
+        nodes: [%Node{source: "dollar_amount$", schema_module: nil, fields: []}],
+        edges: []
+      }
+
+      result = D2.render(graph, []) |> IO.iodata_to_binary()
+
+      assert result =~ ~S("dollar_amount\$")
+      refute result =~ ~r/[^\\]\$/
+    end
+
+    test "escapes a bare $ carried by a parameterized type" do
+      type = {:parameterized, {SomeMod.Pattern, %{pattern: "^[A-Z]{2}$"}}}
+
+      graph = %Graph{
+        nodes: [
+          %Node{
+            source: "things",
+            schema_module: MyApp.Thing,
+            fields: [Field.new(%{name: :code, type: type})]
+          }
+        ],
+        edges: []
+      }
+
+      result = D2.render(graph, []) |> IO.iodata_to_binary()
+
+      assert result =~ ~S(^[A-Z]{2}\$)
+      refute result =~ ~r/[^\\]\$/
+    end
+
     test "escapes raw newlines so the document still parses" do
       graph = %Graph{
         nodes: [%Node{source: "new\nline", schema_module: nil, fields: []}],

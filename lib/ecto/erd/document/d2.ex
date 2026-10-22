@@ -269,17 +269,17 @@ defmodule Ecto.ERD.Document.D2 do
 
   defp node_ref(source, schema_module), do: {source, schema_module}
 
-  # Escape order is load-bearing: backslashes first, or the backslashes added
-  # for `"` and `${` would themselves get doubled. `${` triggers d2 variable
-  # substitution inside double-quoted strings (undefined vars fail to compile)
-  # and a raw newline terminates the string at the parser level.
+  # Escape order matters: backslashes must be processed first to prevent all other
+  # backslashes from being doubled. Any `$` signals to d2 that substitution is beginning,
+  # and the next character must be `{` or d2 rejects the value with "substitutions must
+  # begin on {". A raw newline terminates the string at the parser level.
   defp quoted(value) do
     escaped =
       value
       |> to_string()
       |> String.replace("\\", "\\\\")
       |> String.replace("\"", "\\\"")
-      |> String.replace("${", "\\${")
+      |> String.replace("$", "\\$")
       |> String.replace("\n", "\\n")
 
     "\"" <> escaped <> "\""
