@@ -31,6 +31,8 @@ entity Ecto.ERD.Example.Accounts.User {
   id : id
   --
   email : string
+  balance : integer
+  currency : string
   role : enum(owner,suspended,member,author,editor,admin,reviewer,support,analyst,billing,...)
   preferences : map
   profile : map
