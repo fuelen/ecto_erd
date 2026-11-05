@@ -58,6 +58,8 @@ Table api_keys {
 Table users {
   id integer [pk]
   email varchar
+  balance integer
+  currency varchar
   role role
   preferences jsonb
   profile jsonb

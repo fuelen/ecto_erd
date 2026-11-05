@@ -39,6 +39,8 @@ direction: right
   shape: sql_table
   ":id": ":id " {constraint: primary_key}
   ":email": ":string"
+  ":balance": "Money(EUR)"
+  ":currency": "#Ecto.ERD.Example.Type.IsoCode<%{pattern: \"^[A-Z]{3}\$\", field: :currency, schema: Ecto.ERD.Example.Accounts.User}>"
   ":role": "#Enum<[:admin, :analyst, :author, :billing, :editor, :guest, :member, :owner, :reviewer, :support, ...]>"
   ":preferences": ":map"
   ":profile": "#Ecto.Embedded<[one: Ecto.ERD.Example.Accounts.Profile]>"

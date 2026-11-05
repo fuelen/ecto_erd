@@ -17,6 +17,55 @@ defmodule Ecto.ERD.Example do
   end
 end
 
+defmodule Ecto.ERD.Example.Type.Money do
+  @moduledoc false
+  use Ecto.ParameterizedType
+
+  @impl true
+  def type(_params), do: :integer
+
+  @impl true
+  def init(opts), do: Map.new(opts)
+
+  @impl true
+  def format(%{currency: currency}), do: "Money(#{currency})"
+
+  @impl true
+  def cast(value, _params), do: {:ok, value}
+
+  @impl true
+  def load(value, _loader, _params), do: {:ok, value}
+
+  @impl true
+  def dump(value, _dumper, _params), do: {:ok, value}
+
+  @impl true
+  def equal?(a, b, _params), do: a == b
+end
+
+defmodule Ecto.ERD.Example.Type.IsoCode do
+  @moduledoc false
+  use Ecto.ParameterizedType
+
+  @impl true
+  def type(_params), do: :string
+
+  @impl true
+  def init(opts), do: Map.new(opts)
+
+  @impl true
+  def cast(value, _params), do: {:ok, value}
+
+  @impl true
+  def load(value, _loader, _params), do: {:ok, value}
+
+  @impl true
+  def dump(value, _dumper, _params), do: {:ok, value}
+
+  @impl true
+  def equal?(a, b, _params), do: a == b
+end
+
 defmodule Ecto.ERD.Example.Accounts.Profile do
   @moduledoc false
   use Ecto.Schema
@@ -44,6 +93,8 @@ defmodule Ecto.ERD.Example.Accounts.User do
 
   schema "users" do
     field(:email, :string)
+    field(:balance, Ecto.ERD.Example.Type.Money, currency: "EUR")
+    field(:currency, Ecto.ERD.Example.Type.IsoCode, pattern: "^[A-Z]{3}$")
 
     field(:role, Ecto.Enum,
       values: [

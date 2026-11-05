@@ -1,6 +1,6 @@
 defmodule Ecto.ERD.Document.Mermaid do
   @moduledoc false
-  alias Ecto.ERD.{Node, Field, Edge, Graph}
+  alias Ecto.ERD.{Node, Field, Edge, Graph, Render}
   @behaviour Ecto.ERD.Document
   require Logger
 
@@ -32,7 +32,7 @@ defmodule Ecto.ERD.Document.Mermaid do
   end
 
   defp render_node(%Node{source: source, fields: fields}, fields_config) do
-    if name_valid?(source) do
+    if source_valid?(source) do
       case fields_config do
         :show_fields ->
           [
@@ -61,7 +61,7 @@ defmodule Ecto.ERD.Document.Mermaid do
          to: {to_source, _to_schema, {:field, _to_field}},
          assoc_types: assoc_types
        }) do
-    if name_valid?(from_source) and name_valid?(to_source) do
+    if source_valid?(from_source) and source_valid?(to_source) do
       operator =
         if {:has, :one} in assoc_types do
           "||--o|"
@@ -81,50 +81,51 @@ defmodule Ecto.ERD.Document.Mermaid do
   end
 
   defp render_field(%Field{} = field) do
-    if name_valid?(to_string(field.name)) do
-      format_type(field.type) <>
-        " " <>
-        to_string(field.name) <>
-        if field.primary? do
-          " PK"
-        else
-          ""
-        end <>
-        if field.comment do
-          ~s( "#{field.comment}")
-        else
-          ""
-        end
-    else
-      Logger.warning(
-        "Field name #{inspect(field.name)} contains invalid symbols and cannot be displayed"
-      )
+    case field_name_and_type(field) do
+      {:ok, name, type} ->
+        type <>
+          " " <>
+          name <>
+          if field.primary? do
+            " PK"
+          else
+            ""
+          end <>
+          if field.comment do
+            ~s( "#{field.comment}")
+          else
+            ""
+          end
 
-      nil
+      {:error, reason} ->
+        Logger.warning(reason)
+        nil
     end
   end
 
-  defp format_type(type) do
-    case Ecto.Type.type(type) do
-      {:array, _t} -> "array"
-      :id -> "integer"
-      :identity -> "bigint"
-      :binary_id -> "uuid"
-      :string -> "varchar"
-      :binary -> "bytea"
-      :map -> "jsonb"
-      {:map, _} -> "jsonb"
-      :time_usec -> "time"
-      :utc_datetime -> "timestamp"
-      :utc_datetime_usec -> "timestamp"
-      :naive_datetime -> "timestamp"
-      :naive_datetime_usec -> "timestamp"
-      atom when is_atom(atom) -> Atom.to_string(atom)
-      {:parameterized, _} -> "unknown"
+  defp source_valid?(source) do
+    source =~ ~r/^[A-Za-z_][A-Za-z0-9_.\-]*$/
+  end
+
+  defp field_name_and_type(field) do
+    name = to_string(field.name)
+    type = Render.sql_type(field.type)
+
+    case {name_valid?(name), name_valid?(type)} do
+      {true, true} ->
+        {:ok, name, type}
+
+      {false, _} ->
+        {:error,
+         "Field name #{inspect(field.name)} contains invalid symbols and cannot be displayed"}
+
+      _ ->
+        {:error,
+         "Field #{inspect(field.name)} type #{inspect(type)} contains invalid symbols and cannot be displayed"}
     end
   end
 
-  defp name_valid?(source_or_field) do
-    source_or_field =~ ~r/^[a-zA-z\-_\d]+$/
+  defp name_valid?(field_or_type) do
+    field_or_type =~ ~r/^[A-Za-z_][A-Za-z0-9_\-()\[\]]*$/
   end
 end
