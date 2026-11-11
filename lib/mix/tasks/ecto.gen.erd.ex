@@ -128,6 +128,7 @@ defmodule Mix.Tasks.Ecto.Gen.Erd do
     Use `Ecto.ERD.Node.set_cluster/2` in this function to set a cluster. Supported only by [DOT](#module-dot), [PlantUML](#module-plantuml),
     [DBML](#module-dbml), and [D2](#module-d2).
     Return `nil` to remove a node from the diagram.
+    To override a displayed field type, set its `Ecto.ERD.Field.type` to a string, such as `"citext"`.
   * `:otp_app` - the application to scan (along with its dependencies) to collect Ecto schemas.
     Defaults to `Mix.Project.config()[:app]`. Configure this only when running the task from an umbrella root.
   * `:enum_values_limit` - maximum number of values to display for `Ecto.Enum` fields. Set to a non-negative
