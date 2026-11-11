@@ -104,7 +104,7 @@ defmodule Ecto.ERD.Document.Mermaid do
   end
 
   defp source_valid?(source) do
-    source =~ ~r/^[A-Za-z_][A-Za-z0-9_.\-]*$/
+    source =~ ~r/\A[A-Za-z_][A-Za-z0-9_.\-]*\z/
   end
 
   defp field_name_and_type(field) do
@@ -126,6 +126,6 @@ defmodule Ecto.ERD.Document.Mermaid do
   end
 
   defp name_valid?(field_or_type) do
-    field_or_type =~ ~r/^[A-Za-z_][A-Za-z0-9_\-()\[\]]*$/
+    field_or_type =~ ~r/\A[A-Za-z_][A-Za-z0-9_\-()\[\]]*\z/
   end
 end

@@ -1180,6 +1180,27 @@ defmodule Ecto.ERDTest do
       assert log =~ "code"
     end
 
+    test "Mermaid rejects a trailing newline in a type, field name, or source" do
+      for graph <- [
+            coded_graph("citext\n"),
+            put_in(coded_graph("citext").nodes, [
+              %Node{source: "users", fields: [Field.new(%{name: :"code\n", type: :string})]}
+            ]),
+            put_in(coded_graph("citext").nodes, [
+              %Node{source: "users\n", fields: []}
+            ])
+          ] do
+        log =
+          capture_log(fn ->
+            result = Mermaid.render(graph, []) |> IO.iodata_to_binary()
+            refute result =~ "code"
+            refute result =~ "users\n {"
+          end)
+
+        assert log =~ "invalid symbols"
+      end
+    end
+
     test "Mermaid keeps a valid field when a sibling field has an invalid type" do
       graph = %Graph{
         nodes: [
